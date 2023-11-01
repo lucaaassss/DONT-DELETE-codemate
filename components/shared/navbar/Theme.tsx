@@ -20,7 +20,7 @@ const Theme = () => {
   return (
     <Menubar className="relative border-none bg-transparent shadow-none">
       <MenubarMenu>
-        <MenubarTrigger className="focus:bg-light-900 data-[state=open]:bg-light-900 dark:focus:bg-dark-200 dark:data-[state=open]:bg-dark-200">
+        <MenubarTrigger className="focus:bg-purple-200 data-[state=open]:bg-purple-200 dark:focus:bg-purple-950 dark:data-[state=open]:bg-purple-950">
           {mode === "light" ? (
             <Image
               src="/assets/icons/sun.svg"
@@ -39,11 +39,11 @@ const Theme = () => {
             />
           )}
         </MenubarTrigger>
-        <MenubarContent className="absolute right-[-3rem] mt-3 min-w-[120px] rounded border py-2 dark:border-dark-400 dark:bg-dark-300">
+        <MenubarContent className="absolute right-[-3rem] mt-3 min-w-[120px] rounded border border-pink-500 bg-pink-200 py-2 dark:border-pink-500 dark:bg-pink-300">
           {themes.map((item) => (
             <MenubarItem
               key={item.value}
-              className="flex items-center gap-4 px-2.5 py-2 dark:focus:bg-dark-400"
+              className="flex items-center gap-4 px-2.5 py-2 focus:bg-pink-500 dark:focus:bg-pink-600"
               // when we click
               onClick={() => {
                 setMode(item.value);
@@ -66,7 +66,7 @@ const Theme = () => {
               <p
                 className={`body-semibold text-light-500 ${
                   mode === item.value
-                    ? "text-primary-500"
+                    ? "text-pink-700"
                     : "text-dark100_light900" // this is from the class in the styles folder
                 }`}
               >

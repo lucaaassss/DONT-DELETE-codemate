@@ -11,12 +11,12 @@ const Navbar = () => {
       <Link href="/" className="flex items-center gap-1">
         <Image
           src="/assets/images/site-logo.svg"
-          width={23}
-          height={23}
+          width={40}
+          height={40}
           alt="Codemate"
         />
-        <p className="h2-bold font-spaceGrotesk text-dark-100 dark:text-light-900 max-sm:hidden">
-          Code<span className="text-primary-500">Mate</span>
+        <p className="h2-bold font-spaceGrotesk text-purple-800 dark:text-purple-600 max-sm:hidden">
+          ode<span className="text-purple-500 dark:text-purple-300">mate</span>
         </p>
       </Link>
       {/* GlobalSearch */}

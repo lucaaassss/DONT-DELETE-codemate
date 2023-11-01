@@ -4,39 +4,39 @@
 
 @layer utilities {
   .background-light850_dark100 {
-    @apply bg-light-850 dark:bg-dark-100;
+    @apply bg-purple-300 dark:bg-purple-700;
   }
 
   .background-light900_dark200 {
-    @apply bg-light-900 dark:bg-dark-200;
+    @apply bg-purple-200 dark:bg-purple-950;
   }
 
   .background-light900_dark300 {
-    @apply bg-light-900 dark:bg-dark-300;
+    @apply bg-purple-200 dark:bg-purple-950;
   }
 
   .background-light800_darkgradient {
-    @apply bg-light-800 dark:dark-gradient;
+    @apply bg-purple-300 dark:purple-gradient;
   }
 
   .background-light800_dark400 {
-    @apply bg-light-800 dark:bg-dark-400 !important;
+    @apply bg-purple-300 dark:bg-purple-950 !important;
   }
 
   .background-light700_dark400 {
-    @apply bg-light-700 dark:bg-dark-400;
+    @apply bg-purple-400 dark:bg-purple-950;
   }
 
   .background-light700_dark300 {
-    @apply bg-light-700 dark:bg-dark-300;
+    @apply bg-purple-400 dark:bg-purple-950;
   }
 
   .background-light800_dark400 {
-    @apply bg-light-800 dark:bg-dark-400;
+    @apply bg-purple-300 dark:bg-purple-950;
   }
 
   .background-light800_dark300 {
-    @apply bg-light-800 dark:bg-dark-300 !important;
+    @apply bg-purple-300 dark:bg-purple-950 !important;
   }
 
   .text-dark100_light900 {
@@ -192,7 +192,7 @@
   }
 
   .primary-gradient {
-    background: linear-gradient(129deg, #ff7000 0%, #e2995f 100%);
+    background: linear-gradient(129deg, #802bb1 0%, #8860d0 100%);
   }
 
   .dark-gradient {
