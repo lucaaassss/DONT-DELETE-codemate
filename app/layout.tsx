@@ -3,6 +3,7 @@ import React from "react";
 import { Inter, Space_Grotesk } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
+import { ThemeProvider } from "@/context/ThemeProvider";
 
 const inter = Inter({
   // Inter is a Google font
@@ -30,20 +31,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider
-      appearance={{
-        elements: {
-          formButtonPrimary: "primary-gradient",
-          footerActionLink: "primary-text-gradient hover:text-primary-500",
-        },
-      }}
-    >
-      <html lang="en">
-        <body className={`${inter.variable}${spaceGrotesk.variable}`}>
-          {children}
-          <h1 className="h1-bold"> HI </h1>
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en">
+      <body className={`${inter.variable}${spaceGrotesk.variable}`}>
+        <ClerkProvider
+          appearance={{
+            elements: {
+              formButtonPrimary: "primary-gradient",
+              footerActionLink: "primary-text-gradient hover:text-primary-500",
+            },
+          }}
+        >
+          <ThemeProvider>{children}</ThemeProvider>{" "}
+          {/* will wrap the entire children with ThemeProvider and ClerkProvider so that they can use light or dark mode and also Clerk authenthication. They do not neceesarily have to use it, they just have access to it. It depends on them whether to use it or not */}
+        </ClerkProvider>
+      </body>
+    </html>
   );
 }
