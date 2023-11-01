@@ -18,12 +18,17 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [mode, setMode] = useState(""); // the empty string "" indicates that at the START it will wither be light or dark mode
 
   const handleThemeChange = () => {
-    if (mode === "dark") {
-      setMode("light");
-      document.documentElement.classList.add("light");
-    } else {
+    if (
+      localStorage.theme === "dark" ||
+      (!("theme" in localStorage) &&
+        window.matchMedia("(prefers-color-scheme:dark)").matches)
+    ) {
+      // check if theme does not exist in local storage and figuring out if the user's operating system prefers the dark mode
       setMode("dark");
-      document.documentElement.classList.add("dark");
+      document.documentElement.classList.add("dark"); // set the mode to dark and add it to the class list of the browser
+    } else {
+      setMode("light");
+      document.documentElement.classList.remove("dark"); // remove the dark version
     }
   };
 
