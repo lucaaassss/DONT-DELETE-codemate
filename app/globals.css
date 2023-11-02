@@ -30,11 +30,11 @@ body {
   }
 
   .btn-secondary {
-    @apply bg-light-800 dark:bg-dark-400 !important;
+    @apply bg-purple-800 dark:bg-purple-300 !important;
   }
 
   .btn-tertiary {
-    @apply bg-light-700 dark:bg-dark-300 !important;
+    @apply bg-yellow-500 dark:bg-yellow-500 !important;
   }
 
   .markdown {
@@ -76,7 +76,7 @@ body {
 }
 
 .primary-text-gradient {
-  background: linear-gradient(129deg, #802bb1 0%, #8860d0 100%);
+  background: linear-gradient(129deg, #ffffff 0%, rgb(255, 255, 255) 0%);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
