@@ -4,7 +4,7 @@
 
 @layer utilities {
   .background-light850_dark100 {
-    @apply bg-purple-300 dark:bg-purple-700;
+    @apply bg-purple-300 dark:bg-purple-800;
   }
 
   .background-light900_dark200 {
@@ -16,7 +16,7 @@
   }
 
   .background-light800_darkgradient {
-    @apply bg-purple-300 dark:purple-gradient;
+    @apply bg-purple-800 dark:bg-purple-300;
   }
 
   .background-light800_dark400 {
