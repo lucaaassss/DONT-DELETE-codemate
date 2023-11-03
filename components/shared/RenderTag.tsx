@@ -1,4 +1,4 @@
-// this is a reusable component
+// this is a dynamic reusable component
 import Link from "next/link";
 import React from "react";
 import { Badge } from "@/components/ui/badge";

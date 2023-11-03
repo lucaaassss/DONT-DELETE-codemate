@@ -1,4 +1,4 @@
-// this is a reusable component
+// this is a dynamic reusable component
 
 "use client"; // change to client side because we use onChange
 import { Input } from "@/components/ui/input";
