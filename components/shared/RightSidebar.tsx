@@ -9,7 +9,7 @@ const hotQuestions = [
   { _id: 2, title: "How do I connect my application to MongoDB?" },
   { _id: 3, title: "What is Hook in React?" },
   { _id: 4, title: "Proper way to use async/await functions" },
-  { _id: 5, title: "How do I use express as a custom server in Next.jS?" },
+  { _id: 5, title: "How do I use express as a custom server in Next.js?" },
 ];
 
 const popularTags = [
