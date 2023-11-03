@@ -1,3 +1,4 @@
+// this is a reusable component
 import Link from "next/link";
 import React from "react";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,8 @@ interface Props {
   totalQuestions?: number; // the question symbol ? means that it is optional
   showCount?: boolean;
 }
+
+// meaning that it will be a type of Props,we can name it however we want
 const RenderTag = ({ _id, name, totalQuestions, showCount }: Props) => {
   return (
     <Link href={`/tags/${_id}`} className="flex justify-between gap-2">
