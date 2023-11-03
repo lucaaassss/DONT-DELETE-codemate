@@ -36,7 +36,7 @@
   }
 
   .background-light800_dark300 {
-    @apply bg-purple-300 dark:bg-purple-950 !important;
+    @apply bg-purple-800 dark:bg-purple-300 !important;
   }
 
   .text-dark100_light900 {
@@ -88,7 +88,7 @@
   }
 
   .text-light400_light500 {
-    @apply text-light-400 dark:text-light-500 !important;
+    @apply text-light-800 dark:text-dark-500 !important;
   }
 
   .light-border {
