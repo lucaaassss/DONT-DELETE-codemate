@@ -23,7 +23,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       (!("theme" in localStorage) &&
         window.matchMedia("(prefers-color-scheme:dark)").matches)
     ) {
-      // check if theme does not exist in local storage and figuring out if the user's operating system prefers the dark mode
+      // check if theme is in dark mode or does not exist in local storage and figuring out if the user's operating system prefers the dark mode
       setMode("dark");
       document.documentElement.classList.add("dark"); // set the mode to dark and add it to the class list of the browser
     } else {
