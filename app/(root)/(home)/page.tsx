@@ -1,5 +1,8 @@
+import HomeFilters from "@/components/home/HomeFilters";
+import Filter from "@/components/shared/Filter";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
+import { HomePageFilters } from "@/constants/filters";
 import Link from "next/link";
 
 export default function Home() {
@@ -25,8 +28,15 @@ export default function Home() {
           otherClasses="flex-1"
         />
         {/* otherClasses is the classes for other pages because we will use this local searchbar component at different pages */}
-        Filters
+        <Filter
+          // this HomePageFilters is a constant retrieved from the constants folder because we will use this filter in different pages
+          // otherClasses is the classes for other pages because we will use this local searchbar component at different pages
+          filters={HomePageFilters}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+          containerClasses="hidden max-md:flex"
+        />
       </div>
+      <HomeFilters />
     </>
   );
 }
