@@ -16,10 +16,10 @@ const questions = [
       { _id: "2", name: "REACT" },
     ],
     author: { _id: "1", name: "Shahirul", picture: "shahirul.jpg" },
-    upvotes: 10,
-    views: 100,
+    upvotes: 1055,
+    views: 500,
     answers: [],
-    createdAt: new Date("2023-11-7T12:19:00.00Z"),
+    createdAt: new Date("2023-11-07T12:00:00.00Z"),
   },
   {
     _id: "2",
@@ -29,10 +29,10 @@ const questions = [
       // { _id: "2", name: "NEXT.JS" },
     ],
     author: { _id: "1", name: "Gwen", picture: "gwen.jpg" },
-    upvotes: 10,
-    views: 100,
+    upvotes: 50000,
+    views: 100000,
     answers: [],
-    createdAt: new Date("2023-11-11T12:47:00.00Z"),
+    createdAt: new Date("2023-09-01T12:00:00.00Z"),
   },
 ];
 export default function Home() {
@@ -68,7 +68,7 @@ export default function Home() {
         />
       </div>
       <HomeFilters />
-      <div className="mt-10 flex w-full flex-col gap-6">
+      <div className="text-dark200_light900 mt-10 flex w-full flex-col gap-6">
         {/* Looping through questions */}
         {questions.length > 0 ? (
           questions.map((question) => (
@@ -87,9 +87,7 @@ export default function Home() {
         ) : (
           <NoResult
             title="There are no questions to show"
-            description="Be the first to break the silence! 🚀 Ask a Question and kickstart the
-          discussion. our query could be the next big thing others learn from. Get
-          involved! 💡"
+            description="Take the lead in ending the silence! 🚀 Ask a question and be the catalyst for a meaningful conversation. Your query could inspire others. Get in on it! 💡"
             link="/ask-question"
             linkTitle="Ask a Question"
           />

@@ -14,18 +14,18 @@ const NoResult = ({ title, description, link, linkTitle }: Props) => {
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center">
       <Image
-        src="/assets/images/light-illustration.png"
+        src="/assets/images/question-mark.png"
         alt="No result illustration"
-        width={270}
-        height={200}
+        width={96}
+        height={96}
         className="block object-contain dark:hidden"
       />
 
       <Image
-        src="/assets/images/dark-illustration.png"
+        src="/assets/images/question-mark.png"
         alt="No result illustration"
-        width={270}
-        height={200}
+        width={96}
+        height={96}
         className="hidden object-contain dark:flex"
       />
 
@@ -34,7 +34,7 @@ const NoResult = ({ title, description, link, linkTitle }: Props) => {
         {description}
       </p>
       <Link href={link}>
-        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-purple-950 px-4 py-3 text-light-900 hover:bg-purple-900 dark:bg-purple-300 dark:text-light-900 dark:hover:bg-purple-200">
+        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-purple-800 px-4 py-3 text-light-900 hover:bg-purple-700 dark:bg-purple-950 dark:text-light-900 dark:hover:bg-purple-900">
           {linkTitle}
         </Button>
       </Link>

@@ -2,6 +2,8 @@
 import Link from "next/link";
 import React from "react";
 import RenderTag from "../shared/RenderTag";
+import Metric from "../shared/Metric";
+import { formatNumber, getTimeStamp } from "@/lib/utils";
 
 // we use picture:string because the picture will have a URL which is a string
 // we use  answers:Array<object> which means that the answers will have an array of object
@@ -38,8 +40,9 @@ const QuestionCard = ({
     <div className="card-wrapper rounded-[10px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
-          <span className="subtle-regular text-dark400_light700 line-clamp-1 flex sm:hidden">
-            {String(createdAt)}
+          <span className="subtle-regular text-dark200_light900 line-clamp-1 flex sm:hidden">
+            {/* getTimeStamp is a utility function we have declared in lib > util.ts file */}
+            {getTimeStamp(createdAt)}
           </span>
           <Link href={`/question/${_id}`}>
             <h3 className="sm:h3-semibold base-semibold text-dark200_light900 line-clamp-1 flex-1">
@@ -49,10 +52,42 @@ const QuestionCard = ({
         </div>
         {/* If signed in, add edit delete actions */}
       </div>
-      <div className="mt-3.5 flex flex-wrap gap-2">
+      <div className="text-dark200_light900 mt-3.5 flex flex-wrap gap-2">
         {tags.map((tag) => (
           <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
         ))}
+      </div>
+      <div className="flex-between mt-6 w-full flex-wrap gap-3">
+        <Metric
+          imgUrl="/assets/icons/avatar.svg"
+          alt="user"
+          value={author.name}
+          title={`• asked ${getTimeStamp(createdAt)}`}
+          href={`/profile/${author._id}`}
+          isAuthor
+          textStyles="body-medium text-dark200_light900"
+        />
+        <Metric
+          imgUrl="/assets/icons/like.svg"
+          alt="Upvotes"
+          value={formatNumber(upvotes)}
+          title="Votes"
+          textStyles="small-medium text-dark200_light900"
+        />
+        <Metric
+          imgUrl="/assets/icons/message.svg"
+          alt="message"
+          value={formatNumber(answers.length)}
+          title="Answers"
+          textStyles="small-medium text-dark200_light900"
+        />
+        <Metric
+          imgUrl="/assets/icons/eye.svg"
+          alt="eye"
+          value={formatNumber(views)}
+          title="Views"
+          textStyles="small-medium text-dark200_light900"
+        />
       </div>
     </div>
   );
