@@ -5,19 +5,19 @@ import RenderTag from "./RenderTag";
 
 // _id is a common practice of naming id when we want to connect to the database
 const hotQuestions = [
-  { _id: 1, title: "Famous UI libraries recommendations" },
-  { _id: 2, title: "How do I connect my application to MongoDB?" },
-  { _id: 3, title: "What is Hook in React?" },
-  { _id: 4, title: "Proper way to use async/await functions" },
-  { _id: 5, title: "How do I use express as a custom server in Next.js?" },
+  { _id: "1", title: "Famous UI libraries recommendations" },
+  { _id: "2", title: "How do I connect my application to MongoDB?" },
+  { _id: "3", title: "What is Hook in React?" },
+  { _id: "4", title: "Proper way to use async/await functions" },
+  { _id: "5", title: "How do I use express as a custom server in Next.js?" },
 ];
 
 const popularTags = [
-  { _id: 1, name: "C++", totalQuestions: 3 },
-  { _id: 2, name: "Java", totalQuestions: 5 },
-  { _id: 3, name: "JavaScript", totalQuestions: 10 },
-  { _id: 4, name: "React", totalQuestions: 7 },
-  { _id: 4, name: "Next.js", totalQuestions: 15 },
+  { _id: "1", name: "C++", totalQuestions: 3 },
+  { _id: "2", name: "Java", totalQuestions: 5 },
+  { _id: "3", name: "JavaScript", totalQuestions: 10 },
+  { _id: "4", name: "React", totalQuestions: 7 },
+  { _id: "4", name: "Next.js", totalQuestions: 15 },
 ];
 
 const RightSidebar = () => {
