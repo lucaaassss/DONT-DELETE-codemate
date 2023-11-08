@@ -87,7 +87,7 @@ export default function Home() {
         ) : (
           <NoResult
             title="There are no questions to show"
-            description="Take the lead in ending the silence! 🚀 Ask a question and be the catalyst for a meaningful conversation. Your query could inspire others. Get in on it! 💡"
+            description="Take the lead in ending the silence! Ask a question and be the catalyst for a meaningful conversation. Your query could inspire others. Get in on it! 🚀"
             link="/ask-question"
             linkTitle="Ask a Question"
           />
