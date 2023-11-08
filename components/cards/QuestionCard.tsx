@@ -53,6 +53,7 @@ const QuestionCard = ({
         {/* If signed in, add edit delete actions */}
       </div>
       <div className="mt-3.5 flex flex-wrap gap-2">
+        {/* will map the tags to the RenderTag component */}
         {tags.map((tag) => (
           <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
         ))}
@@ -95,4 +96,5 @@ const QuestionCard = ({
 
 export default QuestionCard;
 
-// line-clamp-1 means that it will hide the content if it does not fit the Container. "1" indicates the number of maximum line it will show before it is hidden
+// line-clamp-1 means that it will hide the content if it does not fit the Container. "1" indicates the number of maximum line it will show before it is hidden.
+// when it is hidden it will show like this "..."

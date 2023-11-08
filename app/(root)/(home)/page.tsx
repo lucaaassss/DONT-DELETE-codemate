@@ -60,16 +60,19 @@ export default function Home() {
         />
         {/* otherClasses is the classes for other pages because we will use this local searchbar component at different pages */}
         <Filter
-          // this HomePageFilters is a constant retrieved from the constants folder because we will use this filter in different pages
+          // this Filter component is for mobile view
+          // this HomePageFilters is a constant retrieved from the constants > filters.ts file because we will use this filter in different pages
           // otherClasses is the classes for other pages because we will use this local searchbar component at different pages
           filters={HomePageFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
           containerClasses="hidden max-md:flex"
         />
       </div>
+      {/* this homeFilters is for normal view */}
       <HomeFilters />
       <div className="text-dark200_light900 mt-10 flex w-full flex-col gap-6">
         {/* Looping through questions */}
+        {/* checks whether there is a question or not.If there is a question,it will map it to the QuestionCard component */}
         {questions.length > 0 ? (
           questions.map((question) => (
             <QuestionCard

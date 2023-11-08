@@ -1,7 +1,7 @@
 // this is a dynamic reusable component
-// metric in this case is the combination between an image,value and title.For example,image:profile picture value:profile name title:the time the question was asked
-// Another example,image:like icon value:number of likes title:"likes"
-// DO NOTE that one mteric represents one image,one value,one title and other optional properties
+// metric in this case is the combination between an image,value and title.For example,image:profile picture, value:profile name, title:the time the question was asked
+// Another example,image:like icon, value:number of likes, title:"likes"
+// DO NOTE that one metric represents one image,one value,one title and other optional properties
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
@@ -25,6 +25,7 @@ const Metric = ({
   isAuthor,
 }: MetricProps) => {
   const metricContent = (
+    // fragments
     <>
       <Image
         src={imgUrl}

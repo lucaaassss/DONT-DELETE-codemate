@@ -42,7 +42,7 @@ export default function RootLayout({
           }}
         >
           <ThemeProvider>{children}</ThemeProvider>{" "}
-          {/* will wrap the entire children with ThemeProvider and ClerkProvider so that they can use light or dark mode and also Clerk authenthication. They do not neceesarily have to use it, they just have access to it. It depends on them whether to use it or not */}
+          {/* will wrap the entire children with ThemeProvider and ClerkProvider so that they can use light or dark mode and also Clerk authenthication. They do not necessarily have to use it, they just have access to it. It depends on them whether to use it or not */}
         </ClerkProvider>
       </body>
     </html>
