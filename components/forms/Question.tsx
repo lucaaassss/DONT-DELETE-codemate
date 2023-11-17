@@ -18,6 +18,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { QuestionsSchema } from "@/lib/validations";
+import { Badge } from "../ui/badge";
+import Image from "next/image";
 
 const Question = () => {
   const editorRef = useRef(null);
@@ -38,6 +40,42 @@ const Question = () => {
     // ✅ This will be type-safe and validated.
     console.log(values);
   }
+
+  // event:React.KeyboardEvent<HTMLInputElement> means that event is a type of React Keyboard Event specifically HTMLInputElement
+  const handleInputKeyDown = (
+    event: React.KeyboardEvent<HTMLInputElement>,
+    field: any
+  ) => {
+    if (event.key === "Enter" && field.name === "tags") {
+      event.preventDefault(); // to prevent the page from reloading
+
+      const tagInput = event.target as HTMLInputElement;
+      const tagValue = tagInput.value.trim(); // to remove whitespaces
+
+      if (tagValue !== "") {
+        if (tagValue.length > 15) {
+          return form.setError("tags", {
+            type: "required",
+            message: "Tag must be less than 15 characters",
+          });
+        }
+        // if(!field.value.includes(tagValue as never)) means that we are checking that the tags does not exist already within the field.If there are same tags it will never count the tag as a tagValue
+        if (!field.value.includes(tagValue as never)) {
+          form.setValue("tags", [...field.value, tagValue]);
+          tagInput.value = "";
+          form.clearErrors("tags"); // to clear the tags field
+        }
+      } else {
+        form.trigger();
+      }
+    }
+  };
+
+  const handleTagRemove = (tag: string, field: any) => {
+    const newTags = field.value.filter((t: string) => t !== tag); // meaning that we are creating a new instance ofthe modified tags but we did not include the ones that is being clicked.(t:string)=>t!==tag means that it will include all tags but the tag must not be equalled to the ones that being clicked
+
+    form.setValue("tags", newTags); // set the value using the newTags instance
+  };
   return (
     <Form {...form}>
       <form
@@ -131,11 +169,34 @@ const Question = () => {
                 Tags <span className="text-primary-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
-                <Input
-                  className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
-                  placeholder="Add tags"
-                  {...field}
-                />
+                <>
+                  <Input
+                    className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
+                    placeholder="Add tags"
+                    onKeyDown={(event) => handleInputKeyDown(event, field)}
+                  />
+
+                  {field.value.length > 0 && (
+                    <div className="flex-start mt-2.5 gap-2.5">
+                      {field.value.map((tag: any) => (
+                        <Badge
+                          key={tag}
+                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
+                          onClick={() => handleTagRemove(tag, field)}
+                        >
+                          {tag}
+                          <Image
+                            src="/assets/icons/close.svg"
+                            alt="Close icon"
+                            width={12}
+                            height={12}
+                            className="cursor-pointer object-contain invert-0 dark:invert"
+                          />
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                </>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-light-500">
                 Add up to 3 tags to describe what your question is about.You
