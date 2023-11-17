@@ -1,6 +1,6 @@
 // the QuestionSchema used in this file is retrieved from lib>validations.ts because we want our code to be scalable so move it to another place
 "use client"; // because we will be using a lot of forms,states,key presses
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -21,8 +21,11 @@ import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 
+const type: any = "create"; // the form will be reusable so it will have many different types such as edit and create.In this case we set it as create
+
 const Question = () => {
   const editorRef = useRef(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -36,9 +39,17 @@ const Question = () => {
 
   // 2. Define a submit handler.
   function onSubmit(values: z.infer<typeof QuestionsSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
+    setIsSubmitting(true);
+
+    // try is used to see if it is successful in doing something.Catch is used if it fails.Finally is used regardless of it succeeds or fails
+    try {
+      // make an async call to the API/database to create a question
+      // the call will contain all form data
+      // navigate to home page to see the question
+    } catch (error) {
+    } finally {
+      setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
+    }
   }
 
   // event:React.KeyboardEvent<HTMLInputElement> means that event is a type of React Keyboard Event specifically HTMLInputElement
@@ -88,7 +99,7 @@ const Question = () => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Question Title <span className="text-primary-500">*</span>
+                Question Title <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
@@ -96,9 +107,8 @@ const Question = () => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Be as specific as possible and imagine you&apos;re asking a
-                question to another person.
+              <FormDescription className="body-regular mt-2.5 text-gray-500 dark:text-light-500">
+                Insert a specific title for the problem.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
               <FormMessage className="text-red-500" />
@@ -111,8 +121,8 @@ const Question = () => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Detailed explanation of your problem{" "}
-                <span className="text-primary-500">*</span>
+                Detailed Explanation Of The Problem{" "}
+                <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Editor
@@ -151,9 +161,9 @@ const Question = () => {
                   }}
                 />
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Introduce the problem and expand on what you put in the
-                title.Minimum 20 characters.
+              <FormDescription className="body-regular mt-2.5 text-gray-500 dark:text-light-500">
+                Provide a clear and thorough explanation of the problem to help
+                others understand it better.Minimum 20 characters.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
               <FormMessage className="text-red-500" />
@@ -166,7 +176,7 @@ const Question = () => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Tags <span className="text-primary-500">*</span>
+                Tags <span className="text-red-500">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <>
@@ -178,10 +188,12 @@ const Question = () => {
 
                   {field.value.length > 0 && (
                     <div className="flex-start mt-2.5 gap-2.5">
+                      {/* field will map the value to the tag */}
                       {field.value.map((tag: any) => (
                         <Badge
                           key={tag}
-                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2 capitalize"
+                          className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2"
+                          style={{ textTransform: "uppercase" }}
                           onClick={() => handleTagRemove(tag, field)}
                         >
                           {tag}
@@ -198,16 +210,27 @@ const Question = () => {
                   )}
                 </>
               </FormControl>
-              <FormDescription className="body-regular mt-2.5 text-light-500">
-                Add up to 3 tags to describe what your question is about.You
-                need to press enter to add a tag.
+              <FormDescription className="body-regular mt-2.5 text-gray-500 dark:text-light-500">
+                Add up to 3 tags to describe what the question is about.Press
+                Enter to add a tag.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
               <FormMessage className="text-red-500" />
             </FormItem>
           )}
         />
-        <Button type="submit">Submit</Button>
+        {/* disabled={isSubmitting} is a safety measure.It will disallow us to press the submit button for the second time which can cause some chaos in the database */}
+        <Button
+          type="submit"
+          className="primary-gradient w-fit !text-light-900"
+          disabled={isSubmitting}
+        >
+          {isSubmitting ? (
+            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+          ) : (
+            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+          )}
+        </Button>
       </form>
     </Form>
   );
