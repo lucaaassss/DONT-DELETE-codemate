@@ -20,6 +20,7 @@ import { Input } from "@/components/ui/input";
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
+import { createQuestion } from "@/lib/actions/question.action";
 
 const type: any = "create"; // the form will be reusable so it will have many different types such as edit and create.In this case we set it as create
 
@@ -38,7 +39,7 @@ const Question = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof QuestionsSchema>) {
+  async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
 
     // try is used to see if it is successful in doing something.Catch is used if it fails.Finally is used regardless of it succeeds or fails
@@ -46,6 +47,7 @@ const Question = () => {
       // make an async call to the API/database to create a question
       // the call will contain all form data
       // navigate to home page to see the question
+      await createQuestion({}); // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
     } catch (error) {
     } finally {
       setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
@@ -132,6 +134,8 @@ const Question = () => {
                     // @ts-ignore
                     editorRef.current = editor;
                   }}
+                  onBlur={field.onBlur} // onBlur will run once we exit the editor.It will save the value inserted
+                  onEditorChange={(content) => field.onChange(content)} //will change the content of the editor according to what we have inserted
                   initialValue=""
                   init={{
                     height: 350,
