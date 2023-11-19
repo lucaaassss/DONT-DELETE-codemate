@@ -78,8 +78,7 @@ const QuestionCard = ({
         <Metric
           imgUrl="/assets/icons/message.svg"
           alt="message"
-          // value={formatNumber(answers.length)}
-          value="0" // this is only temporary sebab ada error haritu,yang atas tu yang sebenar
+          value={formatNumber(answers.length)}
           title="Answers"
           textStyles="small-medium text-dark200_light900"
         />
