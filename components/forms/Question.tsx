@@ -28,7 +28,7 @@ const Question = () => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 1. Define your form.
+  // 1. define form
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
@@ -38,7 +38,7 @@ const Question = () => {
     },
   });
 
-  // 2. Define a submit handler.
+  // 2. define a submit handler
   async function onSubmit(values: z.infer<typeof QuestionsSchema>) {
     setIsSubmitting(true);
 
@@ -47,7 +47,14 @@ const Question = () => {
       // make an async call to the API/database to create a question
       // the call will contain all form data
       // navigate to home page to see the question
-      await createQuestion({}); // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
+
+      
+      await createQuestion({ // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
+        title:values.title,
+        content:values.explanation,
+        tags:values.tags,
+        author:
+      }); 
     } catch (error) {
     } finally {
       setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
