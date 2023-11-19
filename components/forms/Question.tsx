@@ -55,7 +55,8 @@ const Question = ({ mongoUserId }: Props) => {
         title: values.title,
         content: values.explanation,
         tags: values.tags,
-        author: JSON.parse(mongoUserId), // since we used JSON.stringify before
+        author: JSON.parse(mongoUserId), // since we used JSON.stringify before (at ask-question>page.tsx)
+        path: pathname, // we dont mention the path's name here because we are at homepage,if we are at any other page we have to mention the path's name
       });
 
       // navigate to home page to see the question

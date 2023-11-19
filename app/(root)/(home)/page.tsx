@@ -5,37 +5,14 @@ import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
+import { getQuestions } from "@/lib/actions/question.action";
 import Link from "next/link";
 
-const questions = [
-  {
-    _id: "1",
-    title: "Famous UI libraries recommendations",
-    tags: [
-      { _id: "1", name: "NEXT.JS" },
-      { _id: "2", name: "REACT" },
-    ],
-    author: { _id: "1", name: "Shahirul", picture: "shahirul.jpg" },
-    upvotes: 1055,
-    views: 500,
-    answers: [],
-    createdAt: new Date("2023-11-07T12:00:00.00Z"),
-  },
-  {
-    _id: "2",
-    title: "How do I connect my application to MongoDB",
-    tags: [
-      { _id: "1", name: "MONGODB" },
-      // { _id: "2", name: "NEXT.JS" },
-    ],
-    author: { _id: "1", name: "Gwen", picture: "gwen.jpg" },
-    upvotes: 50000,
-    views: 100000,
-    answers: [],
-    createdAt: new Date("2023-09-01T12:00:00.00Z"),
-  },
-];
-export default function Home() {
+export default async function Home() {
+  // to fetch the questions
+
+  const result = await getQuestions({});
+
   return (
     // Fragments
     <>
@@ -73,8 +50,8 @@ export default function Home() {
       <div className="text-dark200_light900 mt-10 flex w-full flex-col gap-6">
         {/* Looping through questions */}
         {/* checks whether there is a question or not.If there is a question,it will map it to the QuestionCard component */}
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {result.questions.length > 0 ? (
+          result.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

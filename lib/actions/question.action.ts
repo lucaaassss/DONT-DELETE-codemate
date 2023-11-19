@@ -3,9 +3,28 @@
 import Question from "@/database/question.model";
 import Tag from "@/database/tag.model";
 import { connectToDatabase } from "../mongoose";
+import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import User from "@/database/user.model";
+import { revalidatePath } from "next/cache";
+
+export async function getQuestions(params: GetQuestionsParams) {
+  try {
+    connectToDatabase();
+
+    const questions = await Question.find({}) // to find all question
+      .populate({ path: "tags", model: Tag }) // if a specific question has tags attached to it,we want to populate all the values from the tags so that we can also display them at the question card.We do this because MongoDB does not show the name for the tag,it only show the reference.So to be able to get the name,we have to populate it
+      .populate({ path: "author", model: User })
+      .sort({ createdAt: -1 }); // to sort from newest question to oldest question (the newer question will be at the top)
+
+    return { questions };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
 
 // we are dealing with asynchronous code so that's why we will have the try and catch block to handle if the call succeed or not
-export async function createQuestion(params: any) {
+export async function createQuestion(params: CreateQuestionParams) {
   try {
     connectToDatabase();
 
@@ -57,5 +76,7 @@ export async function createQuestion(params: any) {
     // create an interaction record for the user's ask_question action (to track who is the author of the question)
 
     // increment author's reputation by +5 for creating a question
+
+    revalidatePath(path); // to remove the need to reload the homepage everytime a new question is added
   } catch (error) {}
 }
