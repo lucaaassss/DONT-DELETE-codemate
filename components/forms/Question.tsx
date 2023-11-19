@@ -21,12 +21,18 @@ import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
 import { createQuestion } from "@/lib/actions/question.action";
+import { useRouter, usePathname } from "next/navigation";
 
-const type: any = "create"; // the form will be reusable so it will have many different types such as edit and create.In this case we set it as create
+const type: any = "create"; // the form will be reusable so it will have two different types which is edit and create.In this case we set it as create
 
-const Question = () => {
+interface Props {
+  mongoUserId: string;
+}
+const Question = ({ mongoUserId }: Props) => {
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter(); // to navigate
+  const pathname = usePathname(); // to know on which URL that we are at right now
 
   // 1. define form
   const form = useForm<z.infer<typeof QuestionsSchema>>({
@@ -44,17 +50,16 @@ const Question = () => {
 
     // try is used to see if it is successful in doing something.Catch is used if it fails.Finally is used regardless of it succeeds or fails
     try {
-      // make an async call to the API/database to create a question
-      // the call will contain all form data
-      // navigate to home page to see the question
+      await createQuestion({
+        // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
+        title: values.title,
+        content: values.explanation,
+        tags: values.tags,
+        author: JSON.parse(mongoUserId), // since we used JSON.stringify before
+      });
 
-      
-      await createQuestion({ // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
-        title:values.title,
-        content:values.explanation,
-        tags:values.tags,
-        author:
-      }); 
+      // navigate to home page to see the question
+      router.push("/");
     } catch (error) {
     } finally {
       setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
