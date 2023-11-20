@@ -38,16 +38,18 @@ const Page = async () => {
               className="shadow-light100_darknone"
             >
               <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-9 py-10 sm:w-[260px]">
-                <div className="background-light800_dark400 w-fit rounded-sm px-5 py-1.5">
+                <div className="w-fit rounded-sm bg-purple-300 px-5 py-1.5 dark:bg-purple-800">
                   <p className="paragraph-semibold text-dark300_light900">
                     {tag.name}
                   </p>
                 </div>
                 <p className="small-medium text-dark400_light500 mt-3.5">
-                  <span className="body-semibold text-dark500_light500 mr-2.5">
-                    {tag.questions.length}
+                  <span className="body-semibold mr-2.5 text-purple-950 dark:text-light-500">
+                    {tag.questions.length > 0
+                      ? `${tag.questions.length} Questions`
+                      : tag.questions.length}{" "}
+                    Question
                   </span>
-                  Questions
                 </p>
               </article>
             </Link>
