@@ -92,7 +92,7 @@
   }
 
   .light-border {
-    @apply border-light-800 dark:border-dark-300;
+    @apply border-light-800 dark:border-light-800;
   }
 
   .light-border-2 {
