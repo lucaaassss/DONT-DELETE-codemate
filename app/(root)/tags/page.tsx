@@ -45,9 +45,7 @@ const Page = async () => {
                 </div>
                 <p className="small-medium text-dark400_light500 mt-3.5">
                   <span className="body-semibold text-dark500_light500 mr-2.5">
-                    {tag.questions.length > 0
-                      ? `${tag.questions.length}+` // if more than 0 will have + sign
-                      : tag.questions.length}
+                    {tag.questions.length}
                   </span>
                   Questions
                 </p>
@@ -57,7 +55,7 @@ const Page = async () => {
         ) : (
           <NoResult
             title="No Tags Found"
-            description="It looks like there are no tags found"
+            description="No Tags Found"
             link="/ask-question"
             linkTitle="Ask a Question"
           />
