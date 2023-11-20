@@ -6,15 +6,11 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 const Page = async () => {
-  // const { userId } = auth(); // get the current userId from clerk
-
-  const userId = "123456";
+  const { userId } = auth(); // get the current userId from clerk
 
   if (!userId) redirect("/sign-in"); // if we dont currently have a userId,it will redirect to the sign in page
 
   const mongoUser = await getUserById({ userId }); // call the user server action and pass the userId
-
-  console.log(mongoUser); // going to be shown in the terminal since this is a server side page
 
   return (
     <div>
