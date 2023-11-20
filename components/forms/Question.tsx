@@ -148,7 +148,7 @@ const Question = ({ mongoUserId }: Props) => {
                     editorRef.current = editor;
                   }}
                   onBlur={field.onBlur} // onBlur will run once we exit the editor.It will save the value inserted
-                  onEditorChange={(content) => field.onChange(content)} //will change the content of the editor according to what we have inserted
+                  onEditorChange={(content) => field.onChange(content)} // will change the content of the editor according to what we have inserted
                   initialValue=""
                   init={{
                     height: 350,

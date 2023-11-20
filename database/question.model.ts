@@ -27,7 +27,7 @@ const QuestionSchema = new Schema({
   createdAt: { type: Date, default: Date.now },
 });
 
-//turning the schema into a model
+// turning the schema into a model
 const Question = models.Question || model("Question", QuestionSchema); // check if the model exist and if not it will create a Question model based on the QuestionSchema
 
 export default Question; // export the model

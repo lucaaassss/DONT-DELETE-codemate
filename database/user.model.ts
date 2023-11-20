@@ -32,7 +32,7 @@ const UserSchema = new Schema({
   joinedAt: { type: Date, default: Date.now },
 });
 
-//turning the schema into a model
+// turning the schema into a model
 const User = models.User || model("User", UserSchema); // check if the model exist and if not it will create a User model based on the UserSchema
 
 export default User;

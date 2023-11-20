@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 "use server";
 
 import User from "@/database/user.model";
@@ -68,7 +69,7 @@ export async function deleteUser(params: DeleteUserParams) {
       throw new Error("User not found");
     }
 
-    //if the use exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
+    // if the use exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
 
     // get user's question id
     const userQuestionIds = await Question.find({ author: user._id }).distinct(

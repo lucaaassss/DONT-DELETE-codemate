@@ -18,7 +18,7 @@ const TagSchema = new Schema({
   createdOn: { type: Date, default: Date.now },
 });
 
-//turning the schema into a model
+// turning the schema into a model
 const Tag = models.Tag || model("Tag", TagSchema); // check if the model exist and if not it will create a Tag model based on the TagSchema
 
 export default Tag;
