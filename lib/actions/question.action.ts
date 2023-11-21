@@ -3,7 +3,11 @@
 import Question from "@/database/question.model";
 import Tag from "@/database/tag.model";
 import { connectToDatabase } from "../mongoose";
-import { CreateQuestionParams, GetQuestionsParams } from "./shared.types";
+import {
+  CreateQuestionParams,
+  GetQuestionByIdParams,
+  GetQuestionsParams,
+} from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 
@@ -28,7 +32,9 @@ export async function createQuestion(params: CreateQuestionParams) {
   try {
     connectToDatabase();
 
-    const { title, content, tags, author, path } = params; // accepting parameters from the front end (everyting we pass from our form).The path is going to be an URL to the page that we have to reload (the homepage) because we have to revalidate it so that next.js know something has change
+    const { title, content, tags, author, path } = params;
+    // destructuring the params
+    // accepting parameters from the front end (everything we pass from our form).The path is going to be an URL to the page that we have to reload (the homepage) because we have to revalidate it so that next.js know something has change
 
     // create the question
     const question = await Question.create({
@@ -79,4 +85,29 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     revalidatePath(path); // to remove the need to reload the homepage everytime a new question is added
   } catch (error) {}
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId } = params;
+
+    const question = await Question.findById(questionId)
+      .populate({
+        path: "tags",
+        model: Tag,
+        select: "_id name",
+      }) // selecting the id and the name
+      .populate({
+        path: "author",
+        model: User,
+        select: "id_ clerkId name picture",
+      }); // selecting only the id,clerkId,name,picture
+
+    return question;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
