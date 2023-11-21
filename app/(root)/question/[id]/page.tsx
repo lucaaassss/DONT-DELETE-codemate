@@ -1,8 +1,10 @@
 // this page is going to be rendered in each specific question
 import Answer from "@/components/forms/Answer";
+import AllAnswers from "@/components/shared/AllAnswers";
 import Metric from "@/components/shared/Metric";
 import ParseHTML from "@/components/shared/ParseHTML";
 import RenderTag from "@/components/shared/RenderTag";
+import Votes from "@/components/shared/Votes";
 import { getQuestionById } from "@/lib/actions/question.action";
 import { getUserById } from "@/lib/actions/user.action";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
@@ -12,7 +14,6 @@ import Link from "next/link";
 import React from "react";
 
 const Page = async ({ params, searchParams }) => {
-  const result = await getQuestionById({ questionId: params.id });
   const { userId: clerkId } = auth();
 
   let mongoUser;
@@ -21,6 +22,8 @@ const Page = async ({ params, searchParams }) => {
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId }); // now we have access to the mongoUser that have the id of the author that creates the answer
   }
+
+  const result = await getQuestionById({ questionId: params.id }); // the params is coming from the url bar
   return (
     <>
       <div className="flex-start w-full flex-col">
@@ -40,7 +43,9 @@ const Page = async ({ params, searchParams }) => {
               {result.author.name}
             </p>
           </Link>
-          <div className="flex justify-end">VOTING</div>
+          <div className="flex justify-end">
+            <Votes />
+          </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
           {result.title}
@@ -71,7 +76,7 @@ const Page = async ({ params, searchParams }) => {
         />
       </div>
 
-      <div className="text-dark200_light900">
+      <div className="light-border mt-7 w-full rounded-2xl border-b bg-purple-950 px-7 py-10 text-white dark:bg-purple-400 dark:text-black">
         <ParseHTML data={result.content} />
       </div>
 
@@ -86,6 +91,14 @@ const Page = async ({ params, searchParams }) => {
         ))}
       </div>
 
+      {/* existing answers */}
+      <AllAnswers
+        questionId={result._id}
+        userId={JSON.stringify(mongoUser._id)}
+        totalAnswers={result.answers.length}
+      />
+
+      {/* answer that we can insert */}
       <Answer
         question={result.content}
         questionId={JSON.stringify(result._id)}

@@ -70,7 +70,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
           Write Your Answer Here:
         </h4>
         <Button
-          className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
+          className="btn light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
           onClick={() => {}}
         >
           <Image
