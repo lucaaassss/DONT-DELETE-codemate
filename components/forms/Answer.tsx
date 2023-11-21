@@ -104,7 +104,7 @@ const Answer = () => {
                 </FormControl>
 
                 {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
-                <FormMessage className="text-red-500" />
+                <FormMessage className="text-red-500 dark:text-red-300" />
               </FormItem>
             )}
           />

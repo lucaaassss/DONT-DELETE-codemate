@@ -116,7 +116,8 @@ const Question = ({ mongoUserId }: Props) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Question Title <span className="text-red-500">*</span>
+                Question Title{" "}
+                <span className="text-red-500 dark:text-red-300">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Input
@@ -128,7 +129,7 @@ const Question = ({ mongoUserId }: Props) => {
                 Insert a specific title for the problem.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
-              <FormMessage className="text-red-500" />
+              <FormMessage className="text-red-500 dark:text-red-300" />
             </FormItem>
           )}
         />
@@ -139,7 +140,7 @@ const Question = ({ mongoUserId }: Props) => {
             <FormItem className="flex w-full flex-col gap-3">
               <FormLabel className="paragraph-semibold text-dark400_light800">
                 Detailed Explanation Of The Problem{" "}
-                <span className="text-red-500">*</span>
+                <span className="text-red-500 dark:text-red-300">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <Editor
@@ -187,7 +188,7 @@ const Question = ({ mongoUserId }: Props) => {
                 others understand it better.Minimum 20 characters.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
-              <FormMessage className="text-red-500" />
+              <FormMessage className="text-red-500 dark:text-red-300" />
             </FormItem>
           )}
         />
@@ -197,7 +198,7 @@ const Question = ({ mongoUserId }: Props) => {
           render={({ field }) => (
             <FormItem className="flex w-full flex-col">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Tags <span className="text-red-500">*</span>
+                Tags <span className="text-red-500 dark:text-red-300">*</span>
               </FormLabel>
               <FormControl className="mt-3.5">
                 <>
@@ -236,7 +237,7 @@ const Question = ({ mongoUserId }: Props) => {
                 Enter to add a tag.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
-              <FormMessage className="text-red-500" />
+              <FormMessage className="text-red-500 dark:text-red-300" />
             </FormItem>
           )}
         />
