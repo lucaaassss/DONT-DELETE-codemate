@@ -1,6 +1,11 @@
 "use client";
+import {
+  downvoteQuestion,
+  upvoteQuestion,
+} from "@/lib/actions/question.action";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
+import { usePathname, useRouter } from "next/navigation";
 
 // because we us the onClick function
 interface Props {
@@ -24,9 +29,60 @@ const Votes = ({
   hasdownVoted,
   hasSaved,
 }: Props) => {
+  const pathname = usePathname();
+  const router = useRouter();
   const handleSave = () => {};
 
-  const handleVote = (action: string) => {};
+  const handleVote = async (action: string) => {
+    if (!userId) {
+      return; // exiting the function.If a user is not logged in, they cant upvote or downvote
+    }
+
+    if (action === "upvote") {
+      if (type === "Question") {
+        await upvoteQuestion({
+          questionId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        // await upvoteAnswer({
+        //   questionId:JSON.parse(itemId),
+        //   userId:JSON.parse(userId),
+        //   hasupVoted,
+        //   hasdownVoted,
+        //   path:pathname,
+        // })
+      }
+
+      // Todo:show a toast
+      return;
+    }
+
+    if (action === "downvote") {
+      if (type === "Question") {
+        await downvoteQuestion({
+          questionId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        // await downvoteAnswer({
+        //   questionId:JSON.parse(itemId),
+        //   userId:JSON.parse(userId),
+        //   hasupVoted,
+        //   hasdownVoted,
+        //   path:pathname,
+        // })
+      }
+
+      // Todo:show a toast
+    }
+  };
   return (
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">
@@ -74,7 +130,7 @@ const Votes = ({
       </div>
       <Image
         src={
-          hasdownVoted
+          hasSaved
             ? "/assets/icons/star-filled.svg"
             : "/assets/icons/star-red.svg"
         }

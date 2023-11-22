@@ -45,7 +45,7 @@ const Page = async ({ params, searchParams }) => {
           </Link>
           <div className="flex justify-end">
             <Votes
-              type="question" // to check the type whether it is question or answer
+              type="Question" // to check the type whether it is question or answer
               itemId={JSON.stringify(result._id)}
               userId={JSON.stringify(mongoUser._id)}
               upvotes={result.upvotes.length} // to display the number of upvotes
