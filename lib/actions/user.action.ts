@@ -110,6 +110,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
   }
 }
 
+// this action is in user action because each user will have different saved question
 export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
   try {
     connectToDatabase();
@@ -145,13 +146,14 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
   }
 }
 
+// this action is in user action because each user will have different saved question
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase();
 
     const { clerkId, page = 1, pageSize = 10, filter, searchQuery } = params;
 
-    const query: FilterQuery<typeof Question> = searchQuery
+    const query: FilterQuery<typeof Question> = searchQuery // we always do it like this for searchQuery
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
     const user = await User.findOne({ clerkId }).populate({
