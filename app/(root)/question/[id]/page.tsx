@@ -44,7 +44,16 @@ const Page = async ({ params, searchParams }) => {
             </p>
           </Link>
           <div className="flex justify-end">
-            <Votes />
+            <Votes
+              type="question" // to check the type whether it is question or answer
+              itemId={JSON.stringify(result._id)}
+              userId={JSON.stringify(mongoUser._id)}
+              upvotes={result.upvotes.length} // to display the number of upvotes
+              hasupVoted={result.upvotes.includes(mongoUser._id)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
+              downvotes={result.downvotes.length}
+              hasdownVoted={result.downvotes.includes(mongoUser._id)}
+              hasSaved={mongoUser?.saved.includes(result._id)} // to check if the save array under a specific array includes the id of the question
+            />
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5 w-full text-left">
