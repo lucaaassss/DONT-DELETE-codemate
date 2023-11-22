@@ -1,31 +1,24 @@
 import QuestionCard from "@/components/cards/QuestionCard";
-import HomeFilters from "@/components/home/HomeFilters";
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import { Button } from "@/components/ui/button";
-import { HomePageFilters } from "@/constants/filters";
-import { getQuestions } from "@/lib/actions/question.action";
-import Link from "next/link";
+import { QuestionFilters } from "@/constants/filters";
+import { getSavedQuestions } from "@/lib/actions/user.action";
+import { auth } from "@clerk/nextjs";
 
 export default async function Home() {
-  // to fetch the questions
+  const { userId } = auth();
 
-  const result = await getQuestions({});
+  if (!userId) return null;
+
+  const result = await getSavedQuestions({
+    clerkId: userId,
+  });
 
   return (
     // Fragments
     <>
-      <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
-        {/* sm means small devices and larger */}
-        <h1 className="h1-bold text-dark100_light900">All Questions</h1>
-        <Link href="/ask-question" className="flex justify-end max-sm:w-full">
-          <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
-            {/* exclamation mark ! is sometimes used to style shadcn component to mark it as important because otherwise the styles are not gonna get applied */}
-            Ask a Question
-          </Button>
-        </Link>
-      </div>
+      <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
@@ -40,13 +33,11 @@ export default async function Home() {
           // this Filter component is for mobile view
           // this HomePageFilters is a constant retrieved from the constants > filters.ts file because we will use this filter in different pages
           // otherClasses is the classes for other pages because we will use this local searchbar component at different pages
-          filters={HomePageFilters}
+          filters={QuestionFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]"
-          containerClasses="hidden max-md:flex"
         />
       </div>
-      {/* this homeFilters is for normal view */}
-      <HomeFilters />
+
       <div className="text-dark200_light900 mt-10 flex w-full flex-col gap-6">
         {/* Looping through questions */}
         {/* checks whether there is a question or not.If there is a question,it will map it to the QuestionCard component */}
@@ -66,7 +57,7 @@ export default async function Home() {
           ))
         ) : (
           <NoResult
-            title="There are no questions to show"
+            title="There are no saved questions to show"
             description="Take the lead in ending the silence! Ask a question and be the catalyst for a meaningful conversation. Your query could inspire others. Get in on it! 🚀"
             link="/ask-question"
             linkTitle="Ask a Question"
