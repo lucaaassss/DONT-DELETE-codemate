@@ -45,10 +45,7 @@ const Page = async () => {
                 </div>
                 <p className="small-medium text-dark400_light500 mt-3.5">
                   <span className="body-semibold mr-2.5 text-purple-950 dark:text-light-500">
-                    {tag.questions.length > 0
-                      ? `${tag.questions.length} Questions`
-                      : tag.questions.length}{" "}
-                    Question
+                    {tag.questions.length} Questions
                   </span>
                 </p>
               </article>
