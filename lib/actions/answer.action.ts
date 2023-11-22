@@ -2,7 +2,11 @@
 
 import Question from "@/database/question.model";
 import { connectToDatabase } from "../mongoose";
-import { CreateAnswerParams, GetAnswersParams } from "./shared.types";
+import {
+  AnswerVoteParams,
+  CreateAnswerParams,
+  GetAnswersParams,
+} from "./shared.types";
 import Answer from "@/database/answer.model";
 import { revalidatePath } from "next/cache";
 
@@ -39,6 +43,82 @@ export async function getAnswers(params: GetAnswersParams) {
       .sort({ createdAt: -1 });
 
     return { answers };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function upvoteAnswer(params: AnswerVoteParams) {
+  try {
+    connectToDatabase();
+
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } }; // pull the specific userId  from the upvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to upvote again since we already upvoted
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId }, // pull the specific userId  from the downvotes
+        $push: { upvotes: userId }, // push  the specific userId to the upvotes
+        // we undo the downvote and then we upvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } }; // if we have not already upvoted or downvoted we will add a new upvote of the userId to the set
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // increment author's reputation
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+export async function downvoteAnswer(params: AnswerVoteParams) {
+  try {
+    connectToDatabase();
+
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } }; // pull the specific userId  from the downvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to downvote again since we already downvoted
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId }, // pull the specific userId  from the upvotes
+        $push: { downvotes: userId }, // push  the specific userId to the downvotes
+        // we undo the upvote and then we downvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } }; // if we have not already upvoted or downvoted we will add a new downvote of the userId to the set
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // increment author's reputation
+
+    revalidatePath(path);
   } catch (error) {
     console.log(error);
     throw error;
