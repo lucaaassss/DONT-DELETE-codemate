@@ -1,5 +1,6 @@
 "use client";
 import { upvoteAnswer, downvoteAnswer } from "@/lib/actions/answer.action";
+import { viewQuestion } from "@/lib/actions/interaction.action";
 import {
   downvoteQuestion,
   upvoteQuestion,
@@ -8,6 +9,7 @@ import { toggleSaveQuestion } from "@/lib/actions/user.action";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 // because we us the onClick function
 interface Props {
@@ -32,7 +34,7 @@ const Votes = ({
   hasSaved,
 }: Props) => {
   const pathname = usePathname();
-  // const router = useRouter();
+  const router = useRouter();
   const handleSave = async () => {
     await toggleSaveQuestion({
       userId: JSON.parse(userId),
@@ -91,6 +93,13 @@ const Votes = ({
       // Todo:show a toast
     }
   };
+
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined, // pass the userId if it exists.If not,pass undefined
+    });
+  }, [itemId, userId, pathname, router]); // will call the useEffect whenever one of these changes
   return (
     <div className="flex gap-5">
       <div className="flex-center gap-2.5">
