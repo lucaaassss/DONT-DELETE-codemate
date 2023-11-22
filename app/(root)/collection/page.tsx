@@ -58,7 +58,8 @@ export default async function Home() {
         ) : (
           <NoResult
             title="There are no saved questions to show"
-            description="Take the lead in ending the silence! Ask a question and be the catalyst for a meaningful conversation. Your query could inspire others. Get in on it! 🚀"
+            description="
+            Your question collection is currently an open canvas waiting to be filled! Dive into the excitement and start saving questions that really spark your curiosity!🎨✨ "
             link="/ask-question"
             linkTitle="Ask a Question"
           />
