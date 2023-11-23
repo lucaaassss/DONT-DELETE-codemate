@@ -14,7 +14,7 @@ const HomeFilters = () => {
           onClick={() => {}}
           className={`body-medium rounded-lg px-6 py-3 capitalize shadow-none ${
             active === item.value
-              ? "bg-yellow-500 text-light-800"
+              ? " bg-primary-100 text-purple-600 dark:bg-yellow-500 dark:text-black"
               : "bg-light-800 text-light-500"
           }`}
         >
