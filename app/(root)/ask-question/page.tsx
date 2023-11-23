@@ -18,7 +18,7 @@ const Page = async () => {
 
       <div className="mt-9">
         {/* pass the mongoUser to the Question form.It is always a good thing to use JSON.stringify things that we get because we dont know what they are */}
-        <Question mongoUserId={JSON.stringify(mongoUser._id)} />
+        <Question mongoUserId={JSON.stringify(mongoUser?._id)} />
       </div>
     </div>
   );

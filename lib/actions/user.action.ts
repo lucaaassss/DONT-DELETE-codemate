@@ -231,6 +231,28 @@ export async function getUserQuestions(params: GetUserStatsParams) {
   }
 }
 
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    // count the total questions asked by the user
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    // display all of the questions asked by the user
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({ upvotes: -1 }) // sort the questions by the highest upvotes
+      .populate("question", "_id title") // populate the question with id and title
+      .populate("author", "_id clerkId name picture"); // populate the author with id,clerkId,name, and picture
+
+    return { totalAnswers, answers: userAnswers };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 // export async function getAllUsers(params:GetAllUsersParams){
 //   try {
 //     connectToDatabase();
