@@ -23,7 +23,7 @@ const UserCard = async ({ user }: Props) => {
       className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]"
     >
       {/* article is used to define a self-contained piece of content, such as a blog post or news article. It helps structure the content in a way that indicates it can be distributed and reused independently of the rest of the page */}
-      <article className="background-light900_dark200 light-border flex w-full flex-col items-center justify-center rounded-2xl border p-8">
+      <article className="background-light900_dark200  flex w-full flex-col items-center justify-center rounded-2xl p-8">
         <Image
           src={user.picture}
           alt="user profile picture"
