@@ -38,7 +38,7 @@ const Page = async () => {
               key={tag._id}
               className="shadow-light100_darknone"
             >
-              <article className="background-light900_dark200 light-border flex w-full flex-col rounded-2xl border px-9 py-10 sm:w-[260px]">
+              <article className="background-light900_dark200  flex w-full flex-col rounded-2xl px-9 py-10 sm:w-[260px]">
                 <div className="w-fit rounded-sm bg-purple-300 px-5 py-1.5 dark:bg-purple-800">
                   <p className="paragraph-semibold text-dark300_light900">
                     {tag.name}

@@ -43,7 +43,7 @@ const AllAnswers = async ({
           ) => (
             <article
               key={answer._id}
-              className="light-border text-dark300_light700 mt-7 w-full rounded-2xl border-b bg-white px-7 py-10 dark:bg-black"
+              className=" text-dark300_light700 mt-7 w-full rounded-2xl bg-white px-7 py-10 dark:bg-black"
             >
               <div className="flex items-center justify-between">
                 <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">

@@ -85,7 +85,7 @@ const Page = async ({ params, searchParams }) => {
         />
       </div>
 
-      <div className="light-border mt-7 w-full rounded-2xl border-b bg-purple-950 px-7 py-10 text-white dark:bg-purple-400 dark:text-black">
+      <div className=" mt-7 w-full rounded-2xl  bg-purple-950 px-7 py-10 text-white dark:bg-purple-400 dark:text-black">
         <ParseHTML data={result.content} />
       </div>
 
