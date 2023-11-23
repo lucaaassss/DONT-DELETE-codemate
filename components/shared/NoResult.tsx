@@ -34,7 +34,7 @@ const NoResult = ({ title, description, link, linkTitle }: Props) => {
         {description}
       </p>
       <Link href={link}>
-        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-purple-800 px-4 py-3 text-light-900 hover:bg-purple-700 dark:bg-purple-950 dark:text-light-900 dark:hover:bg-purple-900">
+        <Button className="paragraph-medium mt-5 min-h-[46px] rounded-lg bg-purple-800 px-4 py-3 text-light-900 dark:bg-purple-300 dark:text-dark-500">
           {linkTitle}
         </Button>
       </Link>
