@@ -24,9 +24,11 @@ interface QuestionProps {
   views: number;
   answers: Array<object>;
   createdAt: Date;
+  clerkId?: string;
 }
 
 const QuestionCard = ({
+  clerkId,
   _id,
   title,
   tags,
@@ -37,7 +39,7 @@ const QuestionCard = ({
   createdAt,
 }: QuestionProps) => {
   return (
-    <div className="card-wrapper rounded-[50px] p-9 sm:px-11">
+    <div className="text-dark200_light900 card-wrapper mt-3 rounded-[50px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
         <div>
           <span className="subtle-regular text-dark200_light900 line-clamp-1 flex sm:hidden">

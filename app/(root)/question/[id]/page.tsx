@@ -65,8 +65,8 @@ const Page = async ({ params, searchParams }) => {
         <Metric
           imgUrl="/assets/icons/clock.svg"
           alt="clock icon"
-          value={` asked ${getTimeStamp(result.createdAt)}`}
-          title="Asked"
+          value={` Asked ${getTimeStamp(result.createdAt)}`}
+          title=""
           textStyles="small-medium text-dark200_light900"
         />
         <Metric
