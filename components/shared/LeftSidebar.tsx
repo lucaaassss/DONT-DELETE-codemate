@@ -72,14 +72,14 @@ const LeftSidebar = () => {
                 className="invert-colors lg:hidden"
               />{" "}
               {/* lg:hidden means that the icon will be hidden on large devices,it will only show on small devices */}
-              <span className="primary-text-gradient max-lg:hidden">
+              <span className="text-white dark:text-black max-lg:hidden">
                 Log In
               </span>
             </Button>
           </Link>
 
           <Link href="/sign-up">
-            <Button className="small-medium light-border-2 btn-tertiary text-dark400_light900 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+            <Button className="small-medium light-border-2 btn-tertiary min-h-[41px] w-full rounded-lg px-4 py-3 text-purple-600 shadow-none dark:text-black">
               <Image
                 src="/assets/icons/sign-up.svg"
                 alt="sign up"

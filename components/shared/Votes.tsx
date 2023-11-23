@@ -107,8 +107,8 @@ const Votes = ({
           <Image
             src={
               hasupVoted
-                ? "/assets/icons/upvoted.svg"
-                : "/assets/icons/upvote.svg"
+                ? "/assets/icons/upvotedd.svg"
+                : "/assets/icons/not-upvotedd.svg"
             }
             width={18}
             height={18}
@@ -128,8 +128,8 @@ const Votes = ({
           <Image
             src={
               hasdownVoted
-                ? "/assets/icons/downvoted.svg"
-                : "/assets/icons/downvote.svg"
+                ? "/assets/icons/downvotedd.svg"
+                : "/assets/icons/not-downvotedd.svg"
             }
             width={18}
             height={18}
@@ -149,11 +149,11 @@ const Votes = ({
         <Image
           src={
             hasSaved
-              ? "/assets/icons/star-filled.svg"
-              : "/assets/icons/star-red.svg"
+              ? "/assets/icons/starred.svg"
+              : "/assets/icons/not-starred.svg"
           }
-          width={18}
-          height={18}
+          width={21}
+          height={21}
           alt="star"
           className="cursor-pointer"
           onClick={handleSave}

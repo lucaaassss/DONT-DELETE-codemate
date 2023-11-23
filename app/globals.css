@@ -34,7 +34,7 @@ body {
   }
 
   .btn-tertiary {
-    @apply bg-yellow-500 dark:bg-yellow-500 !important;
+    @apply bg-primary-100 dark:bg-yellow-500 !important;
   }
 
   .markdown {
