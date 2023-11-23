@@ -244,7 +244,7 @@ const Question = ({ mongoUserId }: Props) => {
         {/* disabled={isSubmitting} is a safety measure.It will disallow us to press the submit button for the second time which can cause some chaos in the database */}
         <Button
           type="submit"
-          className="primary-gradient w-fit !text-light-900"
+          className="primary-gradient dark:primary-gradient-dark w-fit  !text-light-900"
           disabled={isSubmitting}
         >
           {isSubmitting ? (

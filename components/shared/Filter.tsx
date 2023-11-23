@@ -24,7 +24,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
     <div className={`relative ${containerClasses}`}>
       <Select>
         <SelectTrigger
-          className={`${otherClasses} primary-gradient body-regular min-h-[46px] border-none px-5 py-2.5 !text-light-900 `}
+          className={`${otherClasses} primary-gradient dark:primary-gradient-dark body-regular min-h-[46px] border-none px-5 py-2.5  !text-light-900 `}
         >
           {" "}
           {/* otherClasses is the classes for other pages because we will use this local searchbar component at different pages */}
@@ -34,7 +34,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
           </div>
         </SelectTrigger>
         <SelectContent>
-          <SelectGroup className="primary-darker-gradient border-none !text-light-900 ">
+          <SelectGroup className="primary-darker-gradient dark:primary-darker-gradient-dark border-none !text-light-900 ">
             {filters.map((item) => (
               <SelectItem key={item.value} value={item.value}>
                 {item.name}

@@ -107,8 +107,8 @@ const Votes = ({
           <Image
             src={
               hasupVoted
-                ? "/assets/icons/upvotedd.svg"
-                : "/assets/icons/not-upvotedd.svg"
+                ? "/assets/icons/upvoted.svg"
+                : "/assets/icons/not-upvoted.svg"
             }
             width={18}
             height={18}
@@ -128,8 +128,8 @@ const Votes = ({
           <Image
             src={
               hasdownVoted
-                ? "/assets/icons/downvotedd.svg"
-                : "/assets/icons/not-downvotedd.svg"
+                ? "/assets/icons/downvoted.svg"
+                : "/assets/icons/not-downvoted.svg"
             }
             width={18}
             height={18}

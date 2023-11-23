@@ -20,7 +20,7 @@ export default async function Home() {
         {/* sm means small devices and larger */}
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Link href="/ask-question" className="flex justify-end max-sm:w-full">
-          <Button className="primary-gradient min-h-[46px] px-4 py-3 !text-light-900">
+          <Button className="primary-gradient dark:primary-gradient-dark min-h-[46px] px-4 py-3 !text-light-900">
             {/* exclamation mark ! is sometimes used to style shadcn component to mark it as important because otherwise the styles are not gonna get applied */}
             Ask a Question
           </Button>

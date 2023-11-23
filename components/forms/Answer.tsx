@@ -145,7 +145,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
           <div className="flex justify-end">
             <Button
               type="submit"
-              className="primary-gradient w-fit text-white"
+              className="primary-gradient dark:primary-gradient-dark w-fit text-white"
               disabled={isSubmitting} // disabled if isSubmitting is true
             >
               {isSubmitting ? "Submitting..." : "Submit"}

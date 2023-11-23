@@ -199,6 +199,10 @@
     background: linear-gradient(129deg, #4e027a 0%, #6544a3 100%);
   }
 
+  .primary-darker-gradient-dark {
+    background: linear-gradient(129deg, #a453d3 0%, rgb(214, 142, 251) 100%);
+  }
+
   .dark-gradient {
     background: linear-gradient(
       232deg,
