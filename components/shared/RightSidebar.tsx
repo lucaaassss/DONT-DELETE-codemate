@@ -23,8 +23,8 @@ const popularTags = [
 const RightSidebar = () => {
   return (
     <section
-      className="custom-scrollbar background-light900_dark200 light-border sticky right-0 top-0 flex h-screen w-[350px] 
-      flex-col  overflow-y-auto border-l p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden"
+      className="custom-scrollbar background-light900_dark200  sticky right-0 top-0 flex h-screen w-[350px] 
+      flex-col  overflow-y-auto  p-6 pt-36 shadow-light-300 dark:shadow-none max-xl:hidden"
     >
       {/* use div to create a section */}
       <div>

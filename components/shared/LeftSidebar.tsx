@@ -14,8 +14,8 @@ const LeftSidebar = () => {
     // section is what create the container for the sidebar, do note that we dont use sheet from the shad/cn component as it needs to be triggered by a button to display the content, we want our sidebar content to always be displayed
     // do note that the section element does not apply any specific styling or layout. Its appearance is controlled through CSS.
     <section
-      className="custom-scrollbar background-light900_dark200 light-border sticky left-0 top-0 flex h-screen w-fit flex-col 
-    justify-between  overflow-y-auto border-r p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]"
+      className="custom-scrollbar background-light900_dark200 sticky left-0 top-0 flex h-screen w-fit flex-col 
+    justify-between  overflow-y-auto  p-6 pt-36 shadow-light-300 dark:shadow-none max-sm:hidden lg:w-[266px]"
     >
       {/* all of this item is retrieved from the constant > index.ts file */}
       <div className="flex flex-1 flex-col gap-6">
