@@ -1,11 +1,8 @@
 import Link from "next/link";
 import { SignedIn } from "@clerk/nextjs";
-
-// import { Metric } from "../shared/Generic";
-// import EditDeleteAction from "../shared/EditDeleteAction";
-
 import { formatNumber, getTimeStamp } from "@/lib/utils";
 import Metric from "../shared/Metric";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 interface Props {
   clerkId?: string | null;
@@ -49,11 +46,14 @@ const AnswerCard = ({
           </h3>
         </div>
 
-        {/* <SignedIn>
+        <SignedIn>
           {showActionButtons && (
-            // <EditDeleteAction type='Answer' itemId={JSON.stringify(_id)} />
+            <EditDeleteAction
+              type="Answer"
+              itemId={JSON.stringify(_id)} // similar to what we have done for the star button since we only want to display it for certain component only
+            />
           )}
-        </SignedIn> */}
+        </SignedIn>
       </div>
 
       <div className="flex-between text-dark200_light900 mt-6 w-full flex-wrap gap-3">

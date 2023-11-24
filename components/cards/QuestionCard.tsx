@@ -4,6 +4,8 @@ import React from "react";
 import RenderTag from "../shared/RenderTag";
 import Metric from "../shared/Metric";
 import { formatNumber, getTimeStamp } from "@/lib/utils";
+import { SignedIn } from "@clerk/nextjs";
+import EditDeleteAction from "../shared/EditDeleteAction";
 
 // we use picture:string because the picture will have a URL which is a string
 // we use  answers:Array<object> which means that the answers will have an array of object
@@ -38,6 +40,7 @@ const QuestionCard = ({
   answers,
   createdAt,
 }: QuestionProps) => {
+  const showActionButtons = clerkId && clerkId === author.clerkId; // will only display the action button if the clerkId exists and it matches the author's clerk id
   return (
     <div className="text-dark200_light900 card-wrapper mt-3 rounded-[50px] p-9 sm:px-11">
       <div className="flex flex-col-reverse items-start justify-between gap-5 sm:flex-row">
@@ -52,7 +55,14 @@ const QuestionCard = ({
             </h3>
           </Link>
         </div>
-        {/* If signed in, add edit delete actions */}
+        <SignedIn>
+          {showActionButtons && (
+            <EditDeleteAction
+              type="Question"
+              itemId={JSON.stringify(_id)} // similar to what we have done for the star button since we only want to display it for certain component only
+            />
+          )}
+        </SignedIn>
       </div>
       <div className="mt-3.5 flex flex-wrap gap-2">
         {/* will map the tags to the RenderTag component */}
