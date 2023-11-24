@@ -133,17 +133,23 @@ export async function deleteAnswer(params: DeleteAnswerParams) {
 
     const { answerId, path } = params;
 
+    // Find the answer to be deleted
     const answer = await Answer.findById(answerId);
 
     if (!answer) {
       throw new Error("Answer not found");
     }
 
+    // Delete the answer
     await Answer.deleteOne({ _id: answerId });
+
+    // Remove the answer reference from its question
     await Question.updateMany(
       { _id: answer.question },
       { $pull: { answers: answerId } }
     );
+
+    // Delete interactions related to the answer
     await Interaction.deleteMany({ answer: answerId });
 
     revalidatePath(path);
