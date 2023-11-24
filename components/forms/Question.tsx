@@ -20,29 +20,33 @@ import { Input } from "@/components/ui/input";
 import { QuestionsSchema } from "@/lib/validations";
 import { Badge } from "../ui/badge";
 import Image from "next/image";
-import { createQuestion } from "@/lib/actions/question.action";
+import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeProvider";
 
-const type: any = "create"; // the form will be reusable so it will have two different types which is edit and create.In this case we set it as create
-
 interface Props {
+  type?: string;
   mongoUserId: string;
+  questionDetails?: string;
 }
-const Question = ({ mongoUserId }: Props) => {
+const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter(); // to navigate
   const pathname = usePathname(); // to know on which URL that we are at right now
 
+  const parsedQuestionDetails = JSON.parse(questionDetails || ""); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
+
+  const groupedTags = parsedQuestionDetails.tags.map((tag) => tag.name); // will map each tag from the parsedQuestionDetails
+
   // 1. define form
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: "",
-      explanation: "",
-      tags: [],
+      title: parsedQuestionDetails.title || "",
+      explanation: parsedQuestionDetails.content || "",
+      tags: groupedTags || [],
     },
   });
 
@@ -52,17 +56,26 @@ const Question = ({ mongoUserId }: Props) => {
 
     // try is used to see if it is successful in doing something.Catch is used if it fails.Finally is used regardless of it succeeds or fails
     try {
-      await createQuestion({
-        // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
-        title: values.title,
-        content: values.explanation,
-        tags: values.tags,
-        author: JSON.parse(mongoUserId), // since we used JSON.stringify before (at ask-question>page.tsx)
-        path: pathname, // we dont mention the path's name here because we are at homepage,if we are at any other page we have to mention the path's name
-      });
-
-      // navigate to home page to see the question
-      router.push("/");
+      if (type === "Edit") {
+        await editQuestion({
+          questionId: parsedQuestionDetails._id, // passed the id of the question that we want to edit
+          title: values.title, // pass the title that we want to update
+          content: values.explanation, // pass the content that we want to update
+          path: pathname, // pass the path that we want to revalidate
+        });
+        router.push(`/question/${parsedQuestionDetails._id}`); // will navigate the question details page to see the new question we just edited
+      } else {
+        await createQuestion({
+          // will call the createQuestion function which is a server action and then the createQuestion will call the database which is the mongoose.ts file
+          title: values.title,
+          content: values.explanation,
+          tags: values.tags,
+          author: JSON.parse(mongoUserId), // since we used JSON.stringify before (at ask-question>page.tsx)
+          path: pathname, // we dont mention the path's name here because we are at homepage,if we are at any other page we have to mention the path's name
+        });
+        // navigate to home page to see the question
+        router.push("/");
+      }
     } catch (error) {
     } finally {
       setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
@@ -152,7 +165,7 @@ const Question = ({ mongoUserId }: Props) => {
                   }}
                   onBlur={field.onBlur} // onBlur will run once we exit the editor.It will save the value inserted
                   onEditorChange={(content) => field.onChange(content)} // will change the content of the editor according to what we have inserted
-                  initialValue=""
+                  initialValue={parsedQuestionDetails.content || ""}
                   init={{
                     height: 350,
                     menubar: false,
@@ -203,6 +216,7 @@ const Question = ({ mongoUserId }: Props) => {
               <FormControl className="mt-3.5">
                 <>
                   <Input
+                    disabled={type === "Edit"} // disabled the tag field so that the user cant edit the tags as it would very hard for the database to keep track of the updated tags since the tags has questions under it.If we change the tags we also have to find a new category where the question falls into
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     placeholder="Add tags"
                     onKeyDown={(event) => handleInputKeyDown(event, field)}
@@ -216,16 +230,23 @@ const Question = ({ mongoUserId }: Props) => {
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2"
                           style={{ textTransform: "uppercase" }}
-                          onClick={() => handleTagRemove(tag, field)}
+                          // disable user to remove the tag when on edit
+                          onClick={() =>
+                            type !== "Edit"
+                              ? handleTagRemove(tag, field)
+                              : () => {}
+                          }
                         >
                           {tag}
-                          <Image
-                            src="/assets/icons/close.svg"
-                            alt="Close icon"
-                            width={12}
-                            height={12}
-                            className="cursor-pointer object-contain invert-0 dark:invert"
-                          />
+                          {type !== "Edit" && ( // disable user to click one the badge icon when on edit
+                            <Image
+                              src="/assets/icons/close.svg"
+                              alt="Close icon"
+                              width={12}
+                              height={12}
+                              className="cursor-pointer object-contain invert-0 dark:invert"
+                            />
+                          )}
                         </Badge>
                       ))}
                     </div>
@@ -248,9 +269,9 @@ const Question = ({ mongoUserId }: Props) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>{type === "edit" ? "Editing..." : "Posting..."}</>
+            <>{type === "Edit" ? "Editing..." : "Posting..."}</>
           ) : (
-            <>{type === "edit" ? "Edit Question" : "Ask a Question"}</>
+            <>{type === "Edit" ? "Edit Question" : "Ask a Question"}</>
           )}
         </Button>
       </form>
