@@ -34,7 +34,7 @@ const Page = async () => {
         {result.tags.length > 0 ? (
           result.tags.map((tag) => (
             <Link
-              href={`tags/${tag._id}`}
+              href={`tags/${tag._id}`} // will redirect to each respective tag details page if clicked
               key={tag._id}
               className="shadow-light100_darknone"
             >
