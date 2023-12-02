@@ -8,7 +8,7 @@ const Page = async ({ params }: ParamsProps) => {
   // params is coming from ParamsProps
   const { userId } = auth(); // get the userId from clerk
 
-  if (!userId) return null;
+  if (!userId) return null; // if user does not exist,return nothing
 
   const mongoUser = await getUserById({ userId }); // passed in an object containing the userId
   const result = await getQuestionById({ questionId: params.id }); // passed in the questionId which has the value of params id
