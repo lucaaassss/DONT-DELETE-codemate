@@ -44,7 +44,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
         {/* Looping through questions */}
         {/* checks whether there is a question or not.If there is a question,it will map it to the QuestionCard component */}
         {result.questions.length > 0 ? (
-          result.questions.map((question) => (
+          result.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
