@@ -36,16 +36,17 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const router = useRouter(); // to navigate
   const pathname = usePathname(); // to know on which URL that we are at right now
 
-  const parsedQuestionDetails = JSON.parse(questionDetails || ""); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
+  const parsedQuestionDetails =
+    questionDetails && JSON.parse(questionDetails || ""); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
 
-  const groupedTags = parsedQuestionDetails.tags.map((tag) => tag.name); // will map each tag from the parsedQuestionDetails
+  const groupedTags = parsedQuestionDetails?.tags.map((tag) => tag.name); // will map each tag from the parsedQuestionDetails
 
   // 1. define form
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: parsedQuestionDetails.title || "",
-      explanation: parsedQuestionDetails.content || "",
+      title: parsedQuestionDetails?.title || "",
+      explanation: parsedQuestionDetails?.content || "",
       tags: groupedTags || [],
     },
   });
@@ -165,7 +166,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
                   }}
                   onBlur={field.onBlur} // onBlur will run once we exit the editor.It will save the value inserted
                   onEditorChange={(content) => field.onChange(content)} // will change the content of the editor according to what we have inserted
-                  initialValue={parsedQuestionDetails.content || ""}
+                  initialValue={parsedQuestionDetails?.content || ""}
                   init={{
                     height: 350,
                     menubar: false,
