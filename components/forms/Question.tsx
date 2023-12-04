@@ -39,7 +39,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const parsedQuestionDetails =
     questionDetails && JSON.parse(questionDetails || ""); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
 
-  const groupedTags = parsedQuestionDetails?.tags.map((tag) => tag.name); // will map each tag from the parsedQuestionDetails
+  const groupedTags = parsedQuestionDetails?.tags.map((tag: any) => tag.name); // will map each tag from the parsedQuestionDetails
 
   // 1. define form
   const form = useForm<z.infer<typeof QuestionsSchema>>({
