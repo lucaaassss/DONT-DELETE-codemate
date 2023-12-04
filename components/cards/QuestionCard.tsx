@@ -27,7 +27,7 @@ interface QuestionProps {
   views: number;
   answers: Array<object>;
   createdAt: Date;
-  clerkId?: string;
+  clerkId?: string | null;
 }
 
 const QuestionCard = ({
