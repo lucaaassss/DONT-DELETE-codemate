@@ -83,3 +83,29 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     throw error;
   }
 }
+
+export async function getTopPopularTags() {
+  try {
+    connectToDatabase();
+
+    // use the aggregate function to perform aggregation operations on the Tag collection
+    // aggregation is a technique used to analyse complex data.In this case we want to analyse the Tag to find how many questions are related to that tag
+    // aggregation in MongoDB is a powerful framework for processing and transforming documents in the collection. It allows you to perform various operations, such as filtering, grouping, sorting, and projecting, on the documents.
+    // project only the 'name' and calculate the 'numberOfQuestions'
+    // the $project stage is used to shape the documents in the pipeline.It can be used to include,exclude,or reshape fields in the output documents
+    // here, we include 'name' as it is, which means we include it in the output document without any changes
+    // it is included because we want to display the 'name' field in the final result
+    // additionally, we calculate 'numberOfQuestions' by counting the elements in the 'questions' array
+    const popularTags = await Tag.aggregate([
+      // call the aggregate function and pass pipeline.Pipeline is a term in MongoDB and other databases to describe a framework for data transformation through a series of processing stages
+      { $project: { name: 1, numberOfQuestions: { $size: "$questions" } } },
+      { $sort: { numberOfQuestions: -1 } }, // sort the results in descending order based on the 'numberOfQuestions'
+      { $limit: 5 }, // limit the result set to the top 5 tags
+    ]);
+
+    return popularTags;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

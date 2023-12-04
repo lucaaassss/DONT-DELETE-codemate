@@ -237,3 +237,19 @@ export async function editQuestion(params: EditQuestionParams) {
     throw error;
   }
 }
+
+export async function getHotQuestions() {
+  // this function does not need a param since our question already has views and upvotes which we can make use of
+  try {
+    connectToDatabase();
+
+    const hotQuestions = await Question.find({}) // once it connect to the database we will find question and sort it according to views and upvotes
+      .sort({ views: -1, upvotes: -1 }) // will sort in a descending order meaning that the hottest questions will be at the top
+      .limit(5); // will only show top 5 hot questions
+
+    return hotQuestions;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}

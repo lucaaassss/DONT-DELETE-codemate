@@ -2,25 +2,13 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 import RenderTag from "./RenderTag";
+import { getHotQuestions } from "@/lib/actions/question.action";
+import { getTopPopularTags } from "@/lib/actions/tag.actions";
 
-// _id is a common practice of naming id when we want to connect to the database
-const hotQuestions = [
-  { _id: "1", title: "Famous UI libraries recommendations" },
-  { _id: "2", title: "How do I connect my application to MongoDB?" },
-  { _id: "3", title: "What is Hook in React?" },
-  { _id: "4", title: "Proper way to use async/await functions" },
-  { _id: "5", title: "How do I use express as a custom server in Next.js?" },
-];
+const RightSidebar = async () => {
+  const hotQuestions = await getHotQuestions();
+  const popularTags = await getTopPopularTags();
 
-const popularTags = [
-  { _id: "1", name: "C++", totalQuestions: 3 },
-  { _id: "2", name: "Java", totalQuestions: 5 },
-  { _id: "3", name: "JavaScript", totalQuestions: 10 },
-  { _id: "4", name: "React", totalQuestions: 7 },
-  { _id: "4", name: "Next.js", totalQuestions: 15 },
-];
-
-const RightSidebar = () => {
   return (
     <section
       className="custom-scrollbar background-light900_dark200  sticky right-0 top-0 flex h-screen w-[350px] 
@@ -33,7 +21,7 @@ const RightSidebar = () => {
         <div className="mt-7 flex w-full flex-col gap-[30px]">
           {hotQuestions.map((question) => (
             <Link
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`} // _id is a common practice of naming id when we want to connect to the database
               key={question._id}
               className="flex cursor-pointer items-center justify-between gap-7"
             >
@@ -61,7 +49,7 @@ const RightSidebar = () => {
               key={tag._id}
               _id={tag._id}
               name={tag.name}
-              totalQuestions={tag.totalQuestions}
+              totalQuestions={tag.numberOfQuestions} // numberOfQuestions variable is based the getTopPopularTags server action that we had create at the tag.action.ts file
               showCount
             />
           ))}
