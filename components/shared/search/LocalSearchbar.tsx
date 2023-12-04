@@ -3,7 +3,8 @@
 "use client"; // change to client side because we use onChange
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
-import React from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 // interface is like a rulebook that tells other parts of your code how to use the component.
 // it defines a set of "rules" for what kind of information or data you can provide to the component.
@@ -22,6 +23,35 @@ const LocalSearchbar = ({
   placeholder,
   otherClasses,
 }: CustomInputProps) => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // query parameters are a defined set of parameters (key-value pair) attached to the end of a URL used to provide additional information to a web server when making requests. They are an important part of the URL that define specific content or actions based on the data being passed.
+  // to append query params to the end of a URL, a question mark (?) is added followed immediately by a query parameter. To add multiple parameters, an ampersand (&) is added in between each, joining them to form a query string parameter. These can be created by any variation of object types or lengths such as strings, arrays, and numbers. The following is an example:
+  // https://example.com/path?name=Branch&products=[Journeys,Email,Universal%20Ads]
+  // in this example, there are two query parameters:
+  // ‘name’ with the value “Branch”
+  // ‘products’ with the value “[Journeys,Email, Universal%20Ads]”
+  // these parameters can be used to instruct the web server how to process the request, such as customizing the page based on the ‘name’ field or filtering products based on the ‘products’ list.
+  const query = searchParams.get("q"); // getting the name of our query
+
+  const [search, setSearch] = useState(query || ""); // this is for the text on the searchbar,if we share the url that contain certain query,we also want to populate the searchbar with the name of the query
+
+  useEffect(() => {
+    // delayDebounceFn as in delayDebounceFunction
+    const delayDebounceFn = setTimeout(() => {
+      if (search) {
+        // if a search was made,we will create a new URL
+        const newUrl = formUrlQuery({
+          // passing everything we need in the new URL
+          params: searchParams.toString(), // we also declare params because there could also be existing params in there such as category,filtering,pages,etc so we also want to include it as well in our url
+          key: "q", // q as in query
+          value: search,
+        });
+      }
+    }, 300);
+  }, [search, route, pathname, router, searchParams, query]);
   return (
     <div
       className={`background-light800_darkgradient flex min-h-[56px] grow items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
@@ -41,8 +71,8 @@ const LocalSearchbar = ({
       <Input
         type="text"
         placeholder={placeholder}
-        value=""
-        onChange={() => {}}
+        value={search}
+        onChange={(event) => setSearch(event.target.value)}
         className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none"
       />
 
