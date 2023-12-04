@@ -2,7 +2,7 @@
 import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import { IQuestion } from "@/database/question.model";
+// import { IQuestion } from "@/database/question.model";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
 import { URLProps } from "@/types";
 import React from "react";
@@ -31,7 +31,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         {/* Looping through questions */}
         {/* checks whether there is a question or not.If there is a question,it will map it to the QuestionCard component */}
         {result.questions.length > 0 ? (
-          result.questions.map((question: IQuestion) => (
+          result.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
