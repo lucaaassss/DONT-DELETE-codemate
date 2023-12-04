@@ -60,12 +60,12 @@ const LocalSearchbar = ({
             params: searchParams.toString(),
             keysToRemove: ["q"],
           });
-          router.push(newUrl, { scroll: false });
+          router.push(newUrl, { scroll: false }); // scroll:false means that when the navigation to the new URL occurs, the page will not be scrolled to the top. Typically, when we navigate to a new page or URL, the browser automatically scrolls to the top of the page.We want to keep the user's current position in the search results rather than scrolling them to the top of the page after a search is performed
         }
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    return () => clearTimeout(delayDebounceFn); // If any of the useEffect dependencies change, the cleanup function will be called before the new setTimeout is set up. This ensures that if the user interacts with the component (e.g., changes the query) before the 300 milliseconds pass, the previous timeout is canceled, and a new one is scheduled based on the updated state or props.This helps in avoiding unexpected behavior and potential issues
   }, [search, route, pathname, router, searchParams, query]);
   return (
     <div

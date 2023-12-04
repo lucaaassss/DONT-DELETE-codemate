@@ -21,11 +21,11 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery } = params; // searchQuesry is from (home)>page.tsx
 
     const query: FilterQuery<typeof Question> = {}; // how to read: query of a type FilterQuery and we are filtering something that are a type of Question. {} means that our query at the start is just an empty object
 
-    // will search by the title and the content
+    // if a search query is provided, filter questions by title or content
     if (searchQuery) {
       query.$or = [
         { title: { $regex: new RegExp(searchQuery, "i") } },

@@ -10,10 +10,13 @@ import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 
 export default async function Home({ searchParams }: SearchParamsProps) {
-  // to fetch the questions
+  // got searchParams from LocalSearchbar.tsx
 
+  // to fetch the questions
   const result = await getQuestions({
     searchQuery: searchParams.q,
+    // creates an object with a property named searchQuery, and its value is the value of searchParams.q .The searchQuery property is then being used as an argument in the getQuestions function call
+    // searchParams.q is used to access the q property of the searchParams object
   });
 
   return (

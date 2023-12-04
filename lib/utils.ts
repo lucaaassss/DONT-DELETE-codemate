@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import qs from "query-string";
+import qs from "query-string"; // import the query-string library for parsing and stringifying URL queries
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -27,8 +27,18 @@ export const getTimeStamp = (createdAt: Date): string => {
   }
 
   const diffDays = Math.round(diffHours / 24);
+  if (diffDays < 30) {
+    return `${diffDays} days ago`;
+  }
 
-  return `${diffDays} days ago`;
+  const diffMonths = Math.round(diffDays / 30);
+  if (diffMonths < 12) {
+    return `${diffMonths} months ago`;
+  }
+
+  const diffYears = Math.round(diffMonths / 12);
+
+  return `${diffYears} years ago`;
 };
 
 export function formatNumber(number: number) {
@@ -67,49 +77,56 @@ export function getJoinedDate(joinedAt: Date | undefined) {
   return `Joined ${month} ${year}`;
 }
 
+// define the shape of the parameters for forming a URL query
 interface UrlQueryParams {
   params: string;
   key: string;
-  value: string | null; // can be string or null
+  value: string | null; // the value can be a string or null
 }
 
+// function to add or update a key-value pair in the URL query
 export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+  // parse the existing URL query parameters into an object
   const currentUrl = qs.parse(params);
 
-  // we keep the available params and only change the key
-  currentUrl[key] = value; // set the key to the new value that we want to update
+  // update or add the specified key with the new value
+  currentUrl[key] = value;
 
+  // stringify the updated URL with the modified query parameters
   return qs.stringifyUrl(
     {
-      url: window.location.pathname,
-      query: currentUrl,
+      url: window.location.pathname, // get the current URL pathname
+      query: currentUrl, // include the modified query parameters
     },
-
-    { skipNull: true }
-  ); // because we dont need any null values
+    { skipNull: true } // skip null values in the query parameters
+  );
 };
 
+// define the shape of the parameters for removing keys from the URL query
 interface RemoveUrlQueryParams {
   params: string;
   keysToRemove: string[];
 }
 
+// function to remove specified keys from the URL query
 export const removeKeysFromQuery = ({
   params,
   keysToRemove,
 }: RemoveUrlQueryParams) => {
+  // parse the existing URL query parameters into an object
   const currentUrl = qs.parse(params);
 
+  // iterate through each key to remove
   keysToRemove.forEach((key) => {
-    delete currentUrl[key];
+    delete currentUrl[key]; // remove the specified key from the URL parameters
   });
 
+  // stringify the updated URL with the modified query parameters
   return qs.stringifyUrl(
     {
-      url: window.location.pathname,
-      query: currentUrl,
+      url: window.location.pathname, // get the current URL pathname
+      query: currentUrl, // include the modified query parameters
     },
-
-    { skipNull: true }
-  ); // because we dont need any null values
+    { skipNull: true } // skip null values in the query parameters
+  );
 };
