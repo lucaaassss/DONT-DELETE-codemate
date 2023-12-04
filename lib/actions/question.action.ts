@@ -33,7 +33,7 @@ export async function getQuestions(params: GetQuestionsParams) {
       ];
     }
 
-    const questions = await Question.find(query) // to find all question
+    const questions = await Question.find(query) // to find question
       .populate({ path: "tags", model: Tag }) // if a specific question has tags attached to it,we want to populate all the values from the tags so that we can also display them at the question card.We do this because MongoDB does not show the name for the tag,it only show the reference.So to be able to get the name,we have to populate it
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 }); // to sort from newest question to oldest question (the newer question will be at the top)
