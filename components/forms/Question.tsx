@@ -45,7 +45,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const form = useForm<z.infer<typeof QuestionsSchema>>({
     resolver: zodResolver(QuestionsSchema),
     defaultValues: {
-      title: parsedQuestionDetails?.title || "",
+      title: parsedQuestionDetails?.title || "", // we use ? here because sometimes parsedQuestionDetails does not exist so we want to simply return null if it does not exist (also to avoid the app from breaking)
       explanation: parsedQuestionDetails?.content || "",
       tags: groupedTags || [],
     },
