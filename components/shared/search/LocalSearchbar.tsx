@@ -2,6 +2,7 @@
 
 "use client"; // change to client side because we use onChange
 import { Input } from "@/components/ui/input";
+import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -38,6 +39,7 @@ const LocalSearchbar = ({
 
   const [search, setSearch] = useState(query || ""); // this is for the text on the searchbar,if we share the url that contain certain query,we also want to populate the searchbar with the name of the query
 
+  // this is for the url bar,if we type something at the searchbar,the url will also change according to the searchbar
   useEffect(() => {
     // delayDebounceFn as in delayDebounceFunction
     const delayDebounceFn = setTimeout(() => {
@@ -49,8 +51,21 @@ const LocalSearchbar = ({
           key: "q", // q as in query
           value: search,
         });
+
+        router.push(newUrl, { scroll: false });
+      } else {
+        // if there is no search made
+        if (pathname === route) {
+          const newUrl = removeKeysFromQuery({
+            params: searchParams.toString(),
+            keysToRemove: ["q"],
+          });
+          router.push(newUrl, { scroll: false });
+        }
       }
     }, 300);
+
+    return () => clearTimeout(delayDebounceFn);
   }, [search, route, pathname, router, searchParams, query]);
   return (
     <div
