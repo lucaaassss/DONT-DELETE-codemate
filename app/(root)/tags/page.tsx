@@ -2,7 +2,7 @@
 import Filter from "@/components/shared/Filter";
 import NoResult from "@/components/shared/NoResult";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import { UserFilters } from "@/constants/filters";
+import { TagFilters } from "@/constants/filters";
 import { getAllTags } from "@/lib/actions/tag.actions";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
@@ -10,6 +10,7 @@ import Link from "next/link";
 const Page = async ({ searchParams }: SearchParamsProps) => {
   const result = await getAllTags({
     searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
@@ -28,7 +29,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
         <Filter
           // this UserFilters is a constant retrieved from the constants > filters.ts file because we will use this filter in different pages
           // otherClasses is the classes for other pages because we will use this local searchbar component at different pages
-          filters={UserFilters}
+          filters={TagFilters}
           otherClasses="min-h-[56px] sm:min-w-[170px]" // styles for this specific filter
         />
       </div>
