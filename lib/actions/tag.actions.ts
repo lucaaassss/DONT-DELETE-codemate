@@ -39,7 +39,7 @@ export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter, page = 1, pageSize = 5 } = params;
+    const { searchQuery, filter, page = 1, pageSize = 6 } = params;
     const skipAmount = (page - 1) * pageSize;
 
     const query: FilterQuery<typeof Tag> = {};
