@@ -21,7 +21,7 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params; // searchQuesry is from (home)>page.tsx
+    const { searchQuery, filter } = params; // searchQuesry is from (home)>page.tsx
 
     const query: FilterQuery<typeof Question> = {}; // how to read: query of a type FilterQuery and we are filtering something that are a type of Question. {} means that our query at the start is just an empty object
 
@@ -33,10 +33,26 @@ export async function getQuestions(params: GetQuestionsParams) {
       ];
     }
 
+    let sortOptions = {};
+
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 }; // sort by the latest questions asked
+        break;
+      case "frequent":
+        sortOptions = { views: -1 }; // sort by the highest question view since user frequently see that question
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 }; // sort by questions that has 0 answers
+        break;
+
+      default:
+        break;
+    }
     const questions = await Question.find(query) // to find question
       .populate({ path: "tags", model: Tag }) // if a specific question has tags attached to it,we want to populate all the values from the tags so that we can also display them at the question card.We do this because MongoDB does not show the name for the tag,it only show the reference.So to be able to get the name,we have to populate it
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 }); // to sort from newest question to oldest question (the newer question will be at the top)
+      .sort(sortOptions); // to sort from newest question to oldest question (the newer question will be at the top)
 
     return { questions };
   } catch (error) {
