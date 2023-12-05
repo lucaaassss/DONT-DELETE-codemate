@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getTimeStamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
+import Pagination from "./Pagination";
 
 interface Props {
   questionId: string;
@@ -88,6 +89,12 @@ const AllAnswers = async ({
             </article>
           )
         )}
+      </div>
+      <div className="mt-10 w-full">
+        <Pagination
+          pageNumber={page ? +page : 1} // we do +searchParams because thing from searchParams is usually in string so we want to convert it into a number
+          isNext={result.isNextAnswer}
+        />
       </div>
     </div>
   );

@@ -28,6 +28,9 @@ const Pagination = ({ pageNumber, isNext }: Props) => {
 
     router.push(newUrl); // we dont put scroll:false here since we do want to be scrolled back to the top
   }; // accepts direction which is a type string
+
+  if (!isNext && pageNumber === 1) return null; // if we cannot go to the next page and if we cannot go back to previous page , we will hide this pagination component
+
   return (
     <div className="flex w-full items-center justify-center gap-2">
       <Button

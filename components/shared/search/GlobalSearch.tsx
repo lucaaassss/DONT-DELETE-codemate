@@ -17,7 +17,7 @@ const GlobalSearch = () => {
         {/* for the search text input */}
         <Input
           type="text"
-          placeholder="Search for questions,tags,users"
+          placeholder="Search globally"
           className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none"
         />
       </div>
