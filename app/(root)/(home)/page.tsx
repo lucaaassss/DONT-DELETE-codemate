@@ -17,6 +17,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
   const result = await getQuestions({
     searchQuery: searchParams.q,
     filter: searchParams.filter,
+    page: searchParams.page ? +searchParams.page : 1,
     // creates an object with a property named searchQuery, and its value is the value of searchParams.q .The searchQuery property is then being used as an argument in the getQuestions function call
     // searchParams.q is used to access the q property of the searchParams object
   });

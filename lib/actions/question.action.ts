@@ -21,7 +21,10 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params; // searchQuesry is from (home)>page.tsx
+    const { searchQuery, filter, page = 1, pageSize = 3 } = params; // searchQuesry is from (home)>page.tsx
+
+    // calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize; // for example if we are at page 2, it will be 2-1 and then times 20 meaning that we want to skip the first twenty and only see the rest of it
 
     const query: FilterQuery<typeof Question> = {}; // how to read: query of a type FilterQuery and we are filtering something that are a type of Question. {} means that our query at the start is just an empty object
 
@@ -52,9 +55,20 @@ export async function getQuestions(params: GetQuestionsParams) {
     const questions = await Question.find(query) // to find question
       .populate({ path: "tags", model: Tag }) // if a specific question has tags attached to it,we want to populate all the values from the tags so that we can also display them at the question card.We do this because MongoDB does not show the name for the tag,it only show the reference.So to be able to get the name,we have to populate it
       .populate({ path: "author", model: User })
+      .skip(skipAmount)
+      .limit(pageSize)
       .sort(sortOptions); // to sort from newest question to oldest question (the newer question will be at the top)
 
-    return { questions };
+    // figuring out if the next page exist or not
+
+    const totalQuestions = await Question.countDocuments(query);
+
+    const isNext = totalQuestions > skipAmount + questions.length;
+    // skipAmount is the number of questions we already skipped / seen
+    // questions.length represents the number of questions of the current page we are at
+    // for example if we have 101 total questions and the skipped amount is currently 4 pages with the pageSize value of 5 and the current page that we are at contains 5 questions
+    // so the total would be 25, meaning that 101>25 therefore we will still have next pages
+    return { questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;
