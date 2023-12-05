@@ -12,8 +12,8 @@ interface Props {
   questionId: string;
   userId: string;
   totalAnswers: number;
-  page?: number;
-  filter?: number;
+  page?: string;
+  filter?: string;
 }
 const AllAnswers = async ({
   questionId,
@@ -24,6 +24,8 @@ const AllAnswers = async ({
 }: Props) => {
   const result = await getAnswers({
     questionId,
+    page: page ? +page : 1, // if a page exist we going to do +page which is going to convert a string into a number.Else we will display 1
+    sortBy: filter,
   });
   return (
     <div className="mt-11">
