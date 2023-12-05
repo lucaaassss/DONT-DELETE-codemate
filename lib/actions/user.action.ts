@@ -102,7 +102,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params; // set the page and pageSize value in case it does not exist
+    const { searchQuery, filter } = params; // set the page and pageSize value in case it does not exist
 
     const query: FilterQuery<typeof User> = {};
 
@@ -114,7 +114,24 @@ export async function getAllUsers(params: GetAllUsersParams) {
       ];
     }
 
-    const users = await User.find(query).sort({ createdAt: -1 });
+    let sortOptions = {};
+
+    switch (filter) {
+      case "new_users":
+        sortOptions = { joinedAt: -1 }; // sort in descending order meaning newest user will be at top
+        break;
+      case "old_users":
+        sortOptions = { joinedAt: 1 }; // sort in ascending order meaning newest user will be at bottom
+        break;
+      case "top_contributors":
+        sortOptions = { reputation: -1 }; // sort by reputation in descending order
+        break;
+
+      default:
+        break;
+    }
+
+    const users = await User.find(query).sort(sortOptions);
 
     return { users };
   } catch (error) {
