@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
@@ -11,6 +11,7 @@ const GlobalSearch = () => {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const searchContainerRef = useRef(null); // inserting a reference to the searchbar box so that we know when to close it
 
   // query parameters are a defined set of parameters (key-value pair) attached to the end of a URL used to provide additional information to a web server when making requests. They are an important part of the URL that define specific content or actions based on the data being passed.
   // to append query params to the end of a URL, a question mark (?) is added followed immediately by a query parameter. To add multiple parameters, an ampersand (&) is added in between each, joining them to form a query string parameter. These can be created by any variation of object types or lengths such as strings, arrays, and numbers. The following is an example:
@@ -23,6 +24,28 @@ const GlobalSearch = () => {
 
   const [search, setSearch] = useState(query || ""); // this is for the text on the searchbar,if we share the url that contain certain query,we also want to populate the searchbar with the name of the query
   const [isOpen, setIsOpen] = useState(false);
+
+  // this is for closing the searchbar box if the user click anywhere else outside the searchbar box
+  useEffect(() => {
+    const handleOutsideClick = (event: any) => {
+      if (
+        searchContainerRef.current &&
+        // @ts-ignore
+        !searchContainerRef.current.contains(event.target) // meaning that if the user click somewhere else outside the searchbar box
+      ) {
+        setIsOpen(false); // close the searchbar box
+        setSearch(""); // clear the search
+      }
+    };
+
+    setIsOpen(false); // whenever the pathname changes,it will close the searchbar box
+
+    document.addEventListener("click", handleOutsideClick); // document.addEventListener of a type click and when we click, we will call the handleOutsideClick function
+
+    return () => {
+      document.removeEventListener("click", handleOutsideClick); // clear the document.addEventListener . If we use eventListener in a useEffect,we must clear it back
+    };
+  }, [pathname]);
 
   // this is for the url bar,if we type something at the searchbar,the url will also change according to the searchbar
   useEffect(() => {
@@ -54,7 +77,10 @@ const GlobalSearch = () => {
   }, [search, router, pathname, searchParams, query]);
 
   return (
-    <div className="relative w-full max-w-[600px] max-lg:hidden">
+    <div
+      className="relative w-full max-w-[600px] max-lg:hidden"
+      ref={searchContainerRef}
+    >
       <div className="background-light800_darkgradient relative flex min-h-[56px] grow items-center gap-1 rounded-xl px-4">
         <Image
           src="/assets/icons/search.svg"

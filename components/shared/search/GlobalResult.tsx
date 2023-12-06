@@ -5,16 +5,13 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import GlobalFilters from "./GlobalFilters";
+import { globalSearch } from "@/lib/actions/general.action";
 
 const GlobalResult = () => {
   const searchParams = useSearchParams();
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState([
-    { type: "question", id: 1, title: "Next.js Question" },
-    { type: "tag", id: 1, title: "NEXT.JS" },
-    { type: "user", id: 1, title: "Shahirul" },
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [result, setResult] = useState([]);
 
   const global = searchParams.get("global"); // for the query that we insert into the search bar
   const type = searchParams.get("type"); // comes from the url.For the filtering in the searchbar box, meaning that we want to know what type are we filtering so that we can fetch it
@@ -26,6 +23,10 @@ const GlobalResult = () => {
 
       try {
         // fetch everything
+        const res = await globalSearch({ query: global, type }); // query of a type global
+
+        // @ts-ignore
+        setResult(JSON.parse(res));
       } catch (error) {
         console.log(error);
         throw error;
@@ -33,12 +34,28 @@ const GlobalResult = () => {
         setIsLoading(false);
       }
     };
+
+    if (global) {
+      fetchResult();
+    }
   }, [global, type]); // use Effect will run again if global and type change
 
   // renderLink is used to determine the link on where whould the link used in the Content section direct to
   // because we can point to question,tags,users,etc
   const renderLink = (type: string, id: string) => {
-    return "/";
+    switch (type) {
+      case "question":
+        return `/question/${id}`;
+      case "answer":
+        return `/question/${id}`; // will return to question because there is no specific answer detail page,the answer is contained within the question
+      case "user":
+        return `/profile/${id}`;
+      case "tag":
+        return `/tags/${id}`;
+
+      default:
+        return "/";
+    }
   };
 
   return (
@@ -66,7 +83,7 @@ const GlobalResult = () => {
             {result.length > 0 ? (
               result.map((item: any, index: number) => (
                 <Link
-                  href={renderLink("type", "id")}
+                  href={renderLink(item.type, item.id)}
                   key={item.type + item.id + index} // to make sure that it is truly pointing to the right direction, we can combine a few properties
                   className="flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
                 >
@@ -90,8 +107,9 @@ const GlobalResult = () => {
               ))
             ) : (
               <div className="flex-center flex-col px-5">
+                <p className="text-5xl">🫣</p>
                 <p className="text-dark200_light800 body-regular px-5 py-2.5">
-                  Oops,no results found
+                  Oops,no results found!
                 </p>
               </div>
             )}

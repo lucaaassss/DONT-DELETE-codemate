@@ -33,6 +33,30 @@ export async function globalSearch(params: SearchParams) {
     if (!typeLower || !SearchableTypes.includes(typeLower)) {
       // if typeLower does not exist or if searchable types does not include typeLower.In simple words if the filter of the search box is not turned on
       // search across everything
+
+      for (const { model, searchField, type } of modelsAndTypes) {
+        // destructure the properties of modelsAndTypes
+        const queryResults = await model
+          .find({ [searchField]: regexQuery })
+          .limit(2); // because we will display 2 results from each types so the 4x2 is 8
+
+        results.push(
+          ...queryResults.map((item) => ({
+            // spread the queryResults and map its item
+            title:
+              type === "answer"
+                ? `Answers containing ${query}`
+                : item[searchField],
+            type,
+            id:
+              type === "user"
+                ? item.clerkid
+                : type === "answer"
+                ? item.question
+                : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have
+          }))
+        );
+      }
     } else {
       // search in the specified model type (meaning that the searchbox filter is turned on)
       const modelInfo = modelsAndTypes.find((item) => item.type === type); // get an item and that item type must be equal to the type we are searching for
