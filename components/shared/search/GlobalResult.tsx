@@ -17,7 +17,7 @@ const GlobalResult = () => {
   ]);
 
   const global = searchParams.get("global"); // for the query that we insert into the search bar
-  const type = searchParams.get("type"); // for the filtering in the searchbar box
+  const type = searchParams.get("type"); // comes from the url.For the filtering in the searchbar box, meaning that we want to know what type are we filtering so that we can fetch it
 
   useEffect(() => {
     const fetchResult = async () => {
@@ -33,7 +33,7 @@ const GlobalResult = () => {
         setIsLoading(false);
       }
     };
-  }, [global, type]);
+  }, [global, type]); // use Effect will run again if global and type change
 
   // renderLink is used to determine the link on where whould the link used in the Content section direct to
   // because we can point to question,tags,users,etc
@@ -79,10 +79,10 @@ const GlobalResult = () => {
                   />
 
                   <div className="flex flex-col">
-                    <p className="body-medium text-dark200_light800 line-clamp-1">
+                    <p className="body-medium line-clamp-1 text-dark-300 dark:text-white">
                       {item.title}
                     </p>
-                    <p className="text-light400_light500 small-medium mt-1 font-bold capitalize">
+                    <p className="small-medium mt-1 font-bold capitalize text-dark-400 dark:text-light-800">
                       {item.type}
                     </p>
                   </div>

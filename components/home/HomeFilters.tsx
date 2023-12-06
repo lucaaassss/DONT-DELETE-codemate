@@ -48,7 +48,7 @@ const HomeFilters = () => {
           onClick={() => {}}
           className={`body-medium rounded-lg px-6 py-3 capitalize shadow-none ${
             active === item.value
-              ? " bg-primary-100 text-purple-600 dark:bg-yellow-500 dark:text-black"
+              ? " bg-primary-100 text-purple-600 dark:bg-yellow-500 dark:text-dark-300"
               : "bg-light-800 text-light-500"
           }`}
           onClickCapture={() => handleTypeClick(item.value)} // call handleTypeClick function and passed item.value

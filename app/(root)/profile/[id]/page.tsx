@@ -67,7 +67,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
           <SignedIn>
             {clerkId === userInfo.user.clerkId && ( // since we can also view other users profile,we need to ensure that that the clerkId match our profile clerkId so that we can use the update option.Other users cant edit our profile since their id does not match
               <Link href="/profile/edit">
-                <Button className="paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-white dark:text-black">
+                <Button className="paragraph-medium btn-secondary min-h-[46px] min-w-[175px] px-4 py-3 text-white dark:text-dark-300">
                   Edit Profile
                 </Button>
               </Link>

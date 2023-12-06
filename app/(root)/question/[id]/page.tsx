@@ -86,7 +86,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         />
       </div>
 
-      <div className=" mt-7 w-full rounded-2xl  bg-purple-950 px-7 py-10 text-white dark:bg-purple-400 dark:text-black">
+      <div className=" mt-7 w-full rounded-2xl  bg-purple-950 px-7 py-10 text-white dark:bg-purple-400 dark:text-dark-300">
         <ParseHTML data={result.content} />
       </div>
 
