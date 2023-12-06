@@ -16,6 +16,9 @@ const GlobalResult = () => {
   const global = searchParams.get("global"); // for the query that we insert into the search bar
   const type = searchParams.get("type"); // comes from the url.For the filtering in the searchbar box, meaning that we want to know what type are we filtering so that we can fetch it
 
+  const emojis = ["🤖", "😶‍🌫️", "🤯", "🥸", "🥶", "😬", "🔍", "❓"];
+  const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)]; // display random emojis if there is no result
+
   useEffect(() => {
     const fetchResult = async () => {
       setResult([]);
@@ -23,9 +26,13 @@ const GlobalResult = () => {
 
       try {
         // fetch everything
-        const res = await globalSearch({ query: global, type }); // query of a type global
 
-        // @ts-ignore
+        const res = await globalSearch({
+          // @ts-ignore
+          query: global, // query of a type global
+          type,
+        });
+
         setResult(JSON.parse(res));
       } catch (error) {
         console.log(error);
@@ -107,7 +114,7 @@ const GlobalResult = () => {
               ))
             ) : (
               <div className="flex-center flex-col px-5">
-                <p className="text-5xl">🫣</p>
+                <p className="text-5xl">{randomEmoji}</p>
                 <p className="text-dark200_light800 body-regular px-5 py-2.5">
                   Oops,no results found!
                 </p>

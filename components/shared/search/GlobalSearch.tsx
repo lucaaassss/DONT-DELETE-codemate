@@ -20,10 +20,10 @@ const GlobalSearch = () => {
   // ‘name’ with the value “Branch”
   // ‘products’ with the value “[Journeys,Email, Universal%20Ads]”
   // these parameters can be used to instruct the web server how to process the request, such as customizing the page based on the ‘name’ field or filtering products based on the ‘products’ list.
-  const query = searchParams.get("q"); // getting the name of our query
+  const query = searchParams.get("global"); // getting the name of our query
 
   const [search, setSearch] = useState(query || ""); // this is for the text on the searchbar,if we share the url that contain certain query,we also want to populate the searchbar with the name of the query
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(query || false);
 
   // this is for closing the searchbar box if the user click anywhere else outside the searchbar box
   useEffect(() => {
