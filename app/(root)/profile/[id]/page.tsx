@@ -40,7 +40,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
                 <ProfileLink
                   imgUrl="/assets/icons/link.svg"
                   href={userInfo.user.portfolioWebsite}
-                  title="Portfolio"
+                  title="Click me"
                 />
               )}
 
@@ -76,8 +76,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
       </div>
       <Stats
+        reputation={userInfo.reputation}
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
+        badges={userInfo.badgeCounts}
       />
       <div className="mt-10 flex gap-10 ">
         <Tabs defaultValue="top-posts" className="flex-1 ">

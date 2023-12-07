@@ -1,4 +1,5 @@
 import { formatNumber } from "@/lib/utils";
+import { BadgeCounts } from "@/types";
 import Image from "next/image";
 
 // since this stats card component is only going to be used here,we just declare it here instead of declaring it in another component
@@ -22,12 +23,16 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
 interface Props {
   totalQuestions: number;
   totalAnswers: number;
+  badges: BadgeCounts;
+  reputation: number;
 }
 
-const Stats = ({ totalQuestions, totalAnswers }: Props) => {
+const Stats = ({ totalQuestions, totalAnswers, badges, reputation }: Props) => {
   return (
     <div className="mt-10">
-      <h4 className="h3-semibold text-dark200_light900">Stats</h4>
+      <h4 className="h3-semibold text-dark200_light900">
+        Points: {reputation}
+      </h4>
 
       <div className="mt-5 grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-4">
         <div className="background-light900_dark300 flex flex-wrap items-center justify-evenly gap-4 rounded-md  p-6 ">
@@ -47,21 +52,21 @@ const Stats = ({ totalQuestions, totalAnswers }: Props) => {
         </div>
 
         <StatsCard
-          imgUrl="/assets/icons/gold-medal.svg"
-          value={0}
-          title="Gold Badges"
+          imgUrl="/assets/icons/trophyfirst.svg"
+          value={badges.GOLD}
+          title="Grandmaster Trophy"
         />
 
         <StatsCard
-          imgUrl="/assets/icons/silver-medal.svg"
-          value={0}
-          title="Silver Badges"
+          imgUrl="/assets/icons/trophysec.svg"
+          value={badges.SILVER}
+          title="Master Trophy"
         />
 
         <StatsCard
-          imgUrl="/assets/icons/bronze-medal.svg"
-          value={0}
-          title="Bronze Badges"
+          imgUrl="/assets/icons/trophythird.svg"
+          value={badges.BRONZE}
+          title="Novice Trophy"
         />
       </div>
     </div>
