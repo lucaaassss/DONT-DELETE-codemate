@@ -245,6 +245,15 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     }
 
     // increment author's reputation
+    // downvoting or undoing the downvote for other people's answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? -2 : 2 },
+    });
+
+    // receiving upvote from other users
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasdownVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {
