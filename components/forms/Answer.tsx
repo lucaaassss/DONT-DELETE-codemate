@@ -76,7 +76,7 @@ const Answer = ({ question, questionId, authorId }: Props) => {
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
         {
           method: "POST",
-          body: JSON.stringify({ question }), // passing the question to the AI
+          body: JSON.stringify({ question }), // passing the question to the AI. Refer app>api>chatgpt>route.ts
         }
       );
 
