@@ -79,7 +79,7 @@ export async function deleteUser(params: DeleteUserParams) {
       throw new Error("User not found");
     }
 
-    // if the use exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
+    // if the user exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
 
     // get user's question id
     const userQuestionIds = await Question.find({ author: user._id }).distinct(
@@ -352,7 +352,7 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 
     // display all of the questions asked by the user
     const userQuestions = await Question.find({ author: userId })
-      .sort({ createdAt: -1, views: -1, upvotes: -1 }) // sort the questions by its date of post,highest views and upvotes (we put createdAt at first because it will take the highest effect,the order of the sort is important)
+      .sort({ views: -1, upvotes: -1 }) // sort the questions by highest views and upvotes
       .skip(skipAmount)
       .limit(pageSize)
       .populate("tags", "_id name") // populate the tags with id and name
