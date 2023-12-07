@@ -128,11 +128,20 @@ export async function createQuestion(params: CreateQuestionParams) {
     });
 
     // create an interaction record for the user's ask_question action (to track who is the author of the question)
+    await Interaction.create({
+      user: author,
+      action: "ask_question",
+      question: question._id,
+      tags: tagDocuments,
+    });
 
     // increment author's reputation by +5 for creating a question
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } }); // pass in the authpr and update their reputation by 5 points
 
     revalidatePath(path); // to remove the need to reload the homepage everytime a new question is added
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function getQuestionById(params: GetQuestionByIdParams) {
@@ -189,7 +198,15 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
       throw new Error("Question not found");
     }
 
-    // increment author's reputation
+    // increment author's reputation by +1 for upvoting a question and -1 for undoing the upvote
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -1 : 1 },
+    });
+
+    // increment author's reputation by +10 for receiving an upvote to the question they created or -10 for receiving a downvote for the question they created
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasupVoted ? -10 : 10 },
+    });
 
     revalidatePath(path);
   } catch (error) {

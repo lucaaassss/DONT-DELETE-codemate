@@ -287,7 +287,7 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 
     // display all of the questions asked by the user
     const userQuestions = await Question.find({ author: userId })
-      .sort({ views: -1, upvotes: -1 }) // sort the questions by the highest views and upvotes
+      .sort({ createdAt: -1, views: -1, upvotes: -1 }) // sort the questions by its date of post,highest views and upvotes (we put createdAt at first because it will take the highest effect,the order of the sort is important)
       .skip(skipAmount)
       .limit(pageSize)
       .populate("tags", "_id name") // populate the tags with id and name
