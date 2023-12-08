@@ -25,13 +25,19 @@ const NavContent = () => {
         const isActive =
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route; // item.route.length>1 means that if the route exists
+
+        // Check if the route is "/premium" and apply gold color if it's active
+        const isPremiumActive = isActive && item.route === "/premium";
+
         return (
           <SheetClose asChild key={item.route}>
             {/* asChild means we will pass something into it so that it will show that something */}
             <Link
               href={item.route}
               className={`${
-                isActive
+                isPremiumActive
+                  ? "premium-gradient rounded-lg text-light-900"
+                  : isActive
                   ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
                   : "text-dark300_light900"
               } flex items-center justify-start gap-4 bg-transparent p-4`}
@@ -41,9 +47,19 @@ const NavContent = () => {
                 alt={item.label}
                 width={20}
                 height={20}
-                className={`${isActive ? "" : "invert-colors"}`}
+                className={`${
+                  isPremiumActive ? "" : isActive ? "" : "invert-colors"
+                }`}
               />
-              <p className={`${isActive ? "base-bold" : "base-medium"}`}>
+              <p
+                className={`${
+                  isPremiumActive
+                    ? "base-bold"
+                    : isActive
+                    ? "base-bold"
+                    : "base-medium"
+                }`}
+              >
                 {item.label}
               </p>
             </Link>
