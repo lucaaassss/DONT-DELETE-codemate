@@ -9,9 +9,7 @@ export const metadata: Metadata = {
 const Premium = () => {
   return (
     <div>
-      <h1 className="body-semibold flex-wrap text-white dark:text-black">
-        Coming Soon...
-      </h1>
+      <h1 className="h1-bold text-dark100_light900">Coming Soon...</h1>
     </div>
   );
 };
