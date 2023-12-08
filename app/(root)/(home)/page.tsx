@@ -10,6 +10,14 @@ import { getQuestions } from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Home | Codemate",
+  description:
+    "Welcome to Codemate, a vibrant community forum where humans and AI come together to unlock the power of collaboration and discover the ultimate solutions. Let's explore, learn, and achieve greatness as a united force. See you at Codemate!",
+};
+
 export default async function Home({ searchParams }: SearchParamsProps) {
   // got searchParams from LocalSearchbar.tsx
 

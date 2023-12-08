@@ -14,6 +14,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Forum | Codemate",
+};
+
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
 

@@ -3,6 +3,12 @@ import { getUserById } from "@/lib/actions/user.action";
 import { ParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Edit Profile | Codemate",
+};
+
 const Page = async ({ params }: ParamsProps) => {
   // params is coming from ParamsProps
   const { userId } = auth(); // get the userId from clerk

@@ -5,6 +5,12 @@ import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Ask a Question | Codemate",
+};
+
 const Page = async () => {
   const { userId } = auth(); // get the current userId from clerk
 
