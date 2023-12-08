@@ -76,7 +76,7 @@ const Profile = ({ clerkId, user }: Props) => {
           name="name"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="body-semibold text-dark400_light800">
                 Name <span className="text-red-500 dark:text-red-300">*</span>
               </FormLabel>
               <FormControl>
@@ -95,7 +95,7 @@ const Profile = ({ clerkId, user }: Props) => {
           name="username"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>
+              <FormLabel className="body-semibold text-dark400_light800">
                 Username{" "}
                 <span className="text-red-500 dark:text-red-300">*</span>
               </FormLabel>
@@ -115,7 +115,9 @@ const Profile = ({ clerkId, user }: Props) => {
           name="portfolioWebsite"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>Portfolio Link</FormLabel>
+              <FormLabel className="body-semibold text-dark400_light800">
+                Portfolio Link
+              </FormLabel>
               <FormControl>
                 <Input
                   type="url"
@@ -133,7 +135,9 @@ const Profile = ({ clerkId, user }: Props) => {
           name="location"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>Location</FormLabel>
+              <FormLabel className="body-semibold text-dark400_light800">
+                Location
+              </FormLabel>
               <FormControl>
                 <Input
                   placeholder="Enter origin"
@@ -150,7 +154,9 @@ const Profile = ({ clerkId, user }: Props) => {
           name="bio"
           render={({ field }) => (
             <FormItem className="space-y-3.5">
-              <FormLabel>Bio</FormLabel>
+              <FormLabel className="body-semibold text-dark400_light800">
+                Bio
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Enter bio"
@@ -166,7 +172,7 @@ const Profile = ({ clerkId, user }: Props) => {
         <div className="mt-7 flex justify-end">
           <Button
             type="submit"
-            className="primary-gradient dark:primary-gradient-dark w-fit"
+            className="primary-gradient dark:primary-gradient-dark w-fit text-white"
             disabled={isSubmitting}
           >
             {isSubmitting ? "Saving..." : "Save"}

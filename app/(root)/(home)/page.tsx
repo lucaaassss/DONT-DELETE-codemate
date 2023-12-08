@@ -6,11 +6,15 @@ import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { Button } from "@/components/ui/button";
 import { HomePageFilters } from "@/constants/filters";
-import { getQuestions } from "@/lib/actions/question.action";
+import {
+  getQuestions,
+  getRecommendedQuestions,
+} from "@/lib/actions/question.action";
 import { SearchParamsProps } from "@/types";
 import Link from "next/link";
 
 import type { Metadata } from "next";
+import { auth } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Home | Codemate",
@@ -20,17 +24,34 @@ export const metadata: Metadata = {
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   // got searchParams from LocalSearchbar.tsx
+  const { userId } = auth();
 
-  // to fetch the questions
-  const result = await getQuestions({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams.page : 1,
-    // creates an object with a property named searchQuery, and its value is the value of searchParams.q .The searchQuery property is then being used as an argument in the getQuestions function call
-    // searchParams.q is used to access the q property of the searchParams object
-  });
+  let result;
 
-  // fetch recommended questions
+  if (searchParams?.filter === "recommended") {
+    // fetch recommended questions
+    if (userId) {
+      result = await getRecommendedQuestions({
+        userId,
+        searchQuery: searchParams.q,
+        page: searchParams.page ? +searchParams.page : 1,
+      });
+    } else {
+      result = {
+        questions: [], // set the questions to empty array if the user is not signed in
+        isNext: false, // set the isNext page to false since there is no question to be displayed
+      };
+    }
+  } else {
+    // fetch the questions from the other category
+    result = await getQuestions({
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams.page ? +searchParams.page : 1,
+      // creates an object with a property named searchQuery, and its value is the value of searchParams.q .The searchQuery property is then being used as an argument in the getQuestions function call
+      // searchParams.q is used to access the q property of the searchParams object
+    });
+  }
 
   return (
     // Fragments

@@ -105,7 +105,7 @@ const GlobalSearch = () => {
               // if the searchbar is empty and isOpen is true,we will close the searchbar box
               setIsOpen(false);
           }}
-          className="paragraph-regular no-focus placeholder background-light800_darkgradient border-none text-white shadow-none outline-none dark:text-dark-300"
+          className="paragraph-regular no-focus placeholder border-none bg-transparent text-white shadow-none outline-none dark:text-dark-300"
         />
       </div>
       {/* if isOpen is true show GlobalResult component or in other words searchbar box */}

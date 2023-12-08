@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const Support = () => {
-  return <div>Let&apos; connect!</div>;
+  return <div>Let&apos;s connect!</div>;
 };
 
 export default Support;

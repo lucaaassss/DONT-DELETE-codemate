@@ -48,41 +48,39 @@ const AllAnswers = async ({
               key={answer._id}
               className=" text-dark300_light700 mt-7 w-full rounded-2xl bg-white px-7 py-10 dark:bg-black"
             >
-              <div className="flex items-center justify-between">
-                <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
-                  {/* showing the author of the answer */}
-                  <Link
-                    href={`/profile/${answer.author.clerkId}`}
-                    className="flex flex-1 items-start gap-1 sm:items-center"
-                  >
-                    <Image
-                      src={answer.author.picture}
-                      width={18}
-                      height={18}
-                      alt="profile"
-                      className="rounded-full object-cover max-sm:mt-0.5"
-                    />
-                    <div className="flex flex-col sm:flex-row sm:items-center">
-                      <p className="body-semibold text-dark300_light700">
-                        {answer.author.name}
-                      </p>
+              <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+                {/* showing the author of the answer */}
+                <Link
+                  href={`/profile/${answer.author.clerkId}`}
+                  className="flex flex-1 items-start gap-1 sm:items-center"
+                >
+                  <Image
+                    src={answer.author.picture}
+                    width={18}
+                    height={18}
+                    alt="profile"
+                    className="rounded-full object-cover max-sm:mt-0.5"
+                  />
+                  <div className="flex flex-col sm:flex-row sm:items-center">
+                    <p className="body-semibold text-dark300_light700">
+                      {answer.author.name}
+                    </p>
 
-                      <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
-                        {"  "} - answered {getTimeStamp(answer.createdAt)}
-                      </p>
-                    </div>
-                  </Link>
-                  <div className="flex justify-end">
-                    <Votes
-                      type="Answer" // to check the type whether it is question or answer
-                      itemId={JSON.stringify(answer._id)}
-                      userId={JSON.stringify(userId)}
-                      upvotes={answer.upvotes.length} // to display the number of upvotes
-                      hasupVoted={answer.upvotes.includes(userId)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
-                      downvotes={answer.downvotes.length}
-                      hasdownVoted={answer.downvotes.includes(userId)}
-                    />
+                    <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
+                      {"  "} - answered {getTimeStamp(answer.createdAt)}
+                    </p>
                   </div>
+                </Link>
+                <div className="flex justify-end">
+                  <Votes
+                    type="Answer" // to check the type whether it is question or answer
+                    itemId={JSON.stringify(answer._id)}
+                    userId={JSON.stringify(userId)}
+                    upvotes={answer.upvotes.length} // to display the number of upvotes
+                    hasupVoted={answer.upvotes.includes(userId)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
+                    downvotes={answer.downvotes.length}
+                    hasdownVoted={answer.downvotes.includes(userId)}
+                  />
                 </div>
               </div>
               <ParseHTML data={answer.content} />

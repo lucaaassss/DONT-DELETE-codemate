@@ -81,27 +81,29 @@ const QuestionCard = ({
           isAuthor
           textStyles="body-medium text-dark200_light900"
         />
-        <Metric
-          imgUrl="/assets/icons/like.svg"
-          alt="Upvotes"
-          value={formatNumber(upvotes.length)} // if we only do upvotes it will display the user id that upvoted it
-          title="Votes"
-          textStyles="small-medium text-dark200_light900"
-        />
-        <Metric
-          imgUrl="/assets/icons/message.svg"
-          alt="message"
-          value={formatNumber(answers.length)}
-          title="Answers"
-          textStyles="small-medium text-dark200_light900"
-        />
-        <Metric
-          imgUrl="/assets/icons/eye.svg"
-          alt="eye"
-          value={formatNumber(views)}
-          title="Views"
-          textStyles="small-medium text-dark200_light900"
-        />
+        <div className="flex items-center gap-3 max-sm:flex-wrap max-sm:justify-start">
+          <Metric
+            imgUrl="/assets/icons/like.svg"
+            alt="Upvotes"
+            value={formatNumber(upvotes.length)} // if we only do upvotes it will display the user id that upvoted it
+            title="Votes"
+            textStyles="small-medium text-dark200_light900"
+          />
+          <Metric
+            imgUrl="/assets/icons/message.svg"
+            alt="message"
+            value={formatNumber(answers.length)}
+            title="Answers"
+            textStyles="small-medium text-dark200_light900"
+          />
+          <Metric
+            imgUrl="/assets/icons/eye.svg"
+            alt="eye"
+            value={formatNumber(views)}
+            title="Views"
+            textStyles="small-medium text-dark200_light900"
+          />
+        </div>
       </div>
     </div>
   );

@@ -19,7 +19,9 @@ const Page = async ({ params }: ParamsProps) => {
 
   return (
     <>
-      <h1 className="h1-bold text-dark100_light900 mt-5">Edit Profile</h1>
+      <h1 className="h1-bold text-dark100_light900 body-semibold mt-5">
+        Edit Profile
+      </h1>
       <div className="mt-9">
         <Profile
           clerkId={userId} // passed in the clerkId
