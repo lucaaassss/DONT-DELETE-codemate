@@ -17,7 +17,7 @@ import type { Metadata } from "next";
 import { auth } from "@clerk/nextjs";
 
 export const metadata: Metadata = {
-  title: "Home | Codemate",
+  title: "Codemate",
   description:
     "Welcome to Codemate, a vibrant community forum where humans and AI come together to unlock the power of collaboration and discover the ultimate solutions. Let's explore, learn, and achieve greatness as a united force. See you at Codemate!",
 };

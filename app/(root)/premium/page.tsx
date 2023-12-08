@@ -3,10 +3,10 @@ import React from "react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Support | Codemate",
+  title: "Premium | Codemate",
 };
 
-const Support = () => {
+const Premium = () => {
   return (
     <div>
       <h1 className="body-semibold flex-wrap text-white dark:text-black">
@@ -16,4 +16,4 @@ const Support = () => {
   );
 };
 
-export default Support;
+export default Premium;
