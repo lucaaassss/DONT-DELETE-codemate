@@ -191,6 +191,10 @@
     @apply shadow-light-100 dark:shadow-none;
   }
 
+  .question-details {
+    @apply text-white dark:bg-purple-400 dark:text-dark-300 bg-purple-950 !important;
+  }
+
   .primary-gradient {
     background: linear-gradient(129deg, #802bb1 0%, #8860d0 100%);
   }
