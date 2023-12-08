@@ -354,6 +354,7 @@ export async function getRecommendedQuestions(params: RecommendedParams) {
 
     // get distinct tag IDs from user's interactions
     const distinctUserTagIds = [
+      // @ts-ignore
       ...new Set(userTags.map((tag: any) => tag._id)),
     ];
 
