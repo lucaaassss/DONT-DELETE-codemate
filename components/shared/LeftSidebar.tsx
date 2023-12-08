@@ -25,6 +25,9 @@ const LeftSidebar = () => {
             (pathname.includes(item.route) && item.route.length > 1) ||
             pathname === item.route; // item.route.length>1 means that if the route exists
 
+          // Check if the route is "/premium" and apply gold color if it's active
+          const isPremiumActive = isActive && item.route === "/premium";
+
           if (item.route === "/profile") {
             if (userId) {
               item.route = `${item.route}/${userId}`; // we take the current item.route and add the user id to it.For example if the user click on the profile option,the item route will be localhost:3000/profile/fukyfgvh.fukyfgvh is the example of user id
@@ -37,7 +40,9 @@ const LeftSidebar = () => {
               key={item.route}
               href={item.route}
               className={`${
-                isActive
+                isPremiumActive
+                  ? "premium-gradient text-light-900"
+                  : isActive
                   ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
                   : "text-dark300_light900"
               } flex items-center justify-start gap-4 bg-transparent p-4`}

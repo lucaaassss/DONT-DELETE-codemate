@@ -33,9 +33,9 @@ export const sidebarLinks: SidebarLink[] = [
     label: "Community",
   },
   {
-    imgURL: "/assets/icons/suitcase.svg",
-    route: "/jobs",
-    label: "Find Jobs",
+    imgURL: "/assets/icons/crown.svg",
+    route: "/premium",
+    label: "Premium",
   },
   {
     imgURL: "/assets/icons/user.svg",
