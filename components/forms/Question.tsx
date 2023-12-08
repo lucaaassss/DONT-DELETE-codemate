@@ -255,8 +255,8 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
                 </>
               </FormControl>
               <FormDescription className="body-regular mt-2.5 text-gray-500 dark:text-light-500">
-                Add up to 3 tags to describe what the question is about.Press
-                Enter to add a tag.
+                Add up at least 1 tag to describe what the question is
+                about.Press Enter to add a tag.
               </FormDescription>
               {/* FormMessage is for displaying success or error messages,in this case we want to display error message */}
               <FormMessage className="text-red-500 dark:text-red-300" />
