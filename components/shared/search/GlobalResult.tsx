@@ -67,7 +67,7 @@ const GlobalResult = () => {
 
   return (
     // z-10 is used to bring the searchbar box forward
-    <div className="custom-scrollbar absolute top-full z-10 mt-3 w-full rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
+    <div className="custom-scrollbar absolute top-full z-10 mt-3 w-full overflow-y-auto rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
       <GlobalFilters />
       {/* this is for the line that separates filters and top match */}
       <div className="my-5 h-[1px] bg-light-700/50 dark:bg-dark-500/50" />
@@ -86,7 +86,7 @@ const GlobalResult = () => {
             </p>
           </div>
         ) : (
-          <div className="custom-scrollbar flex flex-col gap-2">
+          <div className="flex flex-col gap-2">
             {result.length > 0 ? (
               result.map((item: any, index: number) => (
                 <Link
