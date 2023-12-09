@@ -1,3 +1,4 @@
+// ChatGPT settings
 // implementing the logic for the AI to do its work
 // use POST as the type of route since we sent something to the AI and we want to have its response back
 
