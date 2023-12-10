@@ -28,7 +28,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
   const interactedTags = await getTopInteractedTags({
     userId: userInfo.user._id,
-    limit: 10,
+    limit: 5,
   });
 
   return (

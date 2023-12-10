@@ -11,6 +11,7 @@ import EditDeleteAction from "../shared/EditDeleteAction";
 // we use  answers:Array<object> which means that the answers will have an array of object
 
 interface QuestionProps {
+  clerkId?: string | null;
   _id: string;
   title: string;
   tags: {
@@ -27,7 +28,6 @@ interface QuestionProps {
   views: number;
   answers: Array<object>;
   createdAt: Date;
-  clerkId?: string | null;
 }
 
 const QuestionCard = ({
@@ -77,7 +77,7 @@ const QuestionCard = ({
           alt="user"
           value={author.name}
           title={`• asked ${getTimeStamp(createdAt)}`}
-          href={`/profile/${author._id}`}
+          href={`/profile/${author.clerkId}`}
           isAuthor
           textStyles="body-medium text-dark200_light900"
         />
