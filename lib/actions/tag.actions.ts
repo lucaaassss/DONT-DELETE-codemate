@@ -40,7 +40,7 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 
     return topTagDocuments;
   } catch (error) {
-    console.log(error);
+    console.log("Error fetching top interacted tags:", error);
     throw error;
   }
 }

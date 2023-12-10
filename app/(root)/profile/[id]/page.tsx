@@ -127,7 +127,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
         <div className="flex min-w-[278px] flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
 
-          <div className="mt-7 flex flex-col gap-4">
+          <div className="mt-12 flex flex-col gap-4">
             {interactedTags.map((tag) => (
               <RenderTag
                 key={tag._id}
