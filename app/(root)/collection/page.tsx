@@ -33,7 +33,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
-          route="/"
+          route="/collection"
           iconPosition="left"
           imgSrc="/assets/icons/search.svg"
           placeholder="Search for questions"
@@ -71,8 +71,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
             title="There are no saved questions to show"
             description="
             Your question collection is currently an open canvas waiting to be filled! Dive into the excitement and start saving questions that really spark your curiosity!🎨✨ "
-            link="/ask-question"
-            linkTitle="Ask a Question"
+            link="/"
+            linkTitle="Explore Questions"
           />
         )}
       </div>

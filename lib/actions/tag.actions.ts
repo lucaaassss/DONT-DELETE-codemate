@@ -10,25 +10,35 @@ import {
 import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
+import Interaction from "@/database/interaction.model";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
     connectToDatabase();
 
-    const { userId } = params;
+    const { userId, limit = 3 } = params;
 
     const user = await User.findById(userId);
 
     if (!user) throw new Error("User not found");
 
     // find interactions for the user and group by tags
-    // interactions..
 
-    return [
-      { _id: "1", name: "NEXT.JS" },
-      { _id: "2", name: "REACT" },
-      { _id: "3", name: "CSS" },
-    ];
+    // Find interactions for the user and group by tags
+    const tagCountMap = await Interaction.aggregate([
+      { $match: { user: user._id, tags: { $exists: true, $ne: [] } } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+    ]);
+
+    const topTags = tagCountMap.map((tagCount) => tagCount._id);
+
+    // Find the tag documents for the top tags
+    const topTagDocuments = await Tag.find({ _id: { $in: topTags } });
+
+    return topTagDocuments;
   } catch (error) {
     console.log(error);
     throw error;
