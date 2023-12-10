@@ -7,7 +7,7 @@ export const QuestionsSchema = z.object({
     .max(130, "Title cannot exceed 130 characters"),
   explanation: z
     .string()
-    .min(100, "Explanation must be at least 100 characters long"),
+    .min(20, "Explanation must be at least 20 characters long"),
   tags: z
     .array(
       z

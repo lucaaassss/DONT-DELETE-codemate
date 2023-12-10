@@ -29,7 +29,7 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
       { $match: { user: user._id, tags: { $exists: true, $ne: [] } } },
       { $unwind: "$tags" },
       { $group: { _id: "$tags", count: { $sum: 1 } } },
-      { $sort: { count: -1 } },
+      { $sort: { views: -1 } },
       { $limit: limit },
     ]);
 
