@@ -192,7 +192,7 @@
   }
 
   .question-details {
-    @apply text-white dark:bg-slate-700 dark:text-dark-300 bg-slate-400/80 !important;
+    @apply text-white dark:bg-blue-900 dark:text-dark-300 bg-blue-400/80 !important;
   }
 
   .primary-gradient {

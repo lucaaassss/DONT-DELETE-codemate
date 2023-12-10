@@ -95,10 +95,10 @@ const GlobalResult = () => {
                   className="flex w-full cursor-pointer items-start gap-3 px-5 py-2.5 hover:bg-light-700/50 dark:hover:bg-dark-500/50"
                 >
                   <Image
-                    src="/assets/icons/tag.svg"
+                    src="/assets/icons/arrowresult.svg"
                     alt="tags"
-                    width={18}
-                    height={18}
+                    width={23}
+                    height={23}
                     className="invert-colors mt-1 object-contain"
                   />
 
