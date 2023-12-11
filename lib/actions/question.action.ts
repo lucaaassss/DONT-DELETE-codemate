@@ -301,9 +301,9 @@ export async function editQuestion(params: EditQuestionParams) {
 
     await question.save();
 
-    const newTags = tags.map((tag: string) => tag.toLowerCase());
+    const newTags = tags.map((tag: string) => tag.toUpperCase());
     const existingTags = question.tags.map((tag: any) =>
-      tag.name.toLowerCase()
+      tag.name.toUpperCase()
     );
 
     const tagUpdates = {
@@ -312,13 +312,13 @@ export async function editQuestion(params: EditQuestionParams) {
     };
 
     for (const tag of newTags) {
-      if (!existingTags.includes(tag.toLowerCase())) {
+      if (!existingTags.includes(tag.toUpperCase())) {
         tagUpdates.tagsToAdd.push(tag);
       }
     }
 
     for (const tag of question.tags) {
-      if (!newTags.includes(tag.name.toLowerCase())) {
+      if (!newTags.includes(tag.name.toUpperCase())) {
         tagUpdates.tagsToRemove.push(tag._id);
       }
     }

@@ -20,7 +20,7 @@ export const getTimeStamp = (createdAt: Date): string => {
 
   const diffMinutes = Math.round(diffSeconds / 60);
   if (diffMinutes < 60) {
-    return `${diffMinutes} mins ago`;
+    return `${diffMinutes} minutes ago`;
   }
 
   const diffHours = Math.round(diffMinutes / 60);

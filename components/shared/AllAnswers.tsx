@@ -56,18 +56,18 @@ const AllAnswers = async ({
                 >
                   <Image
                     src={answer.author.picture}
-                    width={18}
-                    height={18}
+                    width={35}
+                    height={35}
                     alt="profile"
                     className="rounded-full object-cover max-sm:mt-0.5"
                   />
-                  <div className="flex flex-col sm:flex-row sm:items-center">
+                  <div className="flex-col sm:flex-row sm:items-center">
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.name}
                     </p>
 
                     <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
-                      {"  "} - answered {getTimeStamp(answer.createdAt)}
+                      {"  "}answered {getTimeStamp(answer.createdAt)}
                     </p>
                   </div>
                 </Link>

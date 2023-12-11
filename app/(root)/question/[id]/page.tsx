@@ -42,8 +42,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <Image
               src={result.author.picture}
               className="rounded-full"
-              width={22}
-              height={22}
+              width={35}
+              height={35}
               alt="profile"
             />
             <p className="paragraph-semibold text-dark300_light700">
