@@ -288,7 +288,7 @@ export async function editQuestion(params: EditQuestionParams) {
   try {
     connectToDatabase();
 
-    const { questionId, title, content, path } = params;
+    const { questionId, title, content, tags, path } = params;
 
     const question = await Question.findById(questionId).populate("tags"); // find the question that has to be updated
 
@@ -300,6 +300,63 @@ export async function editQuestion(params: EditQuestionParams) {
     question.content = content; // update the content
 
     await question.save();
+
+    const newTags = tags.map((tag: string) => tag.toLowerCase());
+    const existingTags = question.tags.map((tag: any) =>
+      tag.name.toLowerCase()
+    );
+
+    const tagUpdates = {
+      tagsToAdd: [] as string[],
+      tagsToRemove: [] as string[],
+    };
+
+    for (const tag of newTags) {
+      if (!existingTags.includes(tag.toLowerCase())) {
+        tagUpdates.tagsToAdd.push(tag);
+      }
+    }
+
+    for (const tag of question.tags) {
+      if (!newTags.includes(tag.name.toLowerCase())) {
+        tagUpdates.tagsToRemove.push(tag._id);
+      }
+    }
+
+    // add new tags and link them to the question
+    const newTagDocuments = [];
+
+    for (const tag of tagUpdates.tagsToAdd) {
+      const newTag = await Tag.findOneAndUpdate(
+        { name: { $regex: new RegExp(`^${tag}$`, "i") } },
+        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
+        { upsert: true, new: true }
+      );
+
+      newTagDocuments.push(newTag._id);
+    }
+
+    console.log({ tagUpdates });
+
+    // remove question reference for tagsToRemove from the tag
+    if (tagUpdates.tagsToRemove.length > 0) {
+      await Tag.updateMany(
+        { _id: { $in: tagUpdates.tagsToRemove } },
+        { $pull: { questions: question._id } }
+      );
+    }
+
+    if (tagUpdates.tagsToRemove.length > 0) {
+      await Question.findByIdAndUpdate(question._id, {
+        $pull: { tags: { $in: tagUpdates.tagsToRemove } },
+      });
+    }
+
+    if (newTagDocuments.length > 0) {
+      await Question.findByIdAndUpdate(question._id, {
+        $push: { tags: { $each: newTagDocuments } },
+      });
+    }
 
     revalidatePath(path);
   } catch (error) {

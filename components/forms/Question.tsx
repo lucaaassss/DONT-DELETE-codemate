@@ -23,6 +23,8 @@ import Image from "next/image";
 import { createQuestion, editQuestion } from "@/lib/actions/question.action";
 import { useRouter, usePathname } from "next/navigation";
 import { useTheme } from "@/context/ThemeProvider";
+import { toast } from "../ui/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   type?: string;
@@ -37,7 +39,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
   const pathname = usePathname(); // to know on which URL that we are at right now
 
   const parsedQuestionDetails =
-    questionDetails && JSON.parse(questionDetails || ""); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
+    questionDetails && JSON.parse(questionDetails as string); // will show the questionDetails if it exist or just display an empty string. This is for the edit option,we want to get the question details since it already exists
 
   const groupedTags = parsedQuestionDetails?.tags.map((tag: any) => tag.name); // will map each tag from the parsedQuestionDetails
 
@@ -62,8 +64,15 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
           questionId: parsedQuestionDetails._id, // passed the id of the question that we want to edit
           title: values.title, // pass the title that we want to update
           content: values.explanation, // pass the content that we want to update
+          tags: values.tags, // pass the tags that we want to change
           path: pathname, // pass the path that we want to revalidate
         });
+
+        toast({
+          title: "Question Edited",
+          description: "Question has been successfully edited.",
+        });
+
         router.push(`/question/${parsedQuestionDetails._id}`); // will navigate the question details page to see the new question we just edited
       } else {
         await createQuestion({
@@ -74,10 +83,20 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
           author: JSON.parse(mongoUserId), // since we used JSON.stringify before (at ask-question>page.tsx)
           path: pathname, // we dont mention the path's name here because we are at homepage,if we are at any other page we have to mention the path's name
         });
+
+        toast({
+          title: "Question Posted",
+          description: "Question has been successfully posted.",
+        });
+
         // navigate to home page to see the question
         router.push("/");
       }
     } catch (error) {
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with the request.",
+      });
     } finally {
       setIsSubmitting(false); // setIsSubmitting will be set to false regardless the task fail or not
     }
@@ -98,7 +117,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
         if (tagValue.length > 15) {
           return form.setError("tags", {
             type: "required",
-            message: "Tag must be less than 15 characters",
+            message: "Tag must not exceed 15 characters",
           });
         }
         // if(!field.value.includes(tagValue as never)) means that we are checking that the tags does not exist already within the field.If there are same tags it will never count the tag as a tagValue
@@ -117,6 +136,13 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
     const newTags = field.value.filter((t: string) => t !== tag); // meaning that we are creating a new instance ofthe modified tags but we did not include the ones that is being clicked.(t:string)=>t!==tag means that it will include all tags but the tag must not be equalled to the ones that being clicked
 
     form.setValue("tags", newTags); // set the value using the newTags instance
+
+    if (newTags.length === 0) {
+      form.setError("tags", {
+        type: "required",
+        message: "At least one tag is required",
+      });
+    }
   };
   return (
     <Form {...form}>
@@ -148,6 +174,7 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
           )}
         />
         <FormField
+          key={mode}
           control={form.control}
           name="explanation"
           render={({ field }) => (
@@ -159,11 +186,11 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
               <FormControl className="mt-3.5">
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_API_KEY} // will process the API key from the .env.local file
-                  onInit={(evt, editor) => {
+                  onInit={(evt, editor) =>
                     // ts-ignore is going to ignore the error as tiny needs it the way it is
                     // @ts-ignore
-                    editorRef.current = editor;
-                  }}
+                    (editorRef.current = editor)
+                  }
                   onBlur={field.onBlur} // onBlur will run once we exit the editor.It will save the value inserted
                   onEditorChange={(content) => field.onChange(content)} // will change the content of the editor according to what we have inserted
                   initialValue={parsedQuestionDetails?.content || ""}
@@ -217,7 +244,6 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
               <FormControl className="mt-3.5">
                 <>
                   <Input
-                    disabled={type === "Edit"} // disabled the tag field so that the user cant edit the tags as it would very hard for the database to keep track of the updated tags since the tags has questions under it.If we change the tags we also have to find a new category where the question falls into
                     className="no-focus paragraph-regular background-light900_dark300 light-border-2 text-dark300_light700 min-h-[56px] border"
                     placeholder="Add tags"
                     onKeyDown={(event) => handleInputKeyDown(event, field)}
@@ -231,23 +257,17 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
                           key={tag}
                           className="subtle-medium background-light800_dark300 text-light400_light500 flex items-center justify-center gap-2 rounded-md border-none px-4 py-2"
                           style={{ textTransform: "uppercase" }}
-                          // disable user to remove the tag when on edit
-                          onClick={() =>
-                            type !== "Edit"
-                              ? handleTagRemove(tag, field)
-                              : () => {}
-                          }
+                          onClick={() => handleTagRemove(tag, field)}
                         >
                           {tag}
-                          {type !== "Edit" && ( // disable user to click one the badge icon when on edit
-                            <Image
-                              src="/assets/icons/close.svg"
-                              alt="Close icon"
-                              width={12}
-                              height={12}
-                              className="cursor-pointer object-contain invert-0 dark:invert"
-                            />
-                          )}
+
+                          <Image
+                            src="/assets/icons/close.svg"
+                            alt="Close icon"
+                            width={12}
+                            height={12}
+                            className="cursor-pointer object-contain invert-0 dark:invert"
+                          />
                         </Badge>
                       ))}
                     </div>
@@ -270,7 +290,10 @@ const Question = ({ type, mongoUserId, questionDetails }: Props) => {
           disabled={isSubmitting}
         >
           {isSubmitting ? (
-            <>{type === "Edit" ? "Editing..." : "Posting..."}</>
+            <>
+              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              {type === "Edit" ? "Editing..." : "Posting..."}
+            </>
           ) : (
             <>{type === "Edit" ? "Edit Question" : "Ask a Question"}</>
           )}
