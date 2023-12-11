@@ -1,4 +1,4 @@
-"use client";
+"use client"; // because we are using hooks
 
 import { useRef, useState } from "react";
 import {
