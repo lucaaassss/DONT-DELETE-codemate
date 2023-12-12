@@ -50,7 +50,7 @@ export async function globalSearch(params: SearchParams) {
             type,
             id:
               type === "user"
-                ? item.clerkid
+                ? item.clerkId
                 : type === "answer"
                   ? item.question
                   : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have

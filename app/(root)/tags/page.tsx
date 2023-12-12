@@ -42,25 +42,27 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
         />
       </div>
 
-      <section className="mt-12 flex flex-wrap gap-4">
+      <section className="mt-12 flex w-full flex-wrap gap-4">
         {result.tags.length > 0 ? (
           result.tags.map((tag) => (
             <Link
-              href={`tags/${tag._id}`} // will redirect to each respective tag details page if clicked
+              href={`/tags/${tag._id}`} // will redirect to each respective tag details page if clicked
               key={tag._id}
               className="shadow-light100_darknone"
             >
               <article className="background-light900_dark200  flex w-full flex-col rounded-2xl px-9 py-10 sm:w-[260px]">
-                <div className="w-fit rounded-sm bg-purple-300 px-5 py-1.5 dark:bg-purple-800">
-                  <p className="paragraph-semibold text-dark300_light900">
-                    {tag.name}
+                <div className="w-[260px] overflow-hidden">
+                  <div className="w-[185px] rounded-sm bg-purple-300 px-5 py-1.5 dark:bg-purple-800">
+                    <p className="paragraph-semibold text-dark300_light900 text-center">
+                      {tag.name}
+                    </p>
+                  </div>
+                  <p className="small-medium text-dark400_light500 mt-3.5">
+                    <span className="body-semibold mr-2.5 text-purple-950 dark:text-light-500">
+                      {tag.questions.length} Questions
+                    </span>
                   </p>
                 </div>
-                <p className="small-medium text-dark400_light500 mt-3.5">
-                  <span className="body-semibold mr-2.5 text-purple-950 dark:text-light-500">
-                    {tag.questions.length} Questions
-                  </span>
-                </p>
               </article>
             </Link>
           ))
