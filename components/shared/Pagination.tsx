@@ -11,19 +11,20 @@ interface Props {
   isNext: boolean;
 }
 
-const Pagination = ({ pageNumber, isNext }: Props) => {
+function Pagination({ pageNumber, isNext }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const handleNavigation = (direction: string) => {
+  const handleNavigation = (type: "prev" | "next") => {
     // figuring out which direction are we going
-    const nextPageNumber =
-      direction === "prev" ? pageNumber - 1 : pageNumber + 1;
+    const nextPageNumber = type === "prev" ? pageNumber - 1 : pageNumber + 1;
+
+    const value = nextPageNumber > 1 ? nextPageNumber.toString() : null;
 
     const newUrl = formUrlQuery({
       params: searchParams.toString(),
       key: "page",
-      value: nextPageNumber.toString(), // updating the value based on the nextPageNumber
+      value,
     });
 
     router.push(newUrl); // we dont put scroll:false here since we do want to be scrolled back to the top
@@ -54,6 +55,6 @@ const Pagination = ({ pageNumber, isNext }: Props) => {
       </Button>
     </div>
   );
-};
+}
 
 export default Pagination;

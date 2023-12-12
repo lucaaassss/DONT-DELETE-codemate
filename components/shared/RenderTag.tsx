@@ -7,27 +7,29 @@ interface Props {
   _id: string;
   name: string;
   totalQuestions?: number; // the question symbol ? means that it is optional
-  showCount?: boolean;
+  showCount?: boolean; // the question symbol ? means that it is optional
 }
 
 // meaning that it will be a type of Props,we can name it whatever we want
 const RenderTag = ({ _id, name, totalQuestions, showCount }: Props) => {
   return (
-    <Link
-      href={`/tags/${_id}`}
-      key={_id}
-      className="flex justify-between gap-2"
-    >
-      {/* meaning that the link will change based on the id */}
-      <Badge className="subtle-medium background-light800_dark300 text-light400_light500 rounded-md border-none px-4 py-2 uppercase">
-        {name}
-      </Badge>
+    <>
+      <Link
+        href={`/tags/${_id}`}
+        key={_id}
+        className="flex justify-between gap-2"
+      >
+        {/* meaning that the link will change based on the id */}
+        <Badge className="subtle-medium background-light800_dark300 text-light400_light500 rounded-md border-none px-4 py-2 uppercase">
+          {name}
+        </Badge>
 
-      {/* if variable showCount is available,then we display totalQuestions */}
-      {showCount && (
-        <p className="small-medium text-dark500_light700">{totalQuestions}</p>
-      )}
-    </Link>
+        {/* if variable showCount is available,then we display totalQuestions */}
+        {showCount && (
+          <p className="small-medium text-dark500_light700">{totalQuestions}</p>
+        )}
+      </Link>
+    </>
   );
 };
 
