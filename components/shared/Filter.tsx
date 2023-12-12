@@ -39,7 +39,7 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
   return (
     <div className={`relative ${containerClasses}`}>
       <Select
-        onValueChange={handleUpdateParams}
+        onValueChange={(value) => handleUpdateParams(value)}
         defaultValue={paramFilter || undefined} // default value can be according to the filter option selected or undefined
       >
         <SelectTrigger
