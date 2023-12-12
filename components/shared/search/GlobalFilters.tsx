@@ -13,11 +13,12 @@ const GlobalFilters = () => {
   const [active, setActive] = useState(typeParams || "");
 
   const handleTypeClick = (item: string) => {
+    let newUrl = "";
     // once we cick something,we get the item that we clicked on which is a type string
     if (active === item) {
       // if the user click the same filter option again,meaning they want to turn it off
       setActive(""); // changing the colour of the filter option clicked.setActive to empty string since it is turned off
-      const newUrl = formUrlQuery({
+      newUrl = formUrlQuery({
         // passing everything we need in the new URL
         params: searchParams.toString(), // we also declare params because there could also be existing params in there such as category,filtering,pages,etc so we also want to include it as well in our url
         key: "type", // modifying the type
@@ -28,7 +29,7 @@ const GlobalFilters = () => {
     } else {
       // if the user click one of the the filter option
       setActive(item); // changing the colour of the filter option clicked
-      const newUrl = formUrlQuery({
+      newUrl = formUrlQuery({
         // passing everything we need in the new URL
         params: searchParams.toString(), // we also declare params because there could also be existing params in there such as category,filtering,pages,etc so we also want to include it as well in our url
         key: "type", // clear the type

@@ -31,7 +31,7 @@ const GlobalSearch = () => {
       if (
         searchContainerRef.current &&
         // @ts-ignore
-        !searchContainerRef.current.contains(event.target) // meaning that if the user click somewhere else outside the searchbar box
+        !searchContainerRef.current?.contains(event.target) // meaning that if the user click somewhere else outside the searchbar box
       ) {
         setIsOpen(false); // close the searchbar box
         setSearch(""); // clear the search
@@ -73,7 +73,7 @@ const GlobalSearch = () => {
       }
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn); // If any of the useEffect dependencies change, the cleanup function will be called before the new setTimeout is set up. This ensures that if the user interacts with the component (e.g., changes the query) before the 300 milliseconds pass, the previous timeout is canceled, and a new one is scheduled based on the updated state or props.This helps in avoiding unexpected behavior and potential issues
+    return () => clearTimeout(delayDebounceFn); // if any of the useEffect dependencies change, the cleanup function will be called before the new setTimeout is set up. This ensures that if the user interacts with the component (e.g., changes the query) before the 300 milliseconds pass, the previous timeout is canceled, and a new one is scheduled based on the updated state or props.This helps in avoiding unexpected behavior and potential issues
   }, [search, router, pathname, searchParams, query]);
 
   return (
