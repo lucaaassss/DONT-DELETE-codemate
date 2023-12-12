@@ -71,7 +71,7 @@ export async function getQuestions(params: GetQuestionsParams) {
     // so the total would be 25, meaning that 101>25 therefore we will still have next pages
     return { questions, isNext };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching questions:", error);
     throw error;
   }
 }
@@ -141,7 +141,8 @@ export async function createQuestion(params: CreateQuestionParams) {
 
     revalidatePath(path); // to remove the need to reload the homepage everytime a new question is added
   } catch (error) {
-    console.log(error);
+    console.error("Error creating question:", error);
+    throw error;
   }
 }
 
@@ -165,14 +166,14 @@ export async function getQuestionById(params: GetQuestionByIdParams) {
 
     return question;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching question by ID:", error);
     throw error;
   }
 }
 
 export async function upvoteQuestion(params: QuestionVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
 
@@ -184,7 +185,7 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
     } else if (hasdownVoted) {
       updateQuery = {
         $pull: { downvotes: userId }, // pull the specific userId  from the downvotes
-        $push: { upvotes: userId }, // push  the specific userId to the upvotes
+        $addToSet: { upvotes: userId }, // push  the specific userId to the upvotes
         // we undo the downvote and then we upvoted
       };
     } else {
@@ -201,24 +202,24 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
 
     // increment author's reputation by +1 for upvoting a question and -1 for undoing the upvote
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: hasupVoted ? -1 : 1 },
+      $inc: { reputation: hasupVoted ? -1 : +1 },
     });
 
     // increment author's reputation by +10 for receiving an upvote to the question they created or -10 for receiving a downvote for the question they created
     await User.findByIdAndUpdate(question.author, {
-      $inc: { reputation: hasupVoted ? -10 : 10 },
+      $inc: { reputation: hasupVoted ? -10 : +10 },
     });
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error upvoting question:", error);
     throw error;
   }
 }
 
 export async function downvoteQuestion(params: QuestionVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
 
@@ -230,7 +231,7 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     } else if (hasupVoted) {
       updateQuery = {
         $pull: { upvotes: userId }, // pull the specific userId  from the upvotes
-        $push: { downvotes: userId }, // push  the specific userId to the downvotes
+        $addToSet: { downvotes: userId }, // push  the specific userId to the downvotes
         // we undo the upvote and then we downvoted
       };
     } else {
@@ -248,28 +249,28 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     // increment author's reputation
     // downvoting or undoing the downvote for other people's answer
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: hasdownVoted ? -2 : 2 },
+      $inc: { reputation: hasdownVoted ? +1 : -1 },
     });
 
-    // receiving upvote from other users
+    // receiving downvote from other users
     await User.findByIdAndUpdate(question.author, {
-      $inc: { reputation: hasdownVoted ? -10 : 10 },
+      $inc: { reputation: hasdownVoted ? +10 : -10 },
     });
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error downvoting question:", error);
     throw error;
   }
 }
 
 export async function deleteQuestion(params: DeleteQuestionParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { questionId, path } = params;
 
-    await Question.deleteOne({ _id: questionId });
+    await Question.deleteOne({ _id: questionId }); // delete the question
     await Answer.deleteMany({ question: questionId }); // delete all answers associated with the question
     await Interaction.deleteMany({ question: questionId }); // delete all interaction associated with the question
     await Tag.updateMany(
@@ -279,14 +280,14 @@ export async function deleteQuestion(params: DeleteQuestionParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting question:", error);
     throw error;
   }
 }
 
 export async function editQuestion(params: EditQuestionParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { questionId, title, content, tags, path } = params;
 
@@ -296,6 +297,7 @@ export async function editQuestion(params: EditQuestionParams) {
       throw new Error("Question not found");
     }
 
+    // update question fields
     question.title = title; // update the title
     question.content = content; // update the content
 
@@ -360,7 +362,7 @@ export async function editQuestion(params: EditQuestionParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error editing question:", error);
     throw error;
   }
 }
@@ -368,7 +370,7 @@ export async function editQuestion(params: EditQuestionParams) {
 export async function getHotQuestions() {
   // this function does not need a param since our question already has views and upvotes which we can make use of
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const hotQuestions = await Question.find({}) // once it connect to the database we will find question and sort it according to views and upvotes
       .sort({ views: -1, upvotes: -1 }) // will sort in a descending order meaning that the hottest questions will be at the top
@@ -376,7 +378,7 @@ export async function getHotQuestions() {
 
     return hotQuestions;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching hot questions:", error);
     throw error;
   }
 }

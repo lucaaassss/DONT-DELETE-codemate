@@ -52,8 +52,8 @@ export async function globalSearch(params: SearchParams) {
               type === "user"
                 ? item.clerkid
                 : type === "answer"
-                ? item.question
-                : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have
+                  ? item.question
+                  : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have
           }))
         );
       }
@@ -81,14 +81,14 @@ export async function globalSearch(params: SearchParams) {
           type === "user"
             ? item.clerkid
             : type === "answer"
-            ? item.question
-            : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have
+              ? item.question
+              : item._id, // if the type is user,return clerkId.If else the type is answer,return question since it contain the id of the item.Else,return item id.This just has to do on how we store id in different properties that we have
       }));
     }
 
     return JSON.stringify(results);
-  } catch (error) {
-    console.log(`Error fetching global results, ${error}`);
+  } catch (error: any) {
+    console.error("Error fetching search results:", error.message);
     throw error;
   }
 }
