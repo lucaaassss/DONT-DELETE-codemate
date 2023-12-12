@@ -6,16 +6,16 @@ export interface ITag extends Document {
   name: string;
   description: string;
   questions: Schema.Types.ObjectId[];
-  Followers: Schema.Types.ObjectId[]; // allow us to follow a specific tag
-  createdOn: Date;
+  followers: Schema.Types.ObjectId[]; // allow us to follow a specific tag
+  createdAt: Date;
 }
 
 const TagSchema = new Schema({
   name: { type: String, required: true, unique: true },
-  description: { type: String, required: true },
+  description: { type: String },
   questions: [{ type: Schema.Types.ObjectId, ref: "Question" }],
   followers: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  createdOn: { type: Date, default: Date.now },
+  createdAt: { type: Date, default: Date.now },
 });
 
 // turning the schema into a model

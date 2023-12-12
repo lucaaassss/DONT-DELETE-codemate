@@ -1,4 +1,4 @@
-import { Schema, models, model, Document } from "mongoose";
+import { Schema, models, model, Document, Date } from "mongoose";
 
 // Schema.Types.ObjectId means a connection/reference to another model in the database since the Interactions will have its own model
 // some will be an array because it will have high quantities and some dont
