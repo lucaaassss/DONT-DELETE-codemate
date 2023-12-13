@@ -59,22 +59,22 @@ const Support = () => {
       className="max-container background-light900_dark300 relative flex flex-col lg:flex-row"
       style={{ minHeight: "100px" }}
     >
-      <div className="flex min-w-[50%] flex-1 flex-col">
-        <h1 className="head-text">Let&apos;s hear it from you!</h1>
-        <div>
+      <div className="mt-[-100px] flex min-w-[50%] flex-1 flex-col">
+        <div className="flex flex-wrap items-center justify-center">
+          <h1 className="head-text">Let&apos;s hear it from you!</h1>
           <Image
             src="/assets/images/codematerobotpng.png"
             alt="Codemate robot"
-            width={30}
-            height={30}
-            className="object-contain "
+            width={170}
+            height={170}
+            className="mb-10 ml-[-15px] object-contain"
           />
         </div>
         <form
           onSubmit={sendmail}
-          className="background-light900_dark300 mt-14 flex w-full flex-col gap-7"
+          className="background-light900_dark300 mt-[-30px] flex w-full flex-col gap-7"
         >
-          <p className="body-regular text-dark-300 dark:text-white">
+          <p className="body-medium mt-2 text-dark-300 dark:text-white">
             Here at Codemate we aim to make your experience awesome. Got
             questions or suggestions? Let us know through the form below — your
             input matters!
