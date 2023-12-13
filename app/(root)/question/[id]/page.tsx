@@ -42,8 +42,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
             <Image
               src={result.author.picture}
               className="rounded-full"
-              width={22}
-              height={22}
+              width={35}
+              height={35}
               alt="profile"
             />
             <p className="paragraph-semibold text-dark300_light700">
@@ -56,9 +56,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
               itemId={JSON.stringify(result._id)}
               userId={JSON.stringify(mongoUser._id)}
               upvotes={result.upvotes.length} // to display the number of upvotes
-              hasupVoted={result.upvotes.includes(mongoUser._id)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
+              hasupVoted={result.upvotes.includes(mongoUser?._id)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
               downvotes={result.downvotes.length}
-              hasdownVoted={result.downvotes.includes(mongoUser._id)}
+              hasdownVoted={result.downvotes.includes(mongoUser?._id)}
               hasSaved={mongoUser?.saved.includes(result._id)} // to check if the save array under a specific array includes the id of the question
             />
           </div>
@@ -110,7 +110,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
       {/* existing answers */}
       <AllAnswers
         questionId={result._id}
-        userId={mongoUser._id}
+        userId={mongoUser?._id}
         totalAnswers={result.answers.length}
         page={searchParams?.page}
         filter={searchParams?.filter}
@@ -120,7 +120,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
       <Answer
         question={result.content}
         questionId={JSON.stringify(result._id)}
-        authorId={JSON.stringify(mongoUser._id)}
+        authorId={JSON.stringify(mongoUser?._id)}
       />
     </>
   );

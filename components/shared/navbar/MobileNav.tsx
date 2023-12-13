@@ -9,12 +9,13 @@ import {
 } from "@/components/ui/sheet";
 import Image from "next/image";
 import Link from "next/link";
-import { SignedOut } from "@clerk/nextjs";
+import { SignedOut, useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { sidebarLinks } from "@/constants";
 import { usePathname } from "next/navigation";
 
 const NavContent = () => {
+  const { userId } = useAuth();
   const pathname = usePathname();
   // this component will be reused across the application
   return (
@@ -29,17 +30,23 @@ const NavContent = () => {
         // Check if the route is "/premium" and apply gold color if it's active
         const isPremiumActive = isActive && item.route === "/premium";
 
+        if (item.route === "/profile") {
+          if (userId) item.route = `${item.route}/${userId}`;
+          else return null;
+        }
+
         return (
           <SheetClose asChild key={item.route}>
             {/* asChild means we will pass something into it so that it will show that something */}
             <Link
               href={item.route}
+              key={item.label}
               className={`${
                 isPremiumActive
                   ? "premium-gradient rounded-lg text-light-900"
                   : isActive
-                  ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
-                  : "text-dark300_light900"
+                    ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
+                    : "text-dark300_light900"
               } flex items-center justify-start gap-4 bg-transparent p-4`}
             >
               <Image
@@ -56,8 +63,8 @@ const NavContent = () => {
                   isPremiumActive
                     ? "base-bold"
                     : isActive
-                    ? "base-bold"
-                    : "base-medium"
+                      ? "base-bold"
+                      : "base-medium"
                 }`}
               >
                 {item.label}
@@ -81,7 +88,10 @@ const MobileNav = () => {
           className="invert-colors sm:hidden"
         />
       </SheetTrigger>
-      <SheetContent side="left">
+      <SheetContent
+        side="left"
+        className="background-light900_dark200 border-none"
+      >
         <Link href="/" className="flex items-center gap-1">
           <Image
             src="/assets/images/site-logo.svg"
@@ -94,7 +104,8 @@ const MobileNav = () => {
             <span className="text-purple-500 dark:text-purple-300">mate</span>
           </p>
         </Link>
-        <div>
+        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
+          {/* allows scroll for left sidebar */}
           <SheetClose asChild>
             <NavContent />
           </SheetClose>
@@ -102,7 +113,7 @@ const MobileNav = () => {
             <div className="flex flex-col gap-3">
               <SheetClose asChild>
                 <Link href="/sign-in">
-                  <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+                  <Button className="small-medium btn-secondary mt-7 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
                     <span className="text-white dark:text-dark-300">
                       Log In
                     </span>
@@ -112,7 +123,7 @@ const MobileNav = () => {
 
               <SheetClose asChild>
                 <Link href="/sign-up">
-                  <Button className="small-medium light-border-2 btn-tertiary min-h-[41px] w-full rounded-lg px-4 py-3 text-purple-600 shadow-none dark:text-dark-300">
+                  <Button className="small-medium btn-tertiary min-h-[41px] w-full rounded-lg px-4 py-3 text-purple-600 shadow-none dark:text-dark-300">
                     Sign Up
                   </Button>
                 </Link>

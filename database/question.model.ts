@@ -22,7 +22,7 @@ const QuestionSchema = new Schema({
   views: { type: Number, default: 0 }, // set the initial value of the views to 0
   upvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   downvotes: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  author: { type: Schema.Types.ObjectId, ref: "User" },
+  author: { type: Schema.Types.ObjectId, ref: "User", required: true },
   answers: [{ type: Schema.Types.ObjectId, ref: "Answer" }],
   createdAt: { type: Date, default: Date.now },
 });

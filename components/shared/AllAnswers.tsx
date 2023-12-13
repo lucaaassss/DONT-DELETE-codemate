@@ -13,8 +13,8 @@ interface Props {
   questionId: string;
   userId: string;
   totalAnswers: number;
-  page?: string;
-  filter?: string;
+  page: string | undefined;
+  filter: string | undefined;
 }
 const AllAnswers = async ({
   questionId,
@@ -32,9 +32,7 @@ const AllAnswers = async ({
     <div className="mt-11">
       <div className="flex items-center justify-between">
         <h3 className="base-semibold text-purple-950 dark:text-purple-200">
-          {totalAnswers !== 1
-            ? `${totalAnswers} Answers`
-            : `${totalAnswers} Answer`}{" "}
+          {totalAnswers} Answers
         </h3>
 
         <Filter filters={AnswerFilters} />
@@ -48,6 +46,10 @@ const AllAnswers = async ({
               key={answer._id}
               className=" text-dark300_light700 mt-7 w-full rounded-2xl bg-white px-7 py-10 dark:bg-black"
             >
+              <span
+                id={JSON.stringify(answer._id)}
+                className="hash-span"
+              ></span>
               <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
                 {/* showing the author of the answer */}
                 <Link
@@ -56,18 +58,18 @@ const AllAnswers = async ({
                 >
                   <Image
                     src={answer.author.picture}
-                    width={18}
-                    height={18}
+                    width={35}
+                    height={35}
                     alt="profile"
-                    className="rounded-full object-cover max-sm:mt-0.5"
+                    className="mr-[2px] rounded-full object-cover max-sm:mt-0.5"
                   />
-                  <div className="flex flex-col sm:flex-row sm:items-center">
+                  <div className="flex-col sm:flex-row sm:items-center">
                     <p className="body-semibold text-dark300_light700">
                       {answer.author.name}
                     </p>
 
                     <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
-                      {"  "} - answered {getTimeStamp(answer.createdAt)}
+                      {"  "}answered {getTimeStamp(answer.createdAt)}
                     </p>
                   </div>
                 </Link>
@@ -88,7 +90,7 @@ const AllAnswers = async ({
           )
         )}
       </div>
-      <div className="mt-10 w-full">
+      <div className="my-10 w-full">
         <Pagination
           pageNumber={page ? +page : 1} // we do +searchParams because thing from searchParams is usually in string so we want to convert it into a number
           isNext={result.isNextAnswer}

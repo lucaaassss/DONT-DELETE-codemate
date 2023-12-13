@@ -24,11 +24,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         window.matchMedia("(prefers-color-scheme:dark)").matches)
     ) {
       // check if theme is in dark mode or does not exist in local storage and figuring out if the user's operating system prefers the dark mode
-      setMode("dark");
       document.documentElement.classList.add("dark"); // set the mode to dark and add it to the class list of the browser
+      setMode("dark");
     } else {
-      setMode("light");
       document.documentElement.classList.remove("dark"); // remove the dark version
+      setMode("light");
     }
   };
 
@@ -45,7 +45,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function useTheme() {
+export function useTheme(): ThemeContextType {
   const context = useContext(ThemeContext);
 
   if (context === undefined) {

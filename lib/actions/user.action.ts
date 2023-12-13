@@ -20,6 +20,7 @@ import Tag from "@/database/tag.model";
 import Answer from "@/database/answer.model";
 import { BadgeCriteriaType } from "@/types";
 import { assignBadges } from "../utils";
+import Interaction from "@/database/interaction.model";
 
 export async function getUserById(params: any) {
   try {
@@ -33,7 +34,7 @@ export async function getUserById(params: any) {
 
     return user;
   } catch (error) {
-    console.log(error);
+    console.error("Error getting user by ID:", error);
     throw error;
   }
 }
@@ -46,7 +47,7 @@ export async function createUser(userData: CreateUserParams) {
 
     return newUser;
   } catch (error) {
-    console.log(error);
+    console.error("Error creating user:", error);
     throw error;
   }
 }
@@ -61,7 +62,7 @@ export async function updateUser(params: UpdateUserParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error updating user:", error);
     throw error;
   }
 }
@@ -72,30 +73,66 @@ export async function deleteUser(params: DeleteUserParams) {
 
     const { clerkId } = params;
 
-    const user = await User.findOneAndDelete({ clerkId });
+    const user = await User.findOne({ clerkId });
 
     // if user does not exist
     if (!user) {
       throw new Error("User not found");
     }
 
-    // if the user exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
-
     // get user's question id
     const userQuestionIds = await Question.find({ author: user._id }).distinct(
       "_id"
     ); // distinct will return distinct values of the given field that matches the filter
 
-    // deleting the questions made
+    // if the user exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
+
+    // deleting all questions asked by the user
     await Question.deleteMany({ author: user._id });
 
-    // TODO: delete user answers,comments,etc.
+    // delete all answers given by the user
+    await Answer.deleteMany({ author: user._id });
 
+    // delete the answers created by other users on questions created by the user
+    await Answer.deleteMany({ question: { $in: userQuestionIds } });
+
+    // remove user reference from upvotes and downvotes on questions
+    await Question.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
+    );
+
+    await Question.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
+
+    // remove user reference from upvotes and downvotes on answers
+    await Answer.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
+    );
+
+    await Answer.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
+
+    // delete interactions involving the user
+    await Interaction.deleteMany({ user: user._id });
+
+    // update tags to remove references to the user's questions
+    await Tag.updateMany(
+      { questions: { $in: userQuestionIds } },
+      { $pull: { questions: { $in: userQuestionIds } } }
+    );
+
+    // delete the user
     const deletedUser = await User.findByIdAndDelete(user._id);
 
     return deletedUser;
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting user:", error);
     throw error;
   }
 }
@@ -145,7 +182,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 
     return { users, isNext };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching users:", error);
     throw error;
   }
 }
@@ -153,7 +190,7 @@ export async function getAllUsers(params: GetAllUsersParams) {
 // this action is in user action because each user will have different saved question
 export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { userId, questionId, path } = params;
 
@@ -181,7 +218,7 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error toggling saved question:", error);
     throw error;
   }
 }
@@ -189,7 +226,7 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 // this action is in user action because each user will have different saved question
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { clerkId, searchQuery, filter, page = 1, pageSize = 3 } = params;
 
@@ -236,24 +273,24 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       ],
     });
 
-    const isNext = user.saved.length > pageSize; // to find out if the total number of saved questions is greater than page size
-
     if (!user) {
       throw new Error("User not found");
     }
 
-    const savedQuestions = user.saved; // extracting the user's saved question
+    const savedQuestions = user.saved.slice(0, pageSize); // extracting the user's saved question
+
+    const isNext = user.saved.length > pageSize; // to find out if the total number of saved questions is greater than page size
 
     return { questions: savedQuestions, isNext }; // return question that is saved
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching saved questions:", error);
     throw error;
   }
 }
 
 export async function getUserInfo(params: GetUserByIdParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { userId } = params;
     const user = await User.findOne({ clerkId: userId });
@@ -297,7 +334,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
       },
     ]);
 
-    const [questionViews] = await Answer.aggregate([
+    const [questionViews] = await Question.aggregate([
       { $match: { author: user._id } },
       {
         $group: {
@@ -334,14 +371,14 @@ export async function getUserInfo(params: GetUserByIdParams) {
       reputation: user.reputation,
     };
   } catch (error) {
-    console.log(error);
+    console.error("Error getting user info:", error);
     throw error;
   }
 }
 
 export async function getUserQuestions(params: GetUserStatsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { userId, page = 1, pageSize = 3 } = params;
 
@@ -362,14 +399,14 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 
     return { totalQuestions, questions: userQuestions, isNextQuestions };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching user questions:", error);
     throw error;
   }
 }
 
 export async function getUserAnswers(params: GetUserStatsParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { userId, page = 1, pageSize = 3 } = params;
 
@@ -383,14 +420,17 @@ export async function getUserAnswers(params: GetUserStatsParams) {
       .sort({ upvotes: -1 }) // sort the questions by the highest upvotes
       .skip(skipAmount)
       .limit(pageSize)
-      .populate("question", "_id title") // populate the question with id and title
+      .populate({
+        path: "question",
+        select: "_id title",
+      }) // populate the question with id and title
       .populate("author", "_id clerkId name picture"); // populate the author with id,clerkId,name, and picture
 
     const isNextAnswer = totalAnswers > skipAmount + userAnswers.length;
 
     return { totalAnswers, answers: userAnswers, isNextAnswer };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching user answers:", error);
     throw error;
   }
 }

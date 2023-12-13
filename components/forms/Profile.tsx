@@ -18,6 +18,8 @@ import { useState } from "react";
 import { ProfileSchema } from "@/lib/validations";
 import { usePathname, useRouter } from "next/navigation";
 import { updateUser } from "@/lib/actions/user.action";
+import { toast } from "../ui/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   clerkId: string;
@@ -45,6 +47,7 @@ const Profile = ({ clerkId, user }: Props) => {
   // 2. Define a submit handler.
   // once we click the submit button it will run this function
   async function onSubmit(values: z.infer<typeof ProfileSchema>) {
+    setIsSubmitting(true);
     try {
       await updateUser({
         clerkId,
@@ -57,9 +60,18 @@ const Profile = ({ clerkId, user }: Props) => {
         },
         path: pathname,
       });
+
+      toast({
+        title: "Profile Updated",
+        description: "Profile information has been successfully updated.",
+      });
+
       router.back(); // the user can see that they updated their profile
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with the request.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -159,6 +171,7 @@ const Profile = ({ clerkId, user }: Props) => {
               </FormLabel>
               <FormControl>
                 <Textarea
+                  rows={5}
                   placeholder="Enter bio"
                   className="no-focus paragraph-regular background-light700_dark300 text-dark300_light700 min-h-[56px]"
                   {...field}
@@ -175,7 +188,14 @@ const Profile = ({ clerkId, user }: Props) => {
             className="primary-gradient dark:primary-gradient-dark w-fit text-white"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Saving..." : "Save"}
+            {isSubmitting ? (
+              <>
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              <>Save</>
+            )}
           </Button>
         </div>
       </form>

@@ -1,12 +1,12 @@
-import { Schema, models, model, Document } from "mongoose";
+import { Schema, models, model, Document, Date } from "mongoose";
 
 // Schema.Types.ObjectId means a connection/reference to another model in the database since the Interactions will have its own model
 // some will be an array because it will have high quantities and some dont
 export interface IInteraction extends Document {
   user: Schema.Types.ObjectId; // which user did the interaction
   action: string;
-  question: Schema.Types.ObjectId; // user might have interact with question
-  answer: Schema.Types.ObjectId; // user might have interact with answer
+  question: Schema.Types.ObjectId[]; // user might have interact with question
+  answer: Schema.Types.ObjectId[]; // user might have interact with answer
   tags: Schema.Types.ObjectId[]; // user might have interact with tag.Tag is an array because we can have multiple tags to each question or answer
   createdAt: Date; // when did the interaction happen
 }

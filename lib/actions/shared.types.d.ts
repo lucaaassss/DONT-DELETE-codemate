@@ -31,7 +31,7 @@ export interface DeleteAnswerParams {
 }
 
 export interface SearchParams {
-  query?: string | null;
+  query: string;
   type?: string | null;
 }
 
@@ -88,6 +88,7 @@ export interface EditQuestionParams {
   questionId: string;
   title: string;
   content: string;
+  tags: string[];
   path: string;
 }
 

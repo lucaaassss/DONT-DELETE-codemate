@@ -192,7 +192,7 @@
   }
 
   .question-details {
-    @apply text-white dark:bg-slate-700 dark:text-dark-300 bg-slate-400/80 !important;
+    @apply text-white dark:bg-purple-950 dark:text-dark-300 bg-purple-200 !important;
   }
 
   .primary-gradient {
@@ -207,7 +207,7 @@
     background: linear-gradient(129deg, #a453d3 0%, rgb(214, 142, 251) 100%);
   }
   .premium-gradient {
-    background: linear-gradient(45deg, #efc82b 0%, #ffe872 100%);
+    background: linear-gradient(45deg, #e2b709 0%, #ffe872 100%);
   }
 
   .dark-gradient {

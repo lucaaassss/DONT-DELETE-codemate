@@ -15,7 +15,7 @@ interface MetricProps {
   textStyles?: string;
   isAuthor?: boolean;
 }
-const Metric = ({
+export const Metric = ({
   imgUrl,
   alt,
   value,

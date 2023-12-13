@@ -10,27 +10,36 @@ import {
 import Tag, { ITag } from "@/database/tag.model";
 import Question from "@/database/question.model";
 import { FilterQuery } from "mongoose";
+import Interaction from "@/database/interaction.model";
 
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
   try {
     connectToDatabase();
 
-    const { userId } = params;
+    const { userId, limit = 3 } = params;
 
+    // find the user by clerkId
     const user = await User.findById(userId);
 
     if (!user) throw new Error("User not found");
 
     // find interactions for the user and group by tags
-    // interactions..
+    const tagCountMap = await Interaction.aggregate([
+      { $match: { user: user._id, tags: { $exists: true, $ne: [] } } },
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: limit },
+    ]);
 
-    return [
-      { _id: "1", name: "NEXT.JS" },
-      { _id: "2", name: "REACT" },
-      { _id: "3", name: "CSS" },
-    ];
+    const topTags = tagCountMap.map((tagCount) => tagCount._id);
+
+    // find the tag documents for the top tags
+    const topTagDocuments = await Tag.find({ _id: { $in: topTags } });
+
+    return topTagDocuments;
   } catch (error) {
-    console.log(error);
+    console.log("Error fetching top interacted tags:", error);
     throw error;
   }
 }
@@ -48,11 +57,11 @@ export async function getAllTags(params: GetAllTagsParams) {
       query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
     }
 
-    let sortOptions = {};
+    let sortOptions: any = {};
 
     switch (filter) {
       case "popular":
-        sortOptions = { questions: -1 };
+        sortOptions = { questions: 1 };
         break;
       case "recent":
         sortOptions = { createdAt: -1 };
@@ -67,6 +76,9 @@ export async function getAllTags(params: GetAllTagsParams) {
         break;
     }
 
+    // modify the query to include tags with non-empty questions array
+    query.questions = { $exists: true, $not: { $size: 0 } };
+
     const totalTags = await Tag.countDocuments(query);
 
     const tags = await Tag.find(query)
@@ -78,20 +90,22 @@ export async function getAllTags(params: GetAllTagsParams) {
 
     return { tags, isNext };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching tags:", error);
     throw error;
   }
 }
 
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { tagId, page = 1, pageSize = 3, searchQuery } = params;
     const skipAmount = (page - 1) * pageSize;
 
+    // create a filter for the tag by ID
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
 
+    // find the tag by ID and populate the questions field
     const tag = await Tag.findOne(tagFilter).populate({
       path: "questions",
       model: Question,
@@ -99,13 +113,12 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
         ? { title: { $regex: searchQuery, $options: "i" } } // pass the searchQuery as the title and set it so it is case insensitive
         : {},
       options: {
-        sort: { createdAt: -1 },
         skip: skipAmount,
-        limit: pageSize + 1, // +1 to check if there is next page
+        limit: pageSize + 1, // +1 to check if there is a next page
       },
       populate: [
-        { path: "tags", model: Tag, select: "_id name" },
-        { path: "author", model: User, select: "_id clerkId name picture" },
+        { path: "tags", model: Tag, select: "_id name" }, // populate the tags field of questions
+        { path: "author", model: User, select: "_id clerkId name picture" }, // populate the author field of questions
       ],
     });
 
@@ -113,20 +126,20 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
       throw new Error("Tag not found");
     }
 
-    const isNext = tag.questions.length > pageSize;
-
     const questions = tag.questions; // return question according to the tag
+
+    const isNext = tag.questions.length > pageSize; // calculate the isNext indicator
 
     return { tagTitle: tag.name, questions, isNext };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching questions by tag ID:", error);
     throw error;
   }
 }
 
 export async function getTopPopularTags() {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     // use the aggregate function to perform aggregation operations on the Tag collection
     // aggregation is a technique used to analyse complex data.In this case we want to analyse the Tag to find how many questions are related to that tag
@@ -145,7 +158,7 @@ export async function getTopPopularTags() {
 
     return popularTags;
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching top popular tags:", error);
     throw error;
   }
 }

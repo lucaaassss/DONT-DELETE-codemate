@@ -37,6 +37,11 @@ const Votes = ({
   const pathname = usePathname();
   const router = useRouter();
   const handleSave = async () => {
+    if (!userId)
+      return toast({
+        title: "Please log in",
+        description: "Log in to perform this action",
+      });
     await toggleSaveQuestion({
       userId: JSON.parse(userId),
       questionId: JSON.parse(itemId),
@@ -55,7 +60,7 @@ const Votes = ({
     if (!userId) {
       return toast({
         title: "Please log in",
-        description: "You must be logged in to perform this action",
+        description: "Log in to perform this action",
       }); // exiting the function.If a user is not logged in, they cant upvote or downvote
     }
 
@@ -115,6 +120,7 @@ const Votes = ({
       questionId: JSON.parse(itemId),
       userId: userId ? JSON.parse(userId) : undefined, // pass the userId if it exists.If not,pass undefined
     });
+    router.refresh();
   }, [itemId, userId, pathname, router]); // will call the useEffect whenever one of these changes
   return (
     <div className="flex gap-5">
@@ -172,7 +178,7 @@ const Votes = ({
           height={21}
           alt="star"
           className="cursor-pointer"
-          onClick={handleSave}
+          onClick={() => handleSave()}
         />
       )}
     </div>

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import RenderTag from "../shared/RenderTag";
 import { Badge } from "../ui/badge";
+import { truncateTag } from "@/lib/utils";
 
 interface Props {
   user: {
@@ -23,7 +24,10 @@ const UserCard = async ({ user }: Props) => {
       className="shadow-light100_darknone w-full max-xs:min-w-full xs:w-[260px]"
     >
       {/* article is used to define a self-contained piece of content, such as a blog post or news article. It helps structure the content in a way that indicates it can be distributed and reused independently of the rest of the page */}
-      <article className="background-light900_dark200  flex w-full flex-col items-center justify-center rounded-2xl p-8">
+      <article
+        key={user._id}
+        className="background-light900_dark200  flex w-full flex-col items-center justify-center rounded-2xl p-8"
+      >
         <Image
           src={user.picture}
           alt="user profile picture"
@@ -45,11 +49,20 @@ const UserCard = async ({ user }: Props) => {
           {interactedTags.length > 0 ? (
             <div className="flex items-center gap-2">
               {interactedTags.map((tag) => (
-                <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
+                <RenderTag
+                  key={tag._id}
+                  _id={tag._id}
+                  name={truncateTag({
+                    name: tag.name,
+                    total: interactedTags.length,
+                  })}
+                />
               ))}
             </div>
           ) : (
-            <Badge>No tags yet</Badge>
+            <Badge className="body-regular text-[18px] text-purple-900 dark:text-purple-400">
+              No Current Tags
+            </Badge>
           )}
         </div>
       </article>

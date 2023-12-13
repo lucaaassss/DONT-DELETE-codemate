@@ -20,7 +20,7 @@ export const getTimeStamp = (createdAt: Date): string => {
 
   const diffMinutes = Math.round(diffSeconds / 60);
   if (diffMinutes < 60) {
-    return `${diffMinutes} mins ago`;
+    return `${diffMinutes} minutes ago`;
   }
 
   const diffHours = Math.round(diffMinutes / 60);
@@ -87,7 +87,7 @@ interface UrlQueryParams {
 }
 
 // function to add or update a key-value pair in the URL query
-export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
+export function formUrlQuery({ params, key, value }: UrlQueryParams) {
   // parse the existing URL query parameters into an object
   const currentUrl = qs.parse(params);
 
@@ -102,7 +102,7 @@ export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
     },
     { skipNull: true } // skip null values in the query parameters
   );
-};
+}
 
 // define the shape of the parameters for removing keys from the URL query
 interface RemoveUrlQueryParams {
@@ -111,10 +111,10 @@ interface RemoveUrlQueryParams {
 }
 
 // function to remove specified keys from the URL query
-export const removeKeysFromQuery = ({
+export function removeKeysFromQuery({
   params,
   keysToRemove,
-}: RemoveUrlQueryParams) => {
+}: RemoveUrlQueryParams) {
   // parse the existing URL query parameters into an object
   const currentUrl = qs.parse(params);
 
@@ -131,7 +131,7 @@ export const removeKeysFromQuery = ({
     },
     { skipNull: true } // skip null values in the query parameters
   );
-};
+}
 
 interface BadgeParam {
   criteria: {
@@ -163,3 +163,20 @@ export function assignBadges(params: BadgeParam) {
 
   return badgeCounts;
 }
+
+interface TruncateParams {
+  name: string;
+  total: number;
+}
+
+export const truncateTag = ({ name, total }: TruncateParams) => {
+  if (total >= 2) {
+    if (name.length > 4) {
+      return `${name.slice(0, 4)}..`;
+    } else {
+      return name;
+    }
+  } else {
+    return name;
+  }
+};

@@ -18,6 +18,15 @@ const Page = async ({ params }: ParamsProps) => {
 
   const mongoUser = await getUserById({ userId }); // passed in an object containing the userId
   const result = await getQuestionById({ questionId: params.id }); // passed in the questionId which has the value of params id
+
+  if (userId !== result.author.clerkId) {
+    return (
+      <p className="base-bold text-dark-300 dark:text-white">
+        You&apos;re not the right person to edit this content
+      </p>
+    );
+  }
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900 mt-5">Edit Question</h1>

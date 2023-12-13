@@ -11,14 +11,17 @@ const HomeFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const [active, setActive] = useState(""); // set the initial state to an empty string
+  const filterParams = searchParams.get("filter");
+
+  const [active, setActive] = useState(filterParams || "");
 
   const handleTypeClick = (item: string) => {
+    let newUrl = "";
     // once we cick something,we get the item that we clicked on which is a type string
     if (active === item) {
       // if the user click the same filter option again,meaning they want to turn it off
       setActive(""); // changing the colour of the filter option clicked.setActive to empty string since it is turned off
-      const newUrl = formUrlQuery({
+      newUrl = formUrlQuery({
         // passing everything we need in the new URL
         params: searchParams.toString(), // we also declare params because there could also be existing params in there such as category,filtering,pages,etc so we also want to include it as well in our url
         key: "filter",
@@ -45,15 +48,14 @@ const HomeFilters = () => {
       {HomePageFilters.map((item) => (
         <Button
           key={item.value}
-          onClick={() => {}}
           className={`body-medium rounded-lg px-6 py-3 capitalize shadow-none ${
             active === item.value
               ? " bg-primary-100 text-purple-600 dark:bg-yellow-500 dark:text-dark-300"
               : "bg-light-800 text-light-500"
           }`}
-          onClickCapture={() => handleTypeClick(item.value)} // call handleTypeClick function and passed item.value
+          onClick={() => handleTypeClick(item.value)} // call handleTypeClick function and passed item.value
         >
-          {item.value}
+          {item.name}
         </Button>
       ))}
     </div>

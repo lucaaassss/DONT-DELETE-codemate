@@ -13,6 +13,8 @@ import QuestionTab from "@/components/shared/QuestionTab";
 import AnswersTab from "@/components/shared/AnswersTab";
 
 import type { Metadata } from "next";
+import { getTopInteractedTags } from "@/lib/actions/tag.actions";
+import RenderTag from "@/components/shared/RenderTag";
 
 export const metadata: Metadata = {
   title: "Profile | Codemate",
@@ -21,6 +23,14 @@ export const metadata: Metadata = {
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
   const userInfo = await getUserInfo({ userId: params.id });
+
+  if (!userInfo.user) return null;
+
+  const interactedTags = await getTopInteractedTags({
+    userId: userInfo.user._id,
+    limit: 5,
+  });
+
   return (
     <>
       <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
@@ -82,7 +92,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
       </div>
       <Stats
-        reputation={userInfo.reputation}
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
         badges={userInfo.badgeCounts}
@@ -97,7 +106,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
               Answers
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="top-posts" className="flex w-full flex-col gap-2">
+          <TabsContent
+            value="top-posts"
+            className="mt-5 flex w-full flex-col gap-2"
+          >
             <QuestionTab
               searchParams={searchParams}
               userId={userInfo.user._id}
@@ -112,6 +124,21 @@ const Page = async ({ params, searchParams }: URLProps) => {
             />
           </TabsContent>
         </Tabs>
+        <div className="flex min-w-[278px] flex-col max-lg:hidden">
+          <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
+
+          <div className="mt-12 flex flex-col gap-4">
+            {interactedTags.map((tag) => (
+              <RenderTag
+                key={tag._id}
+                _id={tag._id}
+                name={tag.name}
+                totalQuestions={tag.questions.length}
+                showCount
+              />
+            ))}
+          </div>
+        </div>
       </div>
     </>
   );

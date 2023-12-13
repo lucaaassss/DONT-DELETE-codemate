@@ -25,7 +25,7 @@ const LeftSidebar = () => {
             (pathname.includes(item.route) && item.route.length > 1) ||
             pathname === item.route; // item.route.length>1 means that if the route exists
 
-          // Check if the route is "/premium" and apply gold color if it's active
+          // check if the route is "/premium" and apply gold color if it is active
           const isPremiumActive = isActive && item.route === "/premium";
 
           if (item.route === "/profile") {
@@ -37,14 +37,14 @@ const LeftSidebar = () => {
           }
           return (
             <Link
-              key={item.route}
+              key={item.label}
               href={item.route}
               className={`${
                 isPremiumActive
                   ? "premium-gradient rounded-lg text-light-900"
                   : isActive
-                  ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
-                  : "text-dark300_light900"
+                    ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
+                    : "text-dark300_light900"
               } flex items-center justify-start gap-4 bg-transparent p-4`}
             >
               <Image
@@ -61,8 +61,8 @@ const LeftSidebar = () => {
                   isPremiumActive
                     ? "base-bold"
                     : isActive
-                    ? "base-bold"
-                    : "base-medium"
+                      ? "base-bold"
+                      : "base-medium"
                 } max-lg:hidden`}
               >
                 {item.label}

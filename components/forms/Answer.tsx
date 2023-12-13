@@ -18,6 +18,8 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
+import { toast } from "../ui/use-toast";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
   question: string;
@@ -40,6 +42,12 @@ const Answer = ({ question, questionId, authorId }: Props) => {
   });
 
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
+    if (!authorId)
+      return toast({
+        title: "Please log in",
+        description: "Log in to post an Answer",
+      });
+
     setIsSubmitting(true);
 
     try {
@@ -57,15 +65,27 @@ const Answer = ({ question, questionId, authorId }: Props) => {
 
         editor.setContent(""); // clear the editor back after submitting
       }
+
+      toast({
+        title: "Answer Posted",
+        description: "Answer successfully posted.",
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description: "There was a problem with the request.",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const generateAIAnswer = async () => {
-    if (!authorId) return; // if author does not exist, exit function
+    if (!authorId)
+      return toast({
+        title: "Please log in",
+        description: "Log in to generate an AI Answer",
+      });
 
     setIsSubmittingAI(true);
 
@@ -91,8 +111,17 @@ const Answer = ({ question, questionId, authorId }: Props) => {
       }
 
       // toast notification
+      toast({
+        title: "AI Answer Generated",
+        description:
+          "The AI has successfully generated an answer based on given query.",
+      });
     } catch (error) {
-      console.log(error);
+      toast({
+        title: "Uh oh! Something went wrong.",
+        description:
+          "There was a problem with user AI request. Take this chance to try to answer it independently!",
+      });
     } finally {
       setIsSubmittingAI(false);
     }
@@ -104,11 +133,15 @@ const Answer = ({ question, questionId, authorId }: Props) => {
           Write Your Answer Here:
         </h4>
         <Button
-          className="btn light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
+          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
           onClick={generateAIAnswer}
+          disabled={isSubmittingAI}
         >
           {isSubmittingAI ? (
-            <>Generating...</>
+            <>
+              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
           ) : (
             <>
               <Image
@@ -188,7 +221,14 @@ const Answer = ({ question, questionId, authorId }: Props) => {
               className="primary-gradient dark:primary-gradient-dark w-fit text-white"
               disabled={isSubmitting} // disabled if isSubmitting is true
             >
-              {isSubmitting ? "Submitting..." : "Submit"}
+              {isSubmitting ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                <>Submit</>
+              )}
             </Button>
           </div>
         </form>

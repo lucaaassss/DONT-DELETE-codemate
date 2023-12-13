@@ -22,24 +22,30 @@ export async function createAnswer(params: CreateAnswerParams) {
     const newAnswer = await Answer.create({ content, author, question });
 
     // add the answer to the question's answer array
-    const questionObject = await Question.findByIdAndUpdate(question, {
-      // question is used as a reference to where to push the answer
-      $push: { answers: newAnswer._id },
-    });
+    // question is used as a reference to where to push the answer
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      question,
+      {
+        $push: { answers: newAnswer._id },
+      },
+      { new: true }
+    );
 
+    // create an Interaction record for the user's answer action
     await Interaction.create({
       user: author,
       action: "answer",
       question,
       answer: newAnswer._id,
-      tags: questionObject.tags,
+      tags: updatedQuestion.tags,
     });
 
+    // increment author's reputation by +10 for creating an answer
     await User.findByIdAndUpdate(author, { $inc: { reputation: 10 } });
 
     revalidatePath(path); // to automatically show the answer without having to reload the page
   } catch (error) {
-    console.log(error);
+    console.error("Error creating answer:", error);
     throw error;
   }
 }
@@ -48,8 +54,14 @@ export async function getAnswers(params: GetAnswersParams) {
   try {
     connectToDatabase();
 
-    const { questionId, sortBy, page = 1, pageSize = 5 } = params;
+    const {
+      questionId,
+      sortBy = "highestUpvotes",
+      page = 1,
+      pageSize = 5,
+    } = params;
 
+    // calculate the number of posts to skip based on the page number and page size
     const skipAmount = (page - 1) * pageSize;
 
     let sortOptions = {};
@@ -72,7 +84,10 @@ export async function getAnswers(params: GetAnswersParams) {
     }
 
     const answers = await Answer.find({ question: questionId })
-      .populate("author", "_id clerkId name picture") // populate the author with id,clerkId,name and picture
+      .populate({
+        path: "author",
+        select: "_id clerkId name picture",
+      }) // populate the author with id,clerkId,name and picture
       .sort(sortOptions)
       .skip(skipAmount)
       .limit(pageSize);
@@ -83,14 +98,14 @@ export async function getAnswers(params: GetAnswersParams) {
 
     return { answers, isNextAnswer };
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching answers:", error);
     throw error;
   }
 }
 
 export async function upvoteAnswer(params: AnswerVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
 
@@ -102,7 +117,7 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
     } else if (hasdownVoted) {
       updateQuery = {
         $pull: { downvotes: userId }, // pull the specific userId  from the downvotes
-        $push: { upvotes: userId }, // push  the specific userId to the upvotes
+        $addToSet: { upvotes: userId }, // add to set  the specific userId to the upvotes
         // we undo the downvote and then we upvoted
       };
     } else {
@@ -119,24 +134,24 @@ export async function upvoteAnswer(params: AnswerVoteParams) {
 
     // upvoting or undoing the upvote for other people's answer
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: hasupVoted ? -2 : 2 },
+      $inc: { reputation: hasupVoted ? -2 : +2 },
     });
 
-    // receiving upvote from othe users
+    // receiving upvote from other users
     await User.findByIdAndUpdate(answer.author, {
-      $inc: { reputation: hasupVoted ? -10 : 10 },
+      $inc: { reputation: hasupVoted ? -2 : +2 },
     });
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error upvoting answer:", error);
     throw error;
   }
 }
 
 export async function downvoteAnswer(params: AnswerVoteParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
 
@@ -148,7 +163,7 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     } else if (hasupVoted) {
       updateQuery = {
         $pull: { upvotes: userId }, // pull the specific userId  from the upvotes
-        $push: { downvotes: userId }, // push  the specific userId to the downvotes
+        $addToSet: { downvotes: userId }, // add to set the specific userId to the downvotes
         // we undo the upvote and then we downvoted
       };
     } else {
@@ -166,49 +181,49 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     // increment author's reputation
     // downvoting or undoing the downvote for other people's answer
     await User.findByIdAndUpdate(userId, {
-      $inc: { reputation: hasdownVoted ? -2 : 2 },
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
     });
 
-    // receiving upvote from other users
+    // receiving downvote from other users
     await User.findByIdAndUpdate(answer.author, {
-      $inc: { reputation: hasdownVoted ? -10 : 10 },
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
     });
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error downvoting answer:", error);
     throw error;
   }
 }
 
 export async function deleteAnswer(params: DeleteAnswerParams) {
   try {
-    connectToDatabase();
+    await connectToDatabase();
 
     const { answerId, path } = params;
 
-    // Find the answer to be deleted
+    // find the answer to be deleted
     const answer = await Answer.findById(answerId);
 
     if (!answer) {
       throw new Error("Answer not found");
     }
 
-    // Delete the answer
+    // delete the answer
     await Answer.deleteOne({ _id: answerId });
 
-    // Remove the answer reference from its question
+    // remove the answer reference from its question
     await Question.updateMany(
       { _id: answer.question },
       { $pull: { answers: answerId } }
     );
 
-    // Delete interactions related to the answer
+    // delete interactions related to the answer
     await Interaction.deleteMany({ answer: answerId });
 
     revalidatePath(path);
   } catch (error) {
-    console.log(error);
+    console.error("Error deleting answer:", error);
     throw error;
   }
 }
