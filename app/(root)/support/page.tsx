@@ -1,19 +1,22 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Button } from "@/components/ui/button";
 import emailjs from "@emailjs/browser";
 import Image from "next/image";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 const Support = () => {
   const nameRef: any = useRef();
   const emailRef: any = useRef();
   const messageRef: any = useRef();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const sendmail = (event: any) => {
+  const sendmail = async (event: any) => {
     event.preventDefault();
+    setIsSubmitting(true);
     // Check if environment variables are defined
     const serviceId = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID;
     const templateId = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID;
@@ -27,9 +30,8 @@ const Support = () => {
       console.error("One or more EmailJS environment variables are missing.");
       return;
     }
-
-    emailjs
-      .send(
+    try {
+      await emailjs.send(
         serviceId,
         templateId,
         {
@@ -40,20 +42,17 @@ const Support = () => {
           message: messageRef.current.value,
         },
         publicKey
-      )
-      .then(
-        () => {
-          toast.success("Message successfully sent!");
-        },
-        (error) => {
-          console.error("Error sending message:", error);
-          toast.error("Unable to send message :(");
-        }
       );
 
-    event.target.reset();
+      toast.success("Message successfully sent!");
+      event.target.reset();
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast.error("Unable to send message");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
-
   return (
     <section
       className="max-container background-light900_dark300 relative flex flex-col lg:flex-row"
@@ -113,8 +112,19 @@ const Support = () => {
               className="textarea"
             />
           </label>
-          <Button className="btnsupport" type="submit">
-            Send
+          <Button
+            className="btnsupport"
+            type="submit"
+            disabled={isSubmitting} // disabled if isSubmitting is true
+          >
+            {isSubmitting ? (
+              <>
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                Submitting...
+              </>
+            ) : (
+              <>Submit</>
+            )}
           </Button>
         </form>
         <div>
