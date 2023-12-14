@@ -128,8 +128,7 @@ const Profile = ({ clerkId, user }: Props) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Portfolio Link{" "}
-                <span className="text-red-500 dark:text-red-300">*</span>
+                Portfolio Link
               </FormLabel>
               <FormControl>
                 <Input
@@ -149,8 +148,7 @@ const Profile = ({ clerkId, user }: Props) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Location{" "}
-                <span className="text-red-500 dark:text-red-300">*</span>
+                Location
               </FormLabel>
               <FormControl>
                 <Input
@@ -169,7 +167,7 @@ const Profile = ({ clerkId, user }: Props) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Bio <span className="text-red-500 dark:text-red-300">*</span>
+                Bio
               </FormLabel>
               <FormControl>
                 <Textarea
