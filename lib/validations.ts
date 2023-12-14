@@ -30,7 +30,7 @@ export const ProfileSchema = z.object({
   username: z
     .string()
     .min(5, "Username must be at least 5 characters long")
-    .max(15, "Username cannot exceed 25 characters"),
+    .max(25, "Username cannot exceed 25 characters"),
   bio: z
     .string()
     .min(10, "Bio must be at least 10 characters long")
@@ -39,7 +39,7 @@ export const ProfileSchema = z.object({
     .or(z.literal("")),
   portfolioWebsite: z
     .string()
-    .url("Invalid URL format for the portfolio website")
+    .url("Invalid URL format")
     .optional()
     .or(z.literal("")),
   location: z
