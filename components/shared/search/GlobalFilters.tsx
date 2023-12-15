@@ -51,7 +51,7 @@ const GlobalFilters = () => {
             className={`light-border-2 small-medium rounded-2xl px-5 py-2 capitalize dark:text-light-800
           ${
             active === item.value
-              ? " bg-primary-100 text-purple-600 dark:bg-yellow-500 dark:text-dark-300"
+              ? " bg-primary-100 text-purple-600 dark:bg-blue-800 dark:text-white"
               : "bg-light-700 text-dark-300 hover:text-purple-900 dark:bg-light-400 dark:hover:text-purple-300"
           }
           
