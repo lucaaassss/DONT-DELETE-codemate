@@ -41,8 +41,8 @@ function Pagination({ pageNumber, isNext }: Props) {
       >
         <p className="body-medium text-dark-300">Prev</p>
       </Button>
-      <div className="flex items-center justify-center rounded-md  bg-primary-100  px-3.5  py-2 dark:bg-yellow-500">
-        <p className="body-semibold text-purple-600 dark:text-dark-300">
+      <div className="flex items-center justify-center rounded-md  bg-primary-100  px-3.5  py-2 dark:bg-blue-800">
+        <p className="body-semibold text-purple-600 dark:text-white">
           {pageNumber}
         </p>
       </div>

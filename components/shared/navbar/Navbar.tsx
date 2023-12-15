@@ -5,6 +5,7 @@ import React from "react";
 import Theme from "./Theme";
 import MobileNav from "./MobileNav";
 import GlobalSearch from "../search/GlobalSearch";
+import Tips from "../Tips";
 
 // Navigation bar or nav bar for short
 const Navbar = () => {
@@ -21,7 +22,12 @@ const Navbar = () => {
           ode<span className="text-purple-500 dark:text-purple-300">mate</span>
         </p>
       </Link>
-      <GlobalSearch />
+
+      <div className="flex flex-1 items-center justify-center">
+        <GlobalSearch />
+      </div>
+      <Tips />
+
       {/* using the GlobalSearch component that we have declared at the components folder */}
       <div className="flex-between gap-5">
         <Theme />
