@@ -78,7 +78,7 @@ const GlobalSearch = () => {
 
   return (
     <div
-      className="relative w-full max-w-[600px] max-lg:hidden"
+      className="relative w-full min-w-[200px] max-w-[600px] max-lg:hidden"
       ref={searchContainerRef}
     >
       <div className="background-light800_darkgradient relative flex min-h-[56px] items-center gap-1 rounded-xl px-4">
