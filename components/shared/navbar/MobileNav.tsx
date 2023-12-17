@@ -104,7 +104,7 @@ const MobileNav = () => {
             <span className="text-purple-500 dark:text-purple-300">mate</span>
           </p>
         </Link>
-        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
+        <div className="custom-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
           {/* allows scroll for left sidebar */}
           <SheetClose asChild>
             <NavContent />
@@ -113,7 +113,7 @@ const MobileNav = () => {
             <div className="flex flex-col gap-3">
               <SheetClose asChild>
                 <Link href="/sign-in">
-                  <Button className="small-medium btn-secondary mt-7 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+                  <Button className="small-medium btn-secondary mt-12 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
                     <span className="text-white dark:text-dark-300">
                       Log In
                     </span>

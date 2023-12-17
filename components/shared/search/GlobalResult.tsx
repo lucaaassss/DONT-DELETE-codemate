@@ -66,7 +66,7 @@ const GlobalResult = () => {
   };
 
   return (
-    <div className="no-scrollbar flex flex-col justify-between overflow-y-auto">
+    <div className="custom-scrollbar flex flex-col justify-between overflow-y-auto">
       {/* z-10 is used to bring the searchbar box forward */}
       <div className="absolute top-full z-10 mt-3 max-h-80 w-full  min-w-[200px]  overflow-y-auto rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
         <GlobalFilters />
