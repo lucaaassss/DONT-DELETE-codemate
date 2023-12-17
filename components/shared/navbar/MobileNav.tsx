@@ -104,7 +104,7 @@ const MobileNav = () => {
             <span className="text-purple-500 dark:text-purple-300">mate</span>
           </p>
         </Link>
-        <div className="custom-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
+        <div className="no-scrollbar flex h-[calc(100vh-80px)] flex-col justify-between overflow-y-auto">
           {/* allows scroll for left sidebar */}
           <SheetClose asChild>
             <NavContent />

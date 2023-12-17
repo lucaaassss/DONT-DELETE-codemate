@@ -16,7 +16,19 @@ const GlobalResult = () => {
   const global = searchParams.get("global"); // for the query that we insert into the search bar
   const type = searchParams.get("type"); // comes from the url.For the filtering in the searchbar box, meaning that we want to know what type are we filtering so that we can fetch it
 
-  const emojis = ["🤖", "😶‍🌫️", "🤯", "🥸", "🥶", "😬", "🔍", "❓"];
+  const emojis = [
+    "🧐",
+    "😶‍🌫️",
+    "🤯",
+    "🥸",
+    "🥶",
+    "😬",
+    "🫨",
+    "🫠",
+    "🤐",
+    "🤥",
+    "🤕",
+  ];
   const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)]; // display random emojis if there is no result
 
   useEffect(() => {
@@ -66,7 +78,7 @@ const GlobalResult = () => {
   };
 
   return (
-    <div className="custom-scrollbar flex flex-col justify-between overflow-y-auto">
+    <div className="no-scrollbar flex flex-col justify-between overflow-y-auto">
       {/* z-10 is used to bring the searchbar box forward */}
       <div className="absolute top-full z-10 mt-3 max-h-80 w-full  min-w-[200px]  overflow-y-auto rounded-xl bg-light-800 py-5 shadow-sm dark:bg-dark-400">
         <GlobalFilters />
@@ -116,7 +128,7 @@ const GlobalResult = () => {
               ) : (
                 <div className="flex-center flex-col px-5">
                   <p className="text-5xl">{randomEmoji}</p>
-                  <p className="text-dark200_light800 body-regular px-5 py-2.5">
+                  <p className="text-dark200_light800 body-regular mt-2 px-5 py-2.5">
                     Oops,no results found!
                   </p>
                 </div>
