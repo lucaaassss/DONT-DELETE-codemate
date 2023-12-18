@@ -15,6 +15,7 @@ import AnswersTab from "@/components/shared/AnswersTab";
 import type { Metadata } from "next";
 import { getTopInteractedTags } from "@/lib/actions/tag.actions";
 import RenderTag from "@/components/shared/RenderTag";
+import { Badge } from "@/components/ui/badge";
 
 export const metadata: Metadata = {
   title: "Profile | Codemate",
@@ -103,7 +104,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
               Top Posts
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
-              Answers
+              Top Answers
             </TabsTrigger>
           </TabsList>
           <TabsContent
@@ -127,17 +128,23 @@ const Page = async ({ params, searchParams }: URLProps) => {
         <div className="flex min-w-[278px] flex-col max-lg:hidden">
           <h3 className="h3-bold text-dark200_light900">Top Tags</h3>
 
-          <div className="mt-12 flex flex-col gap-4">
-            {interactedTags.map((tag) => (
-              <RenderTag
-                key={tag._id}
-                _id={tag._id}
-                name={tag.name}
-                totalQuestions={tag.questions.length}
-                showCount
-              />
-            ))}
-          </div>
+          {interactedTags.length > 0 ? (
+            <div className=" mt-12 flex flex-col gap-4">
+              {interactedTags.map((tag) => (
+                <RenderTag
+                  key={tag._id}
+                  _id={tag._id}
+                  name={tag.name}
+                  totalQuestions={tag.questions.length}
+                  showCount
+                />
+              ))}
+            </div>
+          ) : (
+            <Badge className="ml-[-9px] mt-9 text-[18px] font-bold text-purple-800 dark:text-purple-300">
+              No Current Tags
+            </Badge>
+          )}
         </div>
       </div>
     </>

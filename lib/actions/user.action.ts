@@ -412,12 +412,12 @@ export async function getUserAnswers(params: GetUserStatsParams) {
 
     const skipAmount = (page - 1) * pageSize;
 
-    // count the total questions asked by the user
+    // count the total answers asked by the user
     const totalAnswers = await Answer.countDocuments({ author: userId });
 
-    // display all of the questions asked by the user
+    // display all of the answers asked by the user
     const userAnswers = await Answer.find({ author: userId })
-      .sort({ upvotes: -1 }) // sort the questions by the highest upvotes
+      .sort({ upvotes: -1 }) // sort the answers by the highest upvotes
       .skip(skipAmount)
       .limit(pageSize)
       .populate({
