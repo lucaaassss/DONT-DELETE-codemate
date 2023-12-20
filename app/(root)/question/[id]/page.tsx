@@ -15,6 +15,7 @@ import Link from "next/link";
 import React from "react";
 
 import type { Metadata } from "next";
+import ChatGPTAnswer from "@/components/shared/ChatGPTAnswer";
 
 export const metadata: Metadata = {
   title: "Forum | Codemate",
@@ -107,6 +108,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
         ))}
       </div>
 
+      <ChatGPTAnswer
+        question={result.content}
+        authorId={result.author.clerkId}
+      />
       {/* existing answers */}
       <AllAnswers
         questionId={result._id}
@@ -118,7 +123,6 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
       {/* answer that we can insert */}
       <Answer
-        question={result.content}
         questionId={JSON.stringify(result._id)}
         authorId={JSON.stringify(mongoUser?._id)}
       />

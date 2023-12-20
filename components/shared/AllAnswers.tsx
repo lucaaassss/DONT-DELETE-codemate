@@ -29,7 +29,7 @@ const AllAnswers = async ({
     sortBy: filter,
   });
   return (
-    <div className="mt-11">
+    <div className="mt-[50px]">
       <div className="flex items-center justify-between">
         <h3 className="base-semibold text-purple-950 dark:text-purple-200">
           {totalAnswers} Answers

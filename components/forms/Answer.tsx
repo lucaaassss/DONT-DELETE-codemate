@@ -15,22 +15,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Editor } from "@tinymce/tinymce-react";
 import { useTheme } from "@/context/ThemeProvider";
 import { Button } from "../ui/button";
-import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.action";
 import { usePathname } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import { ReloadIcon } from "@radix-ui/react-icons";
 
 interface Props {
-  question: string;
   questionId: string;
   authorId: string;
 }
 
-const Answer = ({ question, questionId, authorId }: Props) => {
+const Answer = ({ questionId, authorId }: Props) => {
   const pathname = usePathname();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
+
   const { mode } = useTheme();
   const editorRef = useRef(null);
   // this code for the form is retrieved from the shadcn documentation for form
@@ -80,82 +78,11 @@ const Answer = ({ question, questionId, authorId }: Props) => {
     }
   };
 
-  const generateAIAnswer = async () => {
-    if (!authorId)
-      return toast({
-        title: "Please log in",
-        description: "Log in to generate an AI Answer",
-      });
-
-    setIsSubmittingAI(true);
-
-    try {
-      // make API call to API endpoint
-      // we put env here because we want our API to work in both localhost and deployes website
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
-        {
-          method: "POST",
-          body: JSON.stringify({ type: "qna", question }), // passing the question to the AI. Refer app>api>chatgpt>route.ts
-        }
-      );
-
-      const aiAnswer = await response.json();
-
-      // convert plain text to HTML format
-      const formattedAnswer = aiAnswer.reply.replace(/\n/g, "<br>"); // globally replace each line of the AI answer reply with a break tag
-
-      if (editorRef.current) {
-        const editor = editorRef.current as any;
-        editor.setContent(formattedAnswer); // populate the tiny editor with the formatted answer
-      }
-
-      // toast notification
-      toast({
-        title: "AI Answer Generated",
-        description:
-          "The AI has successfully generated an answer based on given query.",
-      });
-    } catch (error) {
-      toast({
-        title: "Uh oh! Something went wrong.",
-        description:
-          "There was a problem with user AI request. Take this chance to try to answer it independently!",
-      });
-    } finally {
-      setIsSubmittingAI(false);
-    }
-  };
   return (
     <div>
-      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
-        <h4 className=" paragraph-semibold text-dark400_light800 mt-5">
-          Write Your Answer Here:
-        </h4>
-        <Button
-          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
-          onClick={generateAIAnswer}
-          disabled={isSubmittingAI}
-        >
-          {isSubmittingAI ? (
-            <>
-              <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
-              Generating...
-            </>
-          ) : (
-            <>
-              <Image
-                src="/assets/icons/stars.svg"
-                alt="star"
-                width={12}
-                height={12}
-                className="object-contain"
-              />
-              Generate AI Answer
-            </>
-          )}
-        </Button>
-      </div>
+      <h4 className=" paragraph-semibold text-dark400_light800 mt-5">
+        Write Your Answer Here:
+      </h4>
 
       <Form {...form}>
         <form
