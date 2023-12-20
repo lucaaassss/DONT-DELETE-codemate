@@ -1,43 +1,30 @@
-// note:
-// -question was not displayed
-// -havent implement AI feature
-
-"use client";
-
+// this page will render specific question for each tag
 import QuestionCard from "@/components/cards/QuestionCard";
 import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
 import { URLProps } from "@/types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-const Page = ({ params, searchParams }: URLProps) => {
-  const [result, setResult] = useState({
-    tagTitle: "",
-    questions: [],
-    isNext: false,
+import type { Metadata } from "next";
+import AITag from "@/components/shared/AITag";
+
+export const metadata: Metadata = {
+  title: "Tag Details | Codemate",
+};
+
+const Page = async ({ params, searchParams }: URLProps) => {
+  const result = await getQuestionsByTagId({
+    tagId: params.id,
+    page: searchParams.page ? +searchParams.page : 1,
+    searchQuery: searchParams.q, // q as in query
   });
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getQuestionsByTagId({
-          tagId: params.id,
-          page: searchParams.page ? +searchParams.page : 1,
-          searchQuery: searchParams.q,
-        });
-        setResult(data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [params.id, searchParams.page, searchParams.q]);
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">{result.tagTitle}</h1>
+
+      <AITag tag={result.tagTitle} />
 
       <div className="mt-11 w-full">
         <LocalSearchbar
