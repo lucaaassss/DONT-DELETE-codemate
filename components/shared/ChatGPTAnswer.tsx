@@ -2,64 +2,67 @@
 
 import React, { useState } from "react";
 import { toast } from "../ui/use-toast";
+import { Button } from "../ui/button";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { Button } from "../ui/button";
 
 interface Props {
-  tag: string;
+  question: string;
+  authorId: string;
 }
-const AITag = ({ tag }: Props) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tagDescription, setTagDescription] = useState("");
+const ChatGPTAnswer = ({ question, authorId }: Props) => {
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
+  const [AIAnswer, setAIAnswer] = useState("");
 
-  const generateAITagDescription = async () => {
-    setIsSubmitting(true);
+  const generateAIAnswer = async () => {
+    if (!authorId)
+      return toast({
+        title: "Please log in",
+        description: "Log in to generate an AI Answer",
+      });
+
+    setIsSubmittingAI(true);
 
     try {
-      // make API call to API endpoint for tag description generation
+      // make API call to API endpoint
+      // we put env here because we want our API to work in both localhost and deployes website
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
         {
           method: "POST",
-          body: JSON.stringify({
-            type: "tagDescription",
-            tag,
-          }),
+          body: JSON.stringify({ type: "qna", question }), // passing the question to the AI. Refer app>api>chatgpt>route.ts
         }
       );
 
-      const aiTagDescription = await response.json();
+      const aiAnswer = await response.json();
 
-      // set the generated tag description in the state
-      setTagDescription(aiTagDescription.reply);
+      setAIAnswer(aiAnswer.reply);
 
       // toast notification
       toast({
-        title: "AI Tag Description Generated",
-        description: "The AI has successfully generated a tag description.",
+        title: "AI Answer Generated",
+        description:
+          "The AI has successfully generated an answer based on given query.",
       });
     } catch (error) {
-      // handle error and show toast
       toast({
         title: "Uh oh! Something went wrong.",
         description:
-          "There was a problem with the AI request for tag description.",
+          "There was a problem with user AI request. Take this chance to try to answer it independently!",
       });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmittingAI(false);
     }
   };
-
   return (
-    <div>
-      <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+    <div className="gap-5 sm:flex-row sm:items-center sm:gap-2">
+      <div className="flex flex-col items-center justify-center">
         <Button
-          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
-          onClick={generateAITagDescription}
-          disabled={isSubmitting}
+          className="btn-fourth light-border-2 mt-10  gap-1.5 rounded-md px-[100px] py-2.5 text-primary-500 shadow-none dark:text-white"
+          onClick={generateAIAnswer}
+          disabled={isSubmittingAI}
         >
-          {isSubmitting ? (
+          {isSubmittingAI ? (
             <>
               <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
               Generating...
@@ -73,17 +76,16 @@ const AITag = ({ tag }: Props) => {
                 height={12}
                 className="object-contain"
               />
-              Generate AI Tag Description
+              Generate AI Answer
             </>
           )}
         </Button>
       </div>
 
-      {/* Conditionally render the div if there is an AI response */}
-      {tagDescription && (
+      {AIAnswer && (
         <>
           <h4 className="paragraph-semibold text-dark400_light800 mt-5">
-            AI-Generated Tag Description:
+            AI-Generated Answer:
           </h4>
           <div className="mt-4">
             {/* display the generated tag description in a div */}
@@ -98,11 +100,11 @@ const AITag = ({ tag }: Props) => {
                 />
               </div>
               <div className="ml-5">
-                {tagDescription.split("\n").map((line, index) => (
+                {AIAnswer.split("\n").map((line, index) => (
                   <div key={index}>
                     {line}
                     {/* Add a line break after each line except for the last line */}
-                    {index < tagDescription.split("\n").length - 1 && <br />}
+                    {index < AIAnswer.split("\n").length - 1 && <br />}
                   </div>
                 ))}
               </div>
@@ -114,4 +116,4 @@ const AITag = ({ tag }: Props) => {
   );
 };
 
-export default AITag;
+export default ChatGPTAnswer;
