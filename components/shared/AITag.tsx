@@ -87,8 +87,17 @@ const AITag = ({ tag }: Props) => {
           </h4>
           <div className="mt-4">
             {/* display the generated tag description in a div */}
-            <div className="body-regular text-dark400_light800 bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
-              {tagDescription}
+            <div className="body-regular text-dark400_light800 flex bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
+              <div className="ml-[-5px] mt-1 shrink-0">
+                <Image
+                  src="/assets/images/chatgpt.png"
+                  alt="chatgpt"
+                  width={35}
+                  height={35}
+                  className="object-contain"
+                />
+              </div>
+              <div className="ml-5">{tagDescription}</div>
             </div>
           </div>
         </>
