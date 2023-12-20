@@ -8,6 +8,7 @@ import { URLProps } from "@/types";
 import React from "react";
 
 import type { Metadata } from "next";
+import AITag from "@/components/shared/AITag";
 
 export const metadata: Metadata = {
   title: "Tag Details | Codemate",
@@ -22,6 +23,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">{result.tagTitle}</h1>
+
+      <AITag tag={result.tagTitle} />
 
       <div className="mt-11 w-full">
         <LocalSearchbar
