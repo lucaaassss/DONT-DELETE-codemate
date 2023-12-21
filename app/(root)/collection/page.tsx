@@ -70,7 +70,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           <NoResult
             title="There are no saved questions to show"
             description="
-            Your question collection is currently an open canvas waiting to be filled! Dive into the excitement and start saving questions that really spark your curiosity!🎨✨ "
+            Your question collection is a canvas awaiting your touch! Dive in, whether it's a blank slate or you're on a quest for specific questions. Let the curiosity flow! 🎨✨ "
             link="/"
             linkTitle="Explore Questions"
           />

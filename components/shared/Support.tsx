@@ -74,9 +74,10 @@ const Support = () => {
           className="background-light900_dark300 mt-[-30px] flex w-full flex-col gap-7"
         >
           <p className="body-medium mt-2 text-dark-300 dark:text-white">
-            Here at Codemate we aim to make your experience awesome. Got
-            questions or suggestions? Let us know through the form below — your
-            input matters!
+            Here at Codemate, we&apos;re all about turning your experience into
+            an epic adventure! Encounter any queries or feel like embarking on a
+            reporting quest?Let us know through the form below — your input
+            matters!
           </p>
           <label className="font-semibold text-dark-300 dark:text-white">
             Name

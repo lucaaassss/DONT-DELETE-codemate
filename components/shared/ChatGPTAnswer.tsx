@@ -58,7 +58,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
     <div className="gap-5 sm:flex-row sm:items-center sm:gap-2">
       <div className="flex flex-col items-center justify-center">
         <Button
-          className="btn-fourth light-border-2 mt-10  gap-1.5 rounded-md px-[100px] py-2.5 text-primary-500 shadow-none dark:text-white"
+          className="btn-fourth light-border-2 mt-10  gap-1.5 rounded-md px-[100px] py-2.5 text-black shadow-none dark:text-white"
           onClick={generateAIAnswer}
           disabled={isSubmittingAI}
         >
@@ -89,7 +89,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
           </h4>
           <div className="mt-4">
             {/* display the generated tag description in a div */}
-            <div className="body-regular text-dark400_light800 flex rounded-2xl bg-white p-7 text-dark-300 dark:bg-black dark:text-white">
+            <div className="body-regular text-dark400_light800 flex rounded-2xl bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
               <div className="ml-[-5px] mt-[0.5px] shrink-0">
                 <Image
                   src="/assets/images/chatgptlogo.png"
@@ -109,6 +109,49 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                 ))}
               </div>
             </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-5">
+            <Button
+              className="btn-fourth light-border-2 mt-10 rounded-md px-[30px] py-2.5 shadow-none"
+              onClick={generateAIAnswer}
+              disabled={isSubmittingAI}
+            >
+              {isSubmittingAI ? (
+                <>
+                  <ReloadIcon className="mr-2 h-4 w-4 animate-spin text-black dark:text-white" />
+                </>
+              ) : (
+                <>
+                  <Image
+                    src="/assets/icons/thumbsdown.svg"
+                    alt="thumbsdown"
+                    width={14}
+                    height={14}
+                    className="invert-colors object-contain"
+                  />
+                </>
+              )}
+            </Button>
+            <Button
+              className="btn-fourth light-border-2 mt-10 rounded-md px-[30px] py-2.5 shadow-none"
+              onClick={() => {
+                toast({
+                  title: "AI Answer Accepted",
+                  description: "Hope you are enjoying your time at Codemate!",
+                });
+              }}
+              disabled={isSubmittingAI}
+            >
+              <>
+                <Image
+                  src="/assets/icons/thumbsup.svg"
+                  alt="thumbsup"
+                  width={14}
+                  height={14}
+                  className="invert-colors object-contain"
+                />
+              </>
+            </Button>
           </div>
         </>
       )}

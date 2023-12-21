@@ -69,7 +69,7 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
         ) : (
           <NoResult
             title="No Tags Found"
-            description="Grab this opportunity to be the first to talk about this specific topic!🚀 "
+            description="No tags yet? Be the pioneer! Start the buzz on this fresh topic and let the fun conversations begin!🚀🌟"
             link="/ask-question"
             linkTitle="Ask a Question"
           />

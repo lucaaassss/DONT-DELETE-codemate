@@ -55,7 +55,7 @@ const AITag = ({ tag }: Props) => {
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <Button
-          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none dark:text-white"
+          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-black shadow-none dark:text-white"
           onClick={generateAITagDescription}
           disabled={isSubmitting}
         >
@@ -87,7 +87,7 @@ const AITag = ({ tag }: Props) => {
           </h4>
           <div className="mt-4">
             {/* display the generated tag description in a div */}
-            <div className="body-regular text-dark400_light800 flex rounded-2xl bg-white p-7 text-dark-300 dark:bg-black dark:text-white">
+            <div className="body-regular text-dark400_light800 flex rounded-2xl bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
               <div className="ml-[-5px] mt-[0.5px] shrink-0">
                 <Image
                   src="/assets/images/chatgptlogo.png"
