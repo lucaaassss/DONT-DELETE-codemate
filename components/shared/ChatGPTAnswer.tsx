@@ -148,7 +148,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                   alt="thumbsup"
                   width={14}
                   height={14}
-                  className="invert-colors object-contain"
+                  className="invert-colors object-contain max-lg:rotate-180"
                 />
               </>
             </Button>
