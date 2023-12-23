@@ -76,7 +76,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                 height={12}
                 className="object-contain"
               />
-              Generate AI Answer
+              Generate Swift AI Answer
             </>
           )}
         </Button>
@@ -103,7 +103,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                 {AIAnswer.split("\n").map((line, index) => (
                   <div key={index}>
                     {line}
-                    {/* Add a line break after each line except for the last line */}
+                    {/* add a line break after each line except for the last line */}
                     {index < AIAnswer.split("\n").length - 1 && <br />}
                   </div>
                 ))}
@@ -113,7 +113,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
           <div className="flex flex-wrap items-center justify-center gap-5">
             <Button
               className="btn-fourth light-border-2 mt-10 rounded-md px-[30px] py-2.5 shadow-none"
-              onClick={generateAIAnswer}
+              onClick={generateAIAnswer} // if thumbs down is clicked,it will regenerate the AI Answer
               disabled={isSubmittingAI}
             >
               {isSubmittingAI ? (
