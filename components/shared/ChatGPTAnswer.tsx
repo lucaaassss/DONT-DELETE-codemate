@@ -88,7 +88,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
             AI-Generated Answer:
           </h4>
           <div className="mt-4">
-            {/* display the generated tag description in a div.Will only display this div if the generate AI button is clicked */}
+            {/* display the generated tag description in a div.Will only display this div if the generate AI answer button is clicked */}
             <div className="body-regular text-dark400_light800 flex rounded-2xl bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
               <div className="ml-[-5px] mt-[0.5px] shrink-0">
                 <Image
