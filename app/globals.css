@@ -34,7 +34,7 @@ body {
   }
 
   .btn-tertiary {
-    @apply bg-primary-100 dark:bg-yellow-500 !important;
+    @apply bg-primary-100 dark:bg-blue-800 !important;
   }
 
   .btn-fourth {
