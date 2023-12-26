@@ -8,6 +8,9 @@ import { getTimeStamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
 import Pagination from "./Pagination";
+import NameBadge from "./NameBadge";
+import { getUserInfo } from "@/lib/actions/user.action";
+import { auth } from "@clerk/nextjs";
 
 interface Props {
   questionId: string;
@@ -15,7 +18,9 @@ interface Props {
   totalAnswers: number;
   page: string | undefined;
   filter: string | undefined;
+  params: { id: string };
 }
+
 const AllAnswers = async ({
   questionId,
   userId,
@@ -28,6 +33,11 @@ const AllAnswers = async ({
     page: page ? +page : 1, // if a page exist we going to do +page which is going to convert a string into a number.Else we will display 1
     sortBy: filter,
   });
+  const { userId: clerkId } = auth();
+  // @ts-ignore
+  const userInfo = await getUserInfo({ userId: clerkId });
+
+  if (!userInfo.user) return null;
   return (
     <div className="mt-[50px]">
       <div className="flex items-center justify-between">
@@ -64,9 +74,12 @@ const AllAnswers = async ({
                     className="mr-[2px] rounded-full object-cover max-sm:mt-0.5"
                   />
                   <div className="flex-col sm:flex-row sm:items-center">
-                    <p className="body-semibold text-dark300_light700">
-                      {answer.author.name}
-                    </p>
+                    <div className="flex items-center">
+                      <p className="body-semibold text-dark300_light700">
+                        {answer.author.name}
+                      </p>
+                      <NameBadge badges={userInfo.badgeCounts} />
+                    </div>
 
                     <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
                       {"  "}answered {getTimeStamp(answer.createdAt)}
