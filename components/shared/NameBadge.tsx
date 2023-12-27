@@ -9,7 +9,7 @@ const NameBadge = ({ badges }: Props) => {
   return (
     <div>
       {badges.GOLD > 0 ? (
-        <div className="ml-1">
+        <div className="ml-0.5">
           <Image
             src="/assets/icons/verifiedlight.svg"
             alt="namebadge"
