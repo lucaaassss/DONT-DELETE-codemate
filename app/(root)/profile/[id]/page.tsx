@@ -16,6 +16,7 @@ import type { Metadata } from "next";
 import { getTopInteractedTags } from "@/lib/actions/tag.actions";
 import RenderTag from "@/components/shared/RenderTag";
 import { Badge } from "@/components/ui/badge";
+import NameBadge from "@/components/shared/NameBadge";
 
 export const metadata: Metadata = {
   title: "Profile | Codemate",
@@ -45,9 +46,12 @@ const Page = async ({ params, searchParams }: URLProps) => {
           />
 
           <div className="mt-3">
-            <h2 className="h2-bold text-dark100_light900">
-              {userInfo.user.name}
-            </h2>
+            <div className="flex items-center">
+              <h2 className="h2-bold text-dark100_light900">
+                {userInfo.user.name}
+              </h2>
+              <NameBadge badges={userInfo.badgeCounts} />
+            </div>
             <p className="paragraph-regular text-dark200_light800">
               @{userInfo.user.username}
             </p>

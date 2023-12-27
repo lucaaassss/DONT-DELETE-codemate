@@ -53,22 +53,22 @@ export const BADGE_CRITERIA = {
   QUESTION_COUNT: {
     BRONZE: 3,
     SILVER: 5,
-    GOLD: 20,
+    GOLD: 8,
   },
   ANSWER_COUNT: {
     BRONZE: 3,
     SILVER: 5,
-    GOLD: 20,
+    GOLD: 8,
   },
   QUESTION_UPVOTES: {
     BRONZE: 5,
     SILVER: 10,
-    GOLD: 30,
+    GOLD: 15,
   },
   ANSWER_UPVOTES: {
     BRONZE: 5,
     SILVER: 10,
-    GOLD: 30,
+    GOLD: 15,
   },
   TOTAL_VIEWS: {
     BRONZE: 100,
