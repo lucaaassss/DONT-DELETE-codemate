@@ -51,7 +51,7 @@ const Stats = ({ totalQuestions, totalAnswers, badges }: Props) => {
         <StatsCard
           imgUrl="/assets/icons/trophyfirst.svg"
           value={badges.GOLD}
-          title="Grandmaster Trophy"
+          title="CodeMaster Trophy"
         />
 
         <StatsCard

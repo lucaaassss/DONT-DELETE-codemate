@@ -8,9 +8,8 @@ import { getTimeStamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
 import Pagination from "./Pagination";
-import NameBadge from "./NameBadge";
+import AnswerBadge from "./AnswerBadge";
 import { getUserInfo } from "@/lib/actions/user.action";
-import { auth } from "@clerk/nextjs";
 
 interface Props {
   questionId: string;
@@ -32,11 +31,15 @@ const AllAnswers = async ({
     page: page ? +page : 1, // if a page exist we going to do +page which is going to convert a string into a number.Else we will display 1
     sortBy: filter,
   });
-  const { userId: clerkId } = auth();
-  // @ts-ignore
-  const userInfo = await getUserInfo({ userId: clerkId });
 
-  if (!userInfo.user) return null;
+  // create an array of promises for fetching user information
+  const userPromises = result.answers.map((answer) =>
+    getUserInfo({ userId: answer.author.clerkId })
+  );
+
+  // use Promise.all to wait for all user information to be fetched
+  const userInfos = await Promise.all(userPromises);
+
   return (
     <div className="mt-[50px]">
       <div className="flex items-center justify-between">
@@ -49,57 +52,65 @@ const AllAnswers = async ({
       <div>
         {result.answers.map(
           (
-            answer // mapping all of the answers and each answer will have its own article
-          ) => (
-            <article
-              key={answer._id}
-              className=" text-dark300_light700 mt-7 w-full rounded-2xl bg-white px-7 py-10 dark:bg-black"
-            >
-              <span
-                id={JSON.stringify(answer._id)}
-                className="hash-span"
-              ></span>
-              <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
-                {/* showing the author of the answer */}
-                <Link
-                  href={`/profile/${answer.author.clerkId}`}
-                  className="flex flex-1 items-start gap-1 sm:items-center"
-                >
-                  <Image
-                    src={answer.author.picture}
-                    width={35}
-                    height={35}
-                    alt="profile"
-                    className="mr-[2px] rounded-full object-cover max-sm:mt-0.5"
-                  />
-                  <div className="flex-col sm:flex-row sm:items-center">
-                    <div className="flex items-center">
-                      <p className="body-semibold text-dark300_light700">
-                        {answer.author.name}
-                      </p>
-                      <NameBadge badges={userInfo.badgeCounts} />
-                    </div>
+            answer,
+            index // mapping all of the answers and each answer will have its own article
+          ) => {
+            const userInfo = userInfos[index];
 
-                    <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
-                      {"  "}answered {getTimeStamp(answer.createdAt)}
-                    </p>
+            if (!userInfo.user) return null;
+            userId = answer.author.clerkId;
+
+            return (
+              <article
+                key={answer._id}
+                className=" text-dark300_light700 mt-7 w-full rounded-2xl bg-white px-7 py-10 dark:bg-black"
+              >
+                <span
+                  id={JSON.stringify(answer._id)}
+                  className="hash-span"
+                ></span>
+                <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+                  {/* showing the author of the answer */}
+                  <Link
+                    href={`/profile/${answer.author.clerkId}`}
+                    className="flex flex-1 items-start gap-1 sm:items-center"
+                  >
+                    <Image
+                      src={answer.author.picture}
+                      width={35}
+                      height={35}
+                      alt="profile"
+                      className="mr-[2px] rounded-full object-cover max-sm:mt-0.5"
+                    />
+                    <div className="flex-col sm:flex-row sm:items-center">
+                      <div className="flex items-center">
+                        <p className="body-semibold text-dark300_light700">
+                          {answer.author.name}
+                        </p>
+                        <AnswerBadge badges={userInfo.badgeCounts} />
+                      </div>
+
+                      <p className="small-regular ml-0.5 mt-0.5 line-clamp-1  dark:text-slate-300">
+                        {"  "}answered {getTimeStamp(answer.createdAt)}
+                      </p>
+                    </div>
+                  </Link>
+                  <div className="flex justify-end">
+                    <Votes
+                      type="Answer" // to check the type whether it is question or answer
+                      itemId={JSON.stringify(answer._id)}
+                      userId={JSON.stringify(userId)}
+                      upvotes={answer.upvotes.length} // to display the number of upvotes
+                      hasupVoted={answer.upvotes.includes(userId)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
+                      downvotes={answer.downvotes.length}
+                      hasdownVoted={answer.downvotes.includes(userId)}
+                    />
                   </div>
-                </Link>
-                <div className="flex justify-end">
-                  <Votes
-                    type="Answer" // to check the type whether it is question or answer
-                    itemId={JSON.stringify(answer._id)}
-                    userId={JSON.stringify(userId)}
-                    upvotes={answer.upvotes.length} // to display the number of upvotes
-                    hasupVoted={answer.upvotes.includes(userId)} // to check if the current question includes the user id.If it does, it means that the user already upvoted
-                    downvotes={answer.downvotes.length}
-                    hasdownVoted={answer.downvotes.includes(userId)}
-                  />
                 </div>
-              </div>
-              <ParseHTML data={answer.content} />
-            </article>
-          )
+                <ParseHTML data={answer.content} />
+              </article>
+            );
+          }
         )}
       </div>
       <div className="my-10 w-full">
