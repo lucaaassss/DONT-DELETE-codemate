@@ -89,13 +89,21 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
           <div className="mt-4">
             {/* display the generated tag description in a div.Will only display this div if the generate AI answer button is clicked */}
             <div className="body-regular text-dark400_light800 flex rounded-2xl bg-purple-200 p-7 text-dark-300 dark:bg-purple-950 dark:text-white">
-              <div className="ml-[-5px] mt-[0.5px] shrink-0">
+              <div className="ml-[-5px] mt-[0.2px] shrink-0">
                 <Image
-                  src="/assets/images/chatgptlogo.png"
+                  src="/assets/images/chatgptlight.png"
                   alt="chatgpt"
-                  width={35}
-                  height={35}
-                  className="object-contain"
+                  width={70}
+                  height={70}
+                  className="block object-contain dark:hidden"
+                />
+
+                <Image
+                  src="/assets/images/chatgptdark.png"
+                  alt="chatgpt"
+                  width={70}
+                  height={70}
+                  className="hidden object-contain dark:flex"
                 />
               </div>
               <div className="ml-5">

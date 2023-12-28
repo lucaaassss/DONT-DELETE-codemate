@@ -62,11 +62,11 @@ const Support = () => {
         <div className="flex flex-wrap items-center justify-center">
           <h1 className="head-text">Let&apos;s hear it from you!</h1>
           <Image
-            src="/assets/images/codematerobotlight.png"
+            src="/assets/images/codematerobotlightt.png"
             alt="Codemate robot"
             width={170}
             height={170}
-            className="mb-10 ml-[-15px] block object-contain dark:hidden"
+            className="mb-3 ml-[-30px] block object-contain dark:hidden"
           />
           <Image
             src="/assets/images/codematerobotdark.png"
