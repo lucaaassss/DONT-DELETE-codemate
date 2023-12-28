@@ -14,7 +14,7 @@ const NoResult = ({ title, description, link, linkTitle }: Props) => {
   return (
     <div className="mt-10 flex w-full flex-col items-center justify-center">
       <Image
-        src="/assets/images/no-question.png"
+        src="/assets/images/no-result-light.png"
         alt="No result illustration"
         width={96}
         height={96}
@@ -22,7 +22,7 @@ const NoResult = ({ title, description, link, linkTitle }: Props) => {
       />
 
       <Image
-        src="/assets/images/no-question.png"
+        src="/assets/images/no-result-dark.png"
         alt="No result illustration"
         width={96}
         height={96}

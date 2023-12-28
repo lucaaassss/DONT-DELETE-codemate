@@ -7,16 +7,13 @@ interface Props {
 }
 
 const NameBadge = ({ badges }: Props) => {
-  // Check if the user has any badges
+  // check if the user pass the badge count
   const hasBadges = badges.GOLD > 0;
 
   return (
     <div className="ml-0.5">
-      {/* Always render the badge UI for all users */}
-
-      {/* Render additional content for users who surpass the badge count */}
+      {/* render badge for users who surpass the badge count */}
       {hasBadges ? (
-        // Render additional content (or modify as needed)
         <div>
           <Image
             src="/assets/icons/verifiedlight.svg"
@@ -33,11 +30,8 @@ const NameBadge = ({ badges }: Props) => {
             className="hidden dark:flex"
           />
         </div>
-      ) : 
-        null
-      }
-
-      {/* Add similar blocks for other badge types (SILVER, GOLD, etc.) if needed */}
+      ) : // if they dont pass the badge count, return null
+      null}
     </div>
   );
 };

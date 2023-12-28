@@ -62,11 +62,18 @@ const Support = () => {
         <div className="flex flex-wrap items-center justify-center">
           <h1 className="head-text">Let&apos;s hear it from you!</h1>
           <Image
-            src="/assets/images/codematerobotpng.png"
+            src="/assets/images/codematerobotlight.png"
             alt="Codemate robot"
             width={170}
             height={170}
-            className="mb-10 ml-[-15px] object-contain"
+            className="mb-10 ml-[-15px] block object-contain dark:hidden"
+          />
+          <Image
+            src="/assets/images/codematerobotdark.png"
+            alt="Codemate robot"
+            width={170}
+            height={170}
+            className="mb-10 ml-[-15px] hidden object-contain dark:flex"
           />
         </div>
         <form
@@ -76,7 +83,7 @@ const Support = () => {
           <p className="body-medium mt-2 text-dark-300 dark:text-white">
             Here at Codemate, we&apos;re all about turning your experience into
             an epic adventure! Encounter any queries or feel like embarking on a
-            reporting quest?Let us know through the form below — your input
+            reporting quest? Let us know through the form below — your input
             matters!
           </p>
           <label className="font-semibold text-dark-300 dark:text-white">

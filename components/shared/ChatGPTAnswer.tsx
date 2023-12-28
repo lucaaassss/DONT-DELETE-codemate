@@ -47,8 +47,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
     } catch (error) {
       toast({
         title: "Uh oh! Something went wrong.",
-        description:
-          "There was a problem with user AI request. Take this chance to try to answer it independently!",
+        description: "AI request took too long to respond :(",
       });
     } finally {
       setIsSubmittingAI(false);

@@ -43,8 +43,7 @@ const AITag = ({ tag }: Props) => {
       // handle error and show toast
       toast({
         title: "Uh oh! Something went wrong.",
-        description:
-          "There was a problem with the AI request for tag description.",
+        description: "AI request took too long to respond :(",
       });
     } finally {
       setIsSubmitting(false);
@@ -79,7 +78,7 @@ const AITag = ({ tag }: Props) => {
         </Button>
       </div>
 
-      {/* Conditionally render the div if there is an AI response */}
+      {/* conditionally render the div if there is an AI response */}
       {tagDescription && (
         <>
           <h4 className="paragraph-semibold text-dark400_light800 mt-5">
@@ -101,7 +100,7 @@ const AITag = ({ tag }: Props) => {
                 {tagDescription.split("\n").map((line, index) => (
                   <div key={index}>
                     {line}
-                    {/* Add a line break after each line except for the last line */}
+                    {/* add a line break after each line except for the last line */}
                     {index < tagDescription.split("\n").length - 1 && <br />}
                   </div>
                 ))}

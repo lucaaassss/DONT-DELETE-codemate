@@ -46,10 +46,10 @@ const Page = async ({ searchParams }: SearchParamsProps) => {
           result.users.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center font-bold">
-            <p>No users yet</p>
+            <p className="text-xl">Whoa, it seems like a ghost town here! 👻</p>
             <Link
               href="/sign-up"
-              className="mt-2 font-semibold text-blue-900 dark:text-blue-300"
+              className="mt-2 font-semibold text-blue-600 dark:text-blue-300"
             >
               Click here to be the first!
             </Link>
