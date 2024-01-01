@@ -128,7 +128,7 @@ const Profile = ({ clerkId, user }: Props) => {
           render={({ field }) => (
             <FormItem className="space-y-3.5">
               <FormLabel className="paragraph-semibold text-dark400_light800">
-                Portfolio Link
+                Social Link
               </FormLabel>
               <FormControl>
                 <Input

@@ -16,7 +16,7 @@ const ProfileLink = ({ imgUrl, href, title }: ProfileLinkProps) => {
         <Link
           href={href}
           target="_blank" // will open the link in a new tab
-          className="paragraph-medium text-blue-500"
+          className="paragraph-medium text-blue-800 dark:text-blue-300"
         >
           {title}
         </Link>

@@ -64,9 +64,9 @@ const Support = () => {
           <Image
             src="/assets/images/codematerobotlightt.png"
             alt="Codemate robot"
-            width={190}
-            height={190}
-            className="mb-3 ml-[-30px] block object-contain dark:hidden max-lg:ml-[-18px]"
+            width={170}
+            height={170}
+            className="mb-3 ml-[-30px] block object-contain dark:hidden max-lg:ml-[-10px]"
           />
           <Image
             src="/assets/images/codematerobotdarkk.png"
