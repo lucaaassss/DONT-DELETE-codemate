@@ -54,7 +54,7 @@ const AITag = ({ tag }: Props) => {
     <div>
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
         <Button
-          className="btn-fourth light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-black shadow-none dark:text-white"
+          className="shinegenerate light-border-2 mt-5 gap-1.5 rounded-md px-4 py-2.5 text-black shadow-none"
           onClick={generateAITagDescription}
           disabled={isSubmitting}
         >

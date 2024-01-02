@@ -90,6 +90,7 @@ const Answer = ({ questionId, authorId }: Props) => {
           onSubmit={form.handleSubmit(handleCreateAnswer)}
         >
           <FormField
+            key={mode}
             control={form.control}
             name="answer"
             render={({ field }) => (

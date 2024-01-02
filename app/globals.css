@@ -93,6 +93,23 @@ body {
     animation: shine 7s linear infinite;
   }
 
+  @keyframes shinegenerate {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
+  .shinegenerate {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(90deg, white, #ffc300, white);
+    background-size: 200% 100%;
+    animation: shine 7s linear infinite;
+  }
+
   .flip-vertical {
     transform: scaleY(-1);
   }

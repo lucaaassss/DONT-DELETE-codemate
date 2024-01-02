@@ -74,13 +74,13 @@ const LeftSidebar = () => {
       <SignedOut>
         <div className="flex flex-col gap-3">
           <Link href="/sign-in">
-            <Button className="small-medium btn-secondary min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
+            <Button className="small-medium btn-secondary mt-5 min-h-[41px] w-full rounded-lg px-4 py-3 shadow-none">
               <Image
                 src="/assets/icons/account.svg"
                 alt="login"
                 width={20}
                 height={20}
-                className="invert-colors lg:hidden"
+                className="lg:hidden"
               />{" "}
               {/* lg:hidden means that the icon will be hidden on large devices,it will only show on small devices */}
               <span className="text-white dark:text-dark-300 max-lg:hidden">
@@ -96,7 +96,7 @@ const LeftSidebar = () => {
                 alt="sign up"
                 width={20}
                 height={20}
-                className="invert-colors lg:hidden"
+                className="lg:hidden"
               />
               <span className="max-lg:hidden">Sign Up</span>
             </Button>
