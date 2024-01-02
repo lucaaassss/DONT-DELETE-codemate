@@ -114,6 +114,10 @@ body {
     transform: scaleY(-1);
   }
 
+  .unflip-vertical {
+    transform: scaleY(1);
+  }
+
   .primary-gradient {
     background: linear-gradient(129deg, #802bb1 0%, #8860d0 100%);
   }
