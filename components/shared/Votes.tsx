@@ -156,7 +156,7 @@ const Votes = ({
             width={18}
             height={18}
             alt="downvote"
-            className="max-md:unflip-vertical flip-vertical cursor-pointer"
+            className="sm:unflip-vertical max-md:unflip-vertical cursor-pointer max-xl:rotate-[270] max-lg:rotate-180"
             onClick={() => handleVote("downvote")}
           />
 
