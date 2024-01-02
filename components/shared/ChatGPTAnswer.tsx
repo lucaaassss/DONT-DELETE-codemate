@@ -57,7 +57,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
     <div className="gap-5 sm:flex-row sm:items-center sm:gap-2">
       <div className="flex flex-col items-center justify-center">
         <Button
-          className="light-border-2 shinegenerate mt-10 gap-1.5 rounded-md px-[80px] py-2.5 text-black shadow-none"
+          className="shinegenerate mt-10 gap-1.5 rounded-md border-4 border-white px-[80px] py-2.5 text-black shadow-none dark:text-white"
           onClick={generateAIAnswer}
           disabled={isSubmittingAI}
         >
