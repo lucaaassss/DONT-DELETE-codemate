@@ -156,7 +156,8 @@ const Votes = ({
             width={18}
             height={18}
             alt="downvote"
-            className="sm:unflip-vertical max-sm:flip-vertical max-md:flip-vertical xs:flip-vertical cursor-pointer max-xl:rotate-[270] max-lg:rotate-180"
+            // eslint-disable-next-line tailwindcss/classnames-order
+            className="max-xl:rotate-[270] max-lg:rotate-180 max-md:flip-vertical max-sm:flip-vertical sm:unflip-vertical xs:unflip-vertical cursor-pointer"
             onClick={() => handleVote("downvote")}
           />
 
