@@ -155,7 +155,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                   alt="thumbsup"
                   width={14}
                   height={14}
-                  className="invert-colors max-sm:flip-vertical xs:unflip-vertical max-xs:flip-vertical object-contain"
+                  className="invert-colors sm:unflip-vertical max-sm:flip-vertical xs:unflip-vertical max-xs:flip-vertical object-contain"
                   // flip-vertical is a custom class
                 />
               </>
