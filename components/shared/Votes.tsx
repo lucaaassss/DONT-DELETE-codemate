@@ -150,14 +150,14 @@ const Votes = ({
           <Image
             src={
               hasdownVoted
-                ? "/assets/icons/downvoted.svg"
-                : "/assets/icons/not-downvoted.svg"
+                ? "/assets/icons/downvoted2.svg"
+                : "/assets/icons/downvote2.svg"
             }
             width={18}
             height={18}
             alt="downvote"
             // eslint-disable-next-line tailwindcss/classnames-order
-            className="max-xl:rotate-[270] max-lg:rotate-180 max-md:flip-vertical max-sm:unflip-vertical sm:unflip-vertical xs:flip-vertical cursor-pointer"
+            className="max-xl:rotate-[270] max-lg:rotate-180 max-md:flip-vertical max-sm:unflip-vertical sm:flip-vertical xs:unflip-vertical cursor-pointer"
             onClick={() => handleVote("downvote")}
           />
 
