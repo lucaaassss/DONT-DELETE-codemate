@@ -95,7 +95,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                   alt="chatgpt"
                   width={70}
                   height={70}
-                  className="block object-contain dark:hidden"
+                  className="floatingImage block object-contain dark:hidden"
                 />
 
                 <Image
@@ -103,7 +103,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                   alt="chatgpt"
                   width={70}
                   height={70}
-                  className="hidden object-contain dark:flex"
+                  className="floatingImage hidden object-contain dark:flex"
                 />
               </div>
               <div className="ml-5">
@@ -156,7 +156,7 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                   width={14}
                   height={14}
                   className="invert-colors max-md:flip-vertical max-sm:flip-vertical sm:unflip-vertical md:unflip-vertical xs:unflip-vertical max-xs:flip-vertical object-contain"
-                  // flip-vertical is a custom class
+                  // flip-vertical and unflip-vertical are custom classes
                 />
               </>
             </Button>

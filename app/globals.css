@@ -63,18 +63,6 @@ body {
   .btnsupport {
     @apply text-white bg-gradient-to-r from-[#00c6ff] to-[#0072ff] focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center;
   }
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  .animate__fadeIn {
-    animation: fadeIn 0.5s ease-in-out;
-  }
 
   @keyframes shine {
     0% {
@@ -108,6 +96,20 @@ body {
     background: linear-gradient(90deg, white, transparent, white);
     background-size: 200% 100%;
     animation: shine 7s linear infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-7px) scale(1);
+    }
+  }
+
+  .floatingImage {
+    animation: float 2s infinite ease-in-out; /* Adjust the duration and other properties as needed */
   }
 
   .flip-vertical {

@@ -93,7 +93,7 @@ const AITag = ({ tag }: Props) => {
                   alt="chatgpt"
                   width={70}
                   height={70}
-                  className="block object-contain dark:hidden"
+                  className="floatingImage block object-contain dark:hidden"
                 />
 
                 <Image
@@ -101,7 +101,7 @@ const AITag = ({ tag }: Props) => {
                   alt="chatgpt"
                   width={70}
                   height={70}
-                  className="hidden object-contain dark:flex"
+                  className="floatingImage hidden object-contain dark:flex"
                 />
               </div>
               <div className="ml-5">

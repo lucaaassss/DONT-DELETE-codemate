@@ -1,37 +1,56 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { BadgeCounts } from "@/types";
 import Image from "next/image";
+
 interface Props {
   badges: BadgeCounts;
 }
 
 const NameBadge = ({ badges }: Props) => {
+  const [isHovered, setIsHovered] = useState(false);
   return (
-    <div className="flex items-center gap-1">
+    <div className="relative flex items-center gap-1">
       {badges.GOLD > 0 ? (
-        <>
-          <div className="ml-0.5">
-            <Image
-              src="/assets/icons/verifiedlight.svg"
-              alt="namebadge"
-              height={20}
-              width={20}
-              className="block dark:hidden"
-            />
+        <div
+          className="group relative ml-0.5"
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <Image
+            src="/assets/icons/verifiedlight.svg"
+            alt="namebadge"
+            height={20}
+            width={20}
+            className="block dark:hidden"
+          />
 
-            <Image
-              src="/assets/icons/verifieddark.svg"
-              alt="namebadge"
-              height={20}
-              width={20}
-              className="hidden dark:flex"
-            />
-          </div>
+          <Image
+            src="/assets/icons/verifieddark.svg"
+            alt="namebadge"
+            height={20}
+            width={20}
+            className="hidden dark:flex"
+          />
 
-          <div className=" animate__fadeIn shine rounded-xl p-1 text-xs font-bold text-blue-800 dark:text-blue-300">
-            CodeMaster
-          </div>
-        </>
+          {isHovered && (
+            <div className="absolute left-full flex w-[150px] -translate-y-1/2 items-center justify-center gap-0 rounded-md bg-white p-2 text-xs font-bold text-blue-800 shadow-md dark:bg-dark-300 dark:text-blue-300">
+              <div>
+                This user is a{" "}
+                <span className="text-purple-900 dark:text-purple-300">
+                  CodeMaster!
+                </span>
+              </div>
+              <Image
+                src="/assets/images/codematerobotverified.png"
+                alt="CodeMaster Image"
+                height={40}
+                width={40}
+                className="mt-[-5px]"
+              />
+            </div>
+          )}
+        </div>
       ) : null}
     </div>
   );
