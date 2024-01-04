@@ -34,19 +34,27 @@ const NameBadge = ({ badges }: Props) => {
           />
 
           {isHovered && (
-            <div className="absolute left-full flex w-[150px] -translate-y-1/2 items-center justify-center gap-0 rounded-md bg-white p-2 text-xs font-bold text-blue-800 shadow-md dark:bg-dark-300 dark:text-blue-300">
+            <div className="absolute left-full ml-1 flex w-[150px] -translate-y-1/2 items-center justify-center gap-0 rounded-xl bg-white p-2 text-xs font-bold text-blue-800 dark:bg-dark-300 dark:text-blue-300">
               <div>
                 This user is a{" "}
-                <span className="text-purple-900 dark:text-purple-300">
-                  CodeMaster!
+                <span className="text-yellow-500 dark:text-yellow-400">
+                  CodeMaster!🎉
                 </span>
               </div>
               <Image
-                src="/assets/images/codematerobotverified.png"
+                src="/assets/images/robotverifiedlight.png"
                 alt="CodeMaster Image"
                 height={40}
                 width={40}
-                className="mt-[-5px]"
+                className="mt-[-5px] block dark:hidden"
+              />
+
+              <Image
+                src="/assets/images/robotverifieddark.png"
+                alt="CodeMaster Image"
+                height={40}
+                width={40}
+                className="mt-[-5px] hidden dark:flex"
               />
             </div>
           )}
