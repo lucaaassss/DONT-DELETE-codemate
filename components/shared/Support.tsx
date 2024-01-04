@@ -55,7 +55,7 @@ const Support = () => {
   };
   return (
     <section
-      className="max-container background-light900_dark300 relative flex flex-col lg:flex-row"
+      className="max-container background-light900_dark300 relative flex flex-col rounded-2xl lg:flex-row"
       style={{ minHeight: "100px" }}
     >
       <div className="mt-[-100px] flex min-w-[50%] flex-1 flex-col">
@@ -73,7 +73,7 @@ const Support = () => {
             alt="Codemate robot"
             width={170}
             height={170}
-            className="mb-10 ml-[-15px] hidden object-contain dark:flex"
+            className="mb-3 ml-[-17px] mt-[-20px] hidden object-contain dark:flex"
           />
         </div>
         <form
@@ -82,9 +82,8 @@ const Support = () => {
         >
           <p className="body-medium mt-2 text-dark-300 dark:text-white">
             Here at Codemate, we&apos;re all about turning your experience into
-            an epic adventure! Encounter any queries or feel like embarking on a
-            reporting quest? Let us know through the form below — your input
-            matters!
+            an epic adventure! Encounter any queries or feel like sharing some
+            issues? Let us know through the form below — your input matters!
           </p>
           <label className="font-semibold text-dark-300 dark:text-white">
             Name
@@ -121,7 +120,7 @@ const Support = () => {
             />
           </label>
           <Button
-            className="btnsupport"
+            className="btnsupportlight dark:btnsupportdark"
             type="submit"
             disabled={isSubmitting} // disabled if isSubmitting is true
           >

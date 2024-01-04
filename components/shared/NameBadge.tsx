@@ -22,7 +22,7 @@ const NameBadge = ({ badges }: Props) => {
             alt="namebadge"
             height={20}
             width={20}
-            className="block dark:hidden"
+            className="wiggle ml-0.5 block dark:hidden"
           />
 
           <Image
@@ -30,7 +30,7 @@ const NameBadge = ({ badges }: Props) => {
             alt="namebadge"
             height={20}
             width={20}
-            className="hidden dark:flex"
+            className="wiggle ml-0.5 hidden dark:flex"
           />
 
           {isHovered && (
