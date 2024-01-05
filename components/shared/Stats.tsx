@@ -27,6 +27,8 @@ interface Props {
 }
 
 const Stats = ({ totalQuestions, totalAnswers, badges }: Props) => {
+  const renderQuestionsEmoji = totalQuestions !== 0 ? "💝" : "💔";
+  const renderAnswersEmoji = totalAnswers !== 0 ? "❤️‍🔥" : "💔";
   return (
     <div className="mt-10">
       <h4 className="h3-semibold text-dark200_light900"> Stats:</h4>
@@ -36,6 +38,7 @@ const Stats = ({ totalQuestions, totalAnswers, badges }: Props) => {
           <div>
             <p className="paragraph-semibold text-dark200_light900">
               {formatNumber(totalQuestions)}
+              <span className="text-xl">{renderQuestionsEmoji}</span>
             </p>
             <p className="body-medium text-dark400_light700">Questions</p>
           </div>
@@ -43,6 +46,7 @@ const Stats = ({ totalQuestions, totalAnswers, badges }: Props) => {
           <div>
             <p className="paragraph-semibold text-dark200_light900">
               {formatNumber(totalAnswers)}
+              <span className="text-xl">{renderAnswersEmoji}</span>
             </p>
             <p className="body-medium text-dark400_light700">Answers</p>
           </div>

@@ -13,7 +13,7 @@ const NameBadge = ({ badges }: Props) => {
     <div className="relative flex items-center gap-1">
       {badges.GOLD > 0 ? (
         <div
-          className="group relative ml-0.5"
+          className="group relative ml-[0.7px]"
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
         >
