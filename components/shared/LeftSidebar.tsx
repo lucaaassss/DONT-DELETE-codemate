@@ -42,7 +42,7 @@ const LeftSidebar = () => {
               href={item.route}
               className={`${
                 isPremiumActive
-                  ? "premium-gradient rounded-lg text-light-900"
+                  ? "premium-gradient dark:premium-gradient-dark rounded-lg text-light-900"
                   : isActive
                     ? "primary-gradient dark:primary-gradient-dark rounded-lg text-light-900"
                     : "text-dark300_light900"
