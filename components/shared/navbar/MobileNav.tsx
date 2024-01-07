@@ -27,8 +27,9 @@ const NavContent = () => {
           (pathname.includes(item.route) && item.route.length > 1) ||
           pathname === item.route; // item.route.length>1 means that if the route exists
 
-        // Check if the route is "/premium" and apply gold color if it's active
-        const isPremiumActive = isActive && item.route === "/premium";
+        // check if the route is "/ask-question" and apply gold color if it's active
+        // originally it is for the premium page but for now we make it for ask a question page
+        const isPremiumActive = isActive && item.route === "/ask-question";
 
         if (item.route === "/profile") {
           if (userId) item.route = `${item.route}/${userId}`;

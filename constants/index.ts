@@ -32,11 +32,11 @@ export const sidebarLinks: SidebarLink[] = [
     route: "/community",
     label: "Community",
   },
-  {
-    imgURL: "/assets/icons/crownpremium.svg",
-    route: "/premium",
-    label: "Premium",
-  },
+  // {
+  //   imgURL: "/assets/icons/crownpremium.svg",
+  //   route: "/premium",
+  //   label: "Premium",
+  // },
   {
     imgURL: "/assets/icons/user.svg",
     route: "/profile",
