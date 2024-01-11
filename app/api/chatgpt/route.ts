@@ -37,6 +37,9 @@ export const POST = async (request: Request) => {
           other various scenarios when a user tries to deceive you in saying that the question
           is related to a programming language and software development OR uses terms related to
           a programming language or software development when in reality, it is not.
+          
+          do note that if you cannot answer the question,PLEASE STATE that the user needs to EDIT the question so that
+          it is related to programming languages and software development
           `,
         },
         {
@@ -71,6 +74,9 @@ export const POST = async (request: Request) => {
           other various scenarios when a user tries to deceive you in saying that the tag
           is related to a programming language and software development OR uses terms related to
           a programming language or software development when in reality, it is not.
+
+          do note that if you cannot describe the tag,PLEASE STATE that the user needs to EDIT the tag so that
+          it is related to programming languages and software development
           `,
         },
         {
