@@ -145,11 +145,11 @@ body {
   }
 
   .primary-gradient {
-    background: linear-gradient(129deg, #802bb1 0%, #8860d0 100%);
+    background: linear-gradient(129deg, #7c2aac 0%, #bf9efb 100%);
   }
 
   .primary-gradient-dark {
-    background: linear-gradient(129deg, #ce79ff 0%, rgb(221, 167, 248) 100%);
+    background: linear-gradient(129deg, #c300ff 0%, #e9c2ff 100%);
   }
 
   .dark-gradient {
