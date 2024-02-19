@@ -20,6 +20,9 @@ export const metadata: Metadata = {
   title: "Codemate",
   description:
     "Welcome to Codemate, a vibrant community forum where humans and AI come together to unlock the power of collaboration and discover the ultimate solutions. Let's explore, learn, and achieve greatness as a united force. See you at Codemate!",
+  icons: {
+    icon: "/assets/images/site-logo.svg",
+  },
 };
 
 export default async function Home({ searchParams }: SearchParamsProps) {

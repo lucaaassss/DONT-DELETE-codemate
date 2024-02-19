@@ -14,11 +14,11 @@ const Navbar = () => {
       <Link href="/" className="flex items-center gap-1">
         <Image
           src="/assets/images/site-logo.svg"
-          width={40}
-          height={40}
+          width={55}
+          height={55}
           alt="Codemate"
         />
-        <p className="h2-bold font-spaceGrotesk text-purple-800 dark:text-purple-500 max-sm:hidden">
+        <p className="h2-bold ml-[-8px] font-spaceGrotesk text-[35px] text-purple-800 dark:text-purple-500 max-sm:hidden">
           ode<span className="text-purple-500 dark:text-purple-300">mate</span>
         </p>
       </Link>
