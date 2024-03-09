@@ -107,11 +107,20 @@ const ChatGPTAnswer = ({ question, authorId }: Props) => {
                 />
               </div>
               <div className="ml-5">
-                {AIAnswer.split("\n").map((line, index) => (
+                {AIAnswer.split(/\n/).map((line, index, array) => (
                   <div key={index}>
-                    {line}
+                    {line.split(/(\*\*.*?\*\*)/).map((segment, idx) => {
+                      // bold words if needed
+                      if (segment.startsWith("**") && segment.endsWith("**")) {
+                        return (
+                          <strong key={idx}>{segment.slice(2, -2)}</strong> // strong is use for bolding
+                        );
+                      } else {
+                        return <span key={idx}>{segment}</span>;
+                      }
+                    })}
                     {/* add a line break after each line except for the last line */}
-                    {index < AIAnswer.split("\n").length - 1 && <br />}
+                    {index < array.length - 1 && <br />}
                   </div>
                 ))}
               </div>

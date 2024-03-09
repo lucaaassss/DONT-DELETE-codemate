@@ -18,7 +18,7 @@ const Navbar = () => {
           height={55}
           alt="Codemate"
         />
-        <p className="h2-bold ml-[-8px] font-spaceGrotesk text-[35px] text-purple-800 dark:text-purple-500 max-sm:hidden">
+        <p className="h2-bold ml-[-7px] font-spaceGrotesk text-[35px] text-purple-800 dark:text-purple-500 max-sm:hidden">
           ode<span className="text-purple-500 dark:text-purple-300">mate</span>
         </p>
       </Link>
