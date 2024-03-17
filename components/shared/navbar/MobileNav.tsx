@@ -100,7 +100,7 @@ const MobileNav = () => {
             height={40}
             alt="Codemate"
           />
-          <p className="h2-bold text-dark100_light900 font-spaceGrotesk ">
+          <p className="h2-bold text-dark100_light900 ml-[-7px] font-spaceGrotesk ">
             ode
             <span className="text-purple-500 dark:text-purple-300">mate</span>
           </p>
