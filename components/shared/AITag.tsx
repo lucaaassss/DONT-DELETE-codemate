@@ -107,16 +107,35 @@ const AITag = ({ tag }: Props) => {
               <div className="ml-5">
                 {tagDescription.split(/\n/).map((line, index, array) => (
                   <div key={index}>
-                    {line.split(/(\*\*.*?\*\*)/).map((segment, idx) => {
-                      // bold words if needed
-                      if (segment.startsWith("**") && segment.endsWith("**")) {
-                        return (
-                          <strong key={idx}>{segment.slice(2, -2)}</strong> // strong is use for bolding
-                        );
-                      } else {
-                        return <span key={idx}>{segment}</span>;
-                      }
-                    })}
+                    {line
+                      .split(/(\*\*.*?\*\*|\bhttps?:\/\/\S+)/)
+                      .map((segment, idx) => {
+                        // bold words if needed
+                        if (
+                          segment.startsWith("**") &&
+                          segment.endsWith("**")
+                        ) {
+                          return (
+                            <strong key={idx}>{segment.slice(2, -2)}</strong> // strong is used for bolding
+                          );
+                        }
+                        // detect and convert links
+                        else if (segment.match(/\bhttps?:\/\/\S+/)) {
+                          return (
+                            <a
+                              key={idx}
+                              href={segment}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-700 dark:text-blue-400"
+                            >
+                              {segment}
+                            </a>
+                          );
+                        } else {
+                          return <span key={idx}>{segment}</span>;
+                        }
+                      })}
                     {/* add a line break after each line except for the last line */}
                     {index < array.length - 1 && <br />}
                   </div>
