@@ -13,7 +13,7 @@ export const QuestionsSchema = z.object({
       z
         .string()
         .min(1, "Tag must be at least 1 character long")
-        .max(15, "Tag cannot exceed 15 characters")
+        .max(20, "Tag cannot exceed 20 characters")
     )
     .min(1, "At least 1 tag is required"), // meaning that we need a minimum of 1 tag and each tag needs to be string with a minimum of 1 character and a maximum of 15 characters
 });
@@ -33,7 +33,7 @@ export const ProfileSchema = z.object({
     .max(25, "Username cannot exceed 25 characters"),
   bio: z
     .string()
-    .min(10, "Bio must be at least 10 characters long")
+    .min(1, "Bio must be at least 1 character long")
     .max(150, "Bio cannot exceed 150 characters")
     .optional()
     .or(z.literal("")),
@@ -44,7 +44,7 @@ export const ProfileSchema = z.object({
     .or(z.literal("")),
   location: z
     .string()
-    .min(5, "Location must be at least 5 characters long")
+    .min(2, "Location must be at least 2 characters long")
     .max(100, "Location cannot exceed 100 characters")
     .optional()
     .or(z.literal("")),
