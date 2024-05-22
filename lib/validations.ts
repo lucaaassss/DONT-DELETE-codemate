@@ -1,7 +1,6 @@
 import * as z from "zod";
 
 const profanityList = [
-  "por",
   "terrori",
   "nig",
   "hitl",
@@ -10,25 +9,65 @@ const profanityList = [
   "fag",
   "stalin",
   "yahudi",
+  "zion",
   "zionist",
   "swastika",
   "communist",
   "racist",
   "terrorist",
   "terrorism",
+  "war",
+  "israel",
+  "genocide",
+  "hate",
+  "ideology",
+  "gyatt",
+  "gyattebayo",
+  "skibidi",
+  "ligma",
+  "deez",
+  "netanyahu",
+  "politik",
+  "politic",
+  "punch",
+  "destroy",
 
   "n1g",
   "naz1",
   "j3w",
   "f@g",
   "f a g",
+  "holy",
+  "niguh",
 
   "n i g",
   "n a z i",
   "j e w",
   "f a g",
+  "fag",
+  "faggot",
+  "sex",
+  "nigga",
+  "goblok",
+  "por",
+  "porn",
+  "dumb",
+  "dumb ass",
+  "cao ni ma",
+  "hitler",
+  "bomb",
+  "stfu",
+  "fck",
+  "mdfk",
+  "bitch",
+  "son of a",
+  "b!tch",
+  "fakof",
+  "explode",
 
   "retard",
+  "ret4rd",
+  "faq",
   "coon",
   "c00n",
   "c o o n",
@@ -200,6 +239,12 @@ const profanityList = [
   "childp",
   "childfu",
   "cocaine",
+  "bullshit",
+  "slit throat",
+  "self harm",
+  "self-harm",
+  "shoot",
+  "suck",
 
   "heroine",
   "cum",
@@ -232,6 +277,8 @@ const profanityList = [
   "meth",
   "m3th",
   "smoke crank",
+  "blow",
+  "kiss",
 
   "fentanyl",
   "morphine",
@@ -323,6 +370,9 @@ const profanityList = [
   "sh1",
   "5h",
   "4hit",
+  "LGBT",
+  "homosexual",
+  "lesbian",
 
   "babi",
   "bodoh",
@@ -342,6 +392,7 @@ const profanityList = [
   "lahanat",
   "bana",
   "buto",
+  "biol",
   "butoh",
   "butuh",
   "lancau",
@@ -355,6 +406,9 @@ const profanityList = [
   "romen",
   "gay",
   "pondan",
+  "maknyah",
+  "ladyboy",
+  "ladyboi",
   "bapok",
   "pengkid",
   "siot",
@@ -377,9 +431,38 @@ const profanityList = [
   "menyalak",
   "neraka",
   "hell",
+  "celaka",
+  "musibat",
+  "lahabau",
+  "mati",
+  "putang ina",
+  "hail",
+  "long live",
+  "snob",
+  "anak",
+  "haram",
+  "dajjal",
+  "laknat",
+  "kafir",
+  "yahudi",
+  "nsfw",
+  "pussy",
+  "pussycat",
+  "entod",
+  "jalang",
+  "noob",
+  "nerd",
+  "idiot",
+  "stupid",
+  "letup",
+  "letop",
+  "cibai",
+  "bij",
+  "fakof",
+  "lanjiao",
 ];
 
-// Function to check for profanity
+// function to check for profanity
 const containsProfanity = (value: string | undefined): boolean => {
   if (!value) return false;
   return profanityList.some((word) => value.toLowerCase().includes(word));
@@ -392,13 +475,13 @@ export const QuestionsSchema = z.object({
     .min(5, "Title must be at least 5 characters long")
     .max(150, "Title cannot exceed 150 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Title contains profanity",
+      message: "Title contains profanity word",
     }),
   explanation: z
     .string()
     .min(20, "Explanation must be at least 20 characters long")
     .refine((value) => !containsProfanity(value), {
-      message: "Explanation contains profanity",
+      message: "Explanation contains profanity word",
     }),
   tags: z
     .array(
@@ -407,7 +490,7 @@ export const QuestionsSchema = z.object({
         .min(1, "Tag must be at least 1 character long")
         .max(20, "Tag cannot exceed 20 characters")
         .refine((value) => !containsProfanity(value), {
-          message: "Tag contains profanity",
+          message: "Tag contains profanity word",
         })
     )
     .min(1, "At least 1 tag is required"),
@@ -418,7 +501,7 @@ export const AnswerSchema = z.object({
     .string()
     .min(20, "Answer must be at least 20 characters long")
     .refine((value) => !containsProfanity(value), {
-      message: "Answer contains profanity",
+      message: "Answer contains profanity word",
     }),
 });
 
@@ -428,14 +511,14 @@ export const ProfileSchema = z.object({
     .min(5, "Name must be at least 5 characters long")
     .max(30, "Name cannot exceed 30 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Name contains profanity",
+      message: "Name contains profanity word",
     }),
   username: z
     .string()
     .min(5, "Username must be at least 5 characters long")
     .max(25, "Username cannot exceed 25 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Username contains profanity",
+      message: "Username contains profanity word",
     }),
   bio: z
     .string()
@@ -444,7 +527,7 @@ export const ProfileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .refine((value) => !containsProfanity(value), {
-      message: "Bio contains profanity",
+      message: "Bio contains profanity word",
     }),
   portfolioWebsite: z
     .string()
@@ -458,6 +541,6 @@ export const ProfileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .refine((value) => !containsProfanity(value), {
-      message: "Location contains profanity",
+      message: "Location contains profanity word",
     }),
 });
