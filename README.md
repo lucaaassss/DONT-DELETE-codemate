@@ -43,21 +43,24 @@ Built with Next.js, Codemate is a web community forum specifically designed for 
 
 ## <a name="features">🔋 Features</a>
 
-👉 **Authentication**: An ultra-secure SSR authentication with proper validations and authorization
+👉 **Authentication**: An ultra-secure Clerk service authentication.
 
-👉 **Connect Banks**: Integrates with Plaid for multiple bank account linking
+👉 **Home Page**: Shows all of the questions posted along with search, filter, and pagination functionality.
 
-👉 **Home Page**: Shows general overview of user account with total balance from all connected banks, recent transactions, money spent on different categories, etc
+👉 **Ask a Question**: Allows user to post questions using the React Hook Form and TinyMCE editor for code snippet.
 
-👉 **My Banks**: Check the complete list of all connected banks with respective balances, account details
+👉 **Question Details**: Shows the details for each question along with AI-generated answer functionality.
 
-👉 **Transaction History**: Includes pagination and filtering options for viewing transaction history of different banks
+👉 **Tags**: Shows all of the questions for each tag along with AI-generated tag description functionality.
 
-👉 **Real-time Updates**: Reflects changes across all relevant pages upon connecting new bank accounts.
+👉 **Collections**: Shows all of the saved questions.
 
-👉 **Funds Transfer**: Allows users to transfer funds using Dwolla to other accounts with required fields and recipient bank ID.
+👉 **Community**: Shows all of the users that are using the platform along with their top tags.
 
-👉 **Responsiveness**: Ensures the application adapts seamlessly to various screen sizes and devices, providing a consistent user experience across desktop, tablet, and mobile platforms.
+👉 **Profile**: Shows the details for each user along with their achievements.
+
+👉 **Support**: Allows user to message the Codemate team via EmailJS service.
+
 
 and many more, including code architecture and reusability. 
 
@@ -76,8 +79,8 @@ Make sure you have the following installed on your machine:
 **Cloning the Repository**
 
 ```bash
-git clone https://github.com/shahirulprojects/Financify.git
-cd Financify
+git clone https://github.com/shahirulprojects/Codemate.git
+cd Codemate
 ```
 
 **Installation**
