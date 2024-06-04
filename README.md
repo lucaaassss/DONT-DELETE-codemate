@@ -93,37 +93,38 @@ npm install
 
 **Set Up Environment Variables**
 
-Create a new file named `.env` in the root of your project and add the following content:
+Create a new file named `.env.local` in the root of your project and add the following content:
 
-```env
-#NEXT
-NEXT_PUBLIC_SITE_URL=
+```env.local
 
-#APPWRITE
-NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
-NEXT_PUBLIC_APPWRITE_PROJECT=
-APPWRITE_DATABASE_ID=
-APPWRITE_USER_COLLECTION_ID=
-APPWRITE_BANK_COLLECTION_ID=
-APPWRITE_TRANSACTION_COLLECTION_ID=
-APPWRITE_SECRET=
+#CLERK
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+NEXT_CLERK_WEBHOOK_SECRET=
 
-#PLAID
-PLAID_CLIENT_ID=
-PLAID_SECRET=
-PLAID_ENV=
-PLAID_PRODUCTS=
-PLAID_COUNTRY_CODES=
+#TINYMCE
+NEXT_PUBLIC_TINY_EDITOR_API_KEY=
 
-#DWOLLA
-DWOLLA_KEY=
-DWOLLA_SECRET=
-DWOLLA_BASE_URL=https://api-sandbox.dwolla.com
-DWOLLA_ENV=sandbox
+#MONGODB
+MONGODB_URL=
+
+#OPENAI
+OPENAI_API_KEY=
+
+#EMAILJS
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=
+
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 
 ```
 
-Replace the placeholder values with your actual respective account credentials. You can obtain these credentials by signing up on the [Appwrite](https://appwrite.io/?utm_source=youtube&utm_content=reactnative&ref=JSmastery), [Plaid](https://plaid.com/) and [Dwolla](https://www.dwolla.com/)
+Replace the placeholder values with your actual respective account credentials. You can obtain these credentials by signing up on the [Clerk](https://clerk.com/), [TinyMCE](https://www.tiny.cloud/) , [MongoDB](https://www.mongodb.com/), [OpenAI](https://platform.openai.com/playground), and [EmailJS](https://www.emailjs.com/)
 
 **Running the Project**
 
@@ -138,31 +139,32 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 <details>
 <summary><code>.env.example</code></summary>
 
-```env
-#NEXT
-NEXT_PUBLIC_SITE_URL=
+```.env.local
+#CLERK
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+CLERK_SECRET_KEY=
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+NEXT_CLERK_WEBHOOK_SECRET=
 
-#APPWRITE
-NEXT_PUBLIC_APPWRITE_ENDPOINT=https://cloud.appwrite.io/v1
-NEXT_PUBLIC_APPWRITE_PROJECT=
-APPWRITE_DATABASE_ID=
-APPWRITE_USER_COLLECTION_ID=
-APPWRITE_BANK_COLLECTION_ID=
-APPWRITE_TRANSACTION_COLLECTION_ID=
-APPWRITE_SECRET=
+#TINYMCE
+NEXT_PUBLIC_TINY_EDITOR_API_KEY=
 
-#PLAID
-PLAID_CLIENT_ID=
-PLAID_SECRET=
-PLAID_ENV=sandbox
-PLAID_PRODUCTS=auth,transactions,identity
-PLAID_COUNTRY_CODES=US,CA
+#MONGODB
+MONGODB_URL=
 
-#DWOLLA
-DWOLLA_KEY=
-DWOLLA_SECRET=
-DWOLLA_BASE_URL=https://api-sandbox.dwolla.com
-DWOLLA_ENV=sandbox
+#OPENAI
+OPENAI_API_KEY=
+
+#EMAILJS
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=
+
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+
 ```
 
 </details>
