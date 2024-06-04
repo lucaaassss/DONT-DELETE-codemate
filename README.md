@@ -24,7 +24,7 @@
 
 ## <a name="introduction">🤖 Introduction</a>
 
-Built with Next.js, Financify is a financial SaaS platform that connects to multiple bank accounts, displays transactions in real-time, allows users to transfer money to other platform users, and manages their finances altogether. 
+Built with Next.js, Codemate is a web community forum specifically designed for programming students.  The platform integrates cutting-edge Artificial Intelligence (AI) through the ChatGPT API to provide intelligent responses to user queries and enhance the accuracy of tag descriptions. Additionally, it leverages Component-Based Software Engineering (CBSE) principles to seamlessly integrate various third-party services, creating a cohesive and user-friendly experience for student programmers.
 
 ## <a name="tech-stack">⚙️ Tech Stack</a>
 
