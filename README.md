@@ -137,9 +137,9 @@ Open [http://localhost:3000](http://localhost:3000) in your browser to view the 
 ## <a name="snippets">🕸️ Snippets</a>
 
 <details>
-<summary><code>.env.example</code></summary>
+<summary><code>.env.local</code></summary>
 
-```.env.local
+```env
 #CLERK
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
 CLERK_SECRET_KEY=
@@ -170,1434 +170,1158 @@ NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 </details>
 
 <details>
-<summary><code>exchangePublicToken</code></summary>
+<summary><code>user.action.ts</code></summary>
 
-```typescript
-// This function exchanges a public token for an access token and item ID
-export const exchangePublicToken = async ({
-  publicToken,
-  user,
-}: exchangePublicTokenProps) => {
-  try {
-    // Exchange public token for access token and item ID
-    const response = await plaidClient.itemPublicTokenExchange({
-      public_token: publicToken,
-    });
-
-    const accessToken = response.data.access_token;
-    const itemId = response.data.item_id;
-
-    // Get account information from Plaid using the access token
-    const accountsResponse = await plaidClient.accountsGet({
-      access_token: accessToken,
-    });
-
-    const accountData = accountsResponse.data.accounts[0];
-
-    // Create a processor token for Dwolla using the access token and account ID
-    const request: ProcessorTokenCreateRequest = {
-      access_token: accessToken,
-      account_id: accountData.account_id,
-      processor: "dwolla" as ProcessorTokenCreateRequestProcessorEnum,
-    };
-
-    const processorTokenResponse =
-      await plaidClient.processorTokenCreate(request);
-    const processorToken = processorTokenResponse.data.processor_token;
-
-    // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
-    const fundingSourceUrl = await addFundingSource({
-      dwollaCustomerId: user.dwollaCustomerId,
-      processorToken,
-      bankName: accountData.name,
-    });
-
-    // If the funding source URL is not created, throw an error
-    if (!fundingSourceUrl) throw Error;
-
-    // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and sharable ID
-    await createBankAccount({
-      userId: user.$id,
-      bankId: itemId,
-      accountId: accountData.account_id,
-      accessToken,
-      fundingSourceUrl,
-      sharableId: encryptId(accountData.account_id),
-    });
-
-    // Revalidate the path to reflect the changes
-    revalidatePath("/");
-
-    // Return a success message
-    return parseStringify({
-      publicTokenExchange: "complete",
-    });
-  } catch (error) {
-    // Log any errors that occur during the process
-    console.error("An error occurred while creating exchanging token:", error);
-  }
-};
-```
-
-</details>
-
-<details>
-<summary><code>user.actions.ts</code></summary>
-
-```typescript
+```user.action
+/* eslint-disable no-unused-vars */
 "use server";
 
+import { FilterQuery } from "mongoose"; // a filter query is used to select the documents that match the query
+import User from "@/database/user.model";
+import { connectToDatabase } from "../mongoose";
+import {
+  CreateUserParams,
+  DeleteUserParams,
+  GetAllUsersParams,
+  GetSavedQuestionsParams,
+  GetUserByIdParams,
+  GetUserStatsParams,
+  ToggleSaveQuestionParams,
+  UpdateUserParams,
+} from "./shared.types";
 import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
-import { ID, Query } from "node-appwrite";
-import {
-  CountryCode,
-  ProcessorTokenCreateRequest,
-  ProcessorTokenCreateRequestProcessorEnum,
-  Products,
-} from "plaid";
+import Question from "@/database/question.model";
+import Tag from "@/database/tag.model";
+import Answer from "@/database/answer.model";
+import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
+import Interaction from "@/database/interaction.model";
 
-import { plaidClient } from "@/lib/plaid.config";
-import {
-  parseStringify,
-  extractCustomerIdFromUrl,
-  encryptId,
-} from "@/lib/utils";
-
-import { createAdminClient, createSessionClient } from "../appwrite.config";
-
-import { addFundingSource, createDwollaCustomer } from "./dwolla.actions";
-
-const {
-  APPWRITE_DATABASE_ID: DATABASE_ID,
-  APPWRITE_USER_COLLECTION_ID: USER_COLLECTION_ID,
-  APPWRITE_BANK_COLLECTION_ID: BANK_COLLECTION_ID,
-} = process.env;
-
-export const signUp = async ({ password, ...userData }: SignUpParams) => {
-  let newUserAccount;
-
+export async function getUserById(params: any) {
   try {
-    // create appwrite user
-    const { database, account } = await createAdminClient();
-    newUserAccount = await account.create(
-      ID.unique(),
-      userData.email,
-      password,
-      `${userData.firstName} ${userData.lastName}`
-    );
+    connectToDatabase();
 
-    if (!newUserAccount) throw new Error("Error creating user");
+    const { userId } = params; // pass the userId as parameters
 
-    // create dwolla customer
-    const dwollaCustomerUrl = await createDwollaCustomer({
-      ...userData,
-      type: "personal",
-    });
+    const user = await User.findOne({ clerkId: userId });
+    // based on the userId we can find the user from the database using the User model
+    // clerkId:userId means that we search the user by clerkId
 
-    if (!dwollaCustomerUrl) throw new Error("Error creating dwolla customer");
-    const dwollaCustomerId = extractCustomerIdFromUrl(dwollaCustomerUrl);
-
-    const newUser = await database.createDocument(
-      DATABASE_ID!,
-      USER_COLLECTION_ID!,
-      ID.unique(),
-      {
-        ...userData,
-        userId: newUserAccount.$id,
-        dwollaCustomerUrl,
-        dwollaCustomerId,
-      }
-    );
-
-    const session = await account.createEmailPasswordSession(
-      userData.email,
-      password
-    );
-
-    cookies().set("appwrite-session", session.secret, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-    });
-
-    return parseStringify(newUser);
+    return user;
   } catch (error) {
-    console.error("Error", error);
+    console.error("Error getting user by ID:", error);
+    throw error;
+  }
+}
 
-    // check if account has been created, if so, delete it
-    if (newUserAccount?.$id) {
-      const { user } = await createAdminClient();
-      await user.delete(newUserAccount?.$id);
+export async function createUser(userData: CreateUserParams) {
+  try {
+    connectToDatabase();
+
+    const newUser = await User.create(userData);
+
+    return newUser;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    throw error;
+  }
+}
+
+export async function updateUser(params: UpdateUserParams) {
+  try {
+    connectToDatabase();
+
+    const { clerkId, updateData, path } = params;
+
+    await User.findOneAndUpdate({ clerkId }, updateData, { new: true }); // find the user based on the clerkId and passed the updated data and then create a new instance of the user in the database
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    throw error;
+  }
+}
+
+export async function deleteUser(params: DeleteUserParams) {
+  try {
+    connectToDatabase();
+
+    const { clerkId } = params;
+
+    const user = await User.findOne({ clerkId });
+
+    // if user does not exist
+    if (!user) {
+      throw new Error("User not found");
     }
 
-    return null;
-  }
-};
+    // get user's question id
+    const userQuestionIds = await Question.find({ author: user._id }).distinct(
+      "_id"
+    ); // distinct will return distinct values of the given field that matches the filter
 
-export const signIn = async ({ email, password }: signInProps) => {
-  try {
-    const { account } = await createAdminClient();
-    const session = await account.createEmailPasswordSession(email, password);
+    // if the user exists,we have to delete the user from the database and also delete the questions,answers,comments,etc that have been made by the user
 
-    cookies().set("appwrite-session", session.secret, {
-      path: "/",
-      httpOnly: true,
-      sameSite: "strict",
-      secure: true,
-    });
+    // deleting all questions asked by the user
+    await Question.deleteMany({ author: user._id });
 
-    const user = await getUserInfo({ userId: session.userId });
+    // delete all answers given by the user
+    await Answer.deleteMany({ author: user._id });
 
-    return parseStringify(user);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
+    // delete the answers created by other users on questions created by the user
+    await Answer.deleteMany({ question: { $in: userQuestionIds } });
 
-export const getLoggedInUser = async () => {
-  try {
-    const { account } = await createSessionClient();
-    const result = await account.get();
-
-    const user = await getUserInfo({ userId: result.$id });
-
-    return parseStringify(user);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-
-// CREATE PLAID LINK TOKEN
-export const createLinkToken = async (user: User) => {
-  try {
-    const tokeParams = {
-      user: {
-        client_user_id: user.$id,
-      },
-      client_name: user.firstName + user.lastName,
-      products: ["auth"] as Products[],
-      language: "en",
-      country_codes: ["US"] as CountryCode[],
-    };
-
-    const response = await plaidClient.linkTokenCreate(tokeParams);
-
-    return parseStringify({ linkToken: response.data.link_token });
-  } catch (error) {
-    console.error(
-      "An error occurred while creating a new Horizon user:",
-      error
-    );
-  }
-};
-
-// EXCHANGE PLAID PUBLIC TOKEN
-// This function exchanges a public token for an access token and item ID
-export const exchangePublicToken = async ({
-  publicToken,
-  user,
-}: exchangePublicTokenProps) => {
-  try {
-    // Exchange public token for access token and item ID
-    const response = await plaidClient.itemPublicTokenExchange({
-      public_token: publicToken,
-    });
-
-    const accessToken = response.data.access_token;
-    const itemId = response.data.item_id;
-
-    // Get account information from Plaid using the access token
-    const accountsResponse = await plaidClient.accountsGet({
-      access_token: accessToken,
-    });
-
-    const accountData = accountsResponse.data.accounts[0];
-
-    // Create a processor token for Dwolla using the access token and account ID
-    const request: ProcessorTokenCreateRequest = {
-      access_token: accessToken,
-      account_id: accountData.account_id,
-      processor: "dwolla" as ProcessorTokenCreateRequestProcessorEnum,
-    };
-
-    const processorTokenResponse =
-      await plaidClient.processorTokenCreate(request);
-    const processorToken = processorTokenResponse.data.processor_token;
-
-    // Create a funding source URL for the account using the Dwolla customer ID, processor token, and bank name
-    const fundingSourceUrl = await addFundingSource({
-      dwollaCustomerId: user.dwollaCustomerId,
-      processorToken,
-      bankName: accountData.name,
-    });
-
-    // If the funding source URL is not created, throw an error
-    if (!fundingSourceUrl) throw Error;
-
-    // Create a bank account using the user ID, item ID, account ID, access token, funding source URL, and sharable ID
-    await createBankAccount({
-      userId: user.$id,
-      bankId: itemId,
-      accountId: accountData.account_id,
-      accessToken,
-      fundingSourceUrl,
-      sharableId: encryptId(accountData.account_id),
-    });
-
-    // Revalidate the path to reflect the changes
-    revalidatePath("/");
-
-    // Return a success message
-    return parseStringify({
-      publicTokenExchange: "complete",
-    });
-  } catch (error) {
-    // Log any errors that occur during the process
-    console.error("An error occurred while creating exchanging token:", error);
-  }
-};
-
-export const getUserInfo = async ({ userId }: getUserInfoProps) => {
-  try {
-    const { database } = await createAdminClient();
-
-    const user = await database.listDocuments(
-      DATABASE_ID!,
-      USER_COLLECTION_ID!,
-      [Query.equal("userId", [userId])]
+    // remove user reference from upvotes and downvotes on questions
+    await Question.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
     );
 
-    if (user.total !== 1) return null;
+    await Question.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
 
-    return parseStringify(user.documents[0]);
+    // remove user reference from upvotes and downvotes on answers
+    await Answer.updateMany(
+      { upvotes: user._id },
+      { $pull: { upvotes: user._id } }
+    );
+
+    await Answer.updateMany(
+      { downvotes: user._id },
+      { $pull: { downvotes: user._id } }
+    );
+
+    // delete interactions involving the user
+    await Interaction.deleteMany({ user: user._id });
+
+    // update tags to remove references to the user's questions
+    await Tag.updateMany(
+      { questions: { $in: userQuestionIds } },
+      { $pull: { questions: { $in: userQuestionIds } } }
+    );
+
+    // delete the user
+    const deletedUser = await User.findByIdAndDelete(user._id);
+
+    return deletedUser;
   } catch (error) {
-    console.error("Error", error);
-    return null;
+    console.error("Error deleting user:", error);
+    throw error;
   }
-};
+}
 
-export const createBankAccount = async ({
-  accessToken,
-  userId,
-  accountId,
-  bankId,
-  fundingSourceUrl,
-  sharableId,
-}: createBankAccountProps) => {
+export async function getAllUsers(params: GetAllUsersParams) {
   try {
-    const { database } = await createAdminClient();
+    connectToDatabase();
 
-    const bankAccount = await database.createDocument(
-      DATABASE_ID!,
-      BANK_COLLECTION_ID!,
-      ID.unique(),
-      {
-        accessToken,
+    const { searchQuery, filter, page = 1, pageSize = 6 } = params;
+    const skipAmount = (page - 1) * pageSize;
+
+    const query: FilterQuery<typeof User> = {};
+
+    // search user by name or username
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, "i") } },
+        { username: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case "new_users": // refer filter.ts file for the variable name
+        sortOptions = { joinedAt: -1 }; // sort in descending order meaning newest user will be at top
+        break;
+      case "old_users":
+        sortOptions = { joinedAt: 1 }; // sort in ascending order meaning newest user will be at bottom
+        break;
+      case "top_contributors":
+        sortOptions = { reputation: -1 }; // sort by reputation in descending order
+        break;
+
+      default:
+        break;
+    }
+
+    const users = await User.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const totalUsers = await User.countDocuments(query);
+
+    const isNext = totalUsers > skipAmount + users.length;
+
+    return { users, isNext };
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+}
+
+// this action is in user action because each user will have different saved question
+export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
+  try {
+    await connectToDatabase();
+
+    const { userId, questionId, path } = params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const isQuestionSaved = user.saved.includes(questionId);
+
+    if (isQuestionSaved) {
+      await User.findByIdAndUpdate(
         userId,
-        accountId,
-        bankId,
-        fundingSourceUrl,
-        sharableId,
-      }
-    );
-
-    return parseStringify(bankAccount);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-
-// get user bank accounts
-export const getBanks = async ({ userId }: getBanksProps) => {
-  try {
-    const { database } = await createAdminClient();
-
-    const banks = await database.listDocuments(
-      DATABASE_ID!,
-      BANK_COLLECTION_ID!,
-      [Query.equal("userId", [userId])]
-    );
-
-    return parseStringify(banks.documents);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-
-// get specific bank from bank collection by document id
-export const getBank = async ({ documentId }: getBankProps) => {
-  try {
-    const { database } = await createAdminClient();
-
-    const bank = await database.listDocuments(
-      DATABASE_ID!,
-      BANK_COLLECTION_ID!,
-      [Query.equal("$id", [documentId])]
-    );
-
-    if (bank.total !== 1) return null;
-
-    return parseStringify(bank.documents[0]);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-
-// get specific bank from bank collection by account id
-export const getBankByAccountId = async ({
-  accountId,
-}: getBankByAccountIdProps) => {
-  try {
-    const { database } = await createAdminClient();
-
-    const bank = await database.listDocuments(
-      DATABASE_ID!,
-      BANK_COLLECTION_ID!,
-      [Query.equal("accountId", [accountId])]
-    );
-
-    if (bank.total !== 1) return null;
-
-    return parseStringify(bank.documents[0]);
-  } catch (error) {
-    console.error("Error", error);
-    return null;
-  }
-};
-```
-  
-</details>
-
-<details>
-<summary><code>dwolla.actions.ts</code></summary>
-
-```typescript
-"use server";
-
-import { Client } from "dwolla-v2";
-
-const getEnvironment = (): "production" | "sandbox" => {
-  const environment = process.env.DWOLLA_ENV as string;
-
-  switch (environment) {
-    case "sandbox":
-      return "sandbox";
-    case "production":
-      return "production";
-    default:
-      throw new Error(
-        "Dwolla environment should either be set to `sandbox` or `production`"
+        { $pull: { saved: questionId } }, // remove the question from saved
+        { new: true } // create new instance
       );
+    } else {
+      await User.findByIdAndUpdate(
+        userId,
+        { $addToSet: { saved: questionId } }, // add the question from saved
+        { new: true } // create new instance
+      );
+    }
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error toggling saved question:", error);
+    throw error;
   }
-};
+}
 
-const dwollaClient = new Client({
-  environment: getEnvironment(),
-  key: process.env.DWOLLA_KEY as string,
-  secret: process.env.DWOLLA_SECRET as string,
-});
-
-// Create a Dwolla Funding Source using a Plaid Processor Token
-export const createFundingSource = async (
-  options: CreateFundingSourceOptions
-) => {
+// this action is in user action because each user will have different saved question
+export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
-    return await dwollaClient
-      .post(`customers/${options.customerId}/funding-sources`, {
-        name: options.fundingSourceName,
-        plaidToken: options.plaidToken,
-      })
-      .then((res) => res.headers.get("location"));
-  } catch (err) {
-    console.error("Creating a Funding Source Failed: ", err);
+    await connectToDatabase();
+
+    const { clerkId, searchQuery, filter, page = 1, pageSize = 3 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    const query: FilterQuery<typeof Question> = searchQuery // we always do it like this for searchQuery
+      ? { title: { $regex: new RegExp(searchQuery, "i") } }
+      : {};
+
+    let sortOptions = {};
+
+    switch (filter) {
+      case "most_recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortOptions = { createdAt: 1 };
+        break;
+      case "most_voted":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "most_viewed":
+        sortOptions = { views: -1 };
+        break;
+      case "most_answered":
+        sortOptions = { answers: -1 };
+        break;
+
+      default:
+        break;
+    }
+
+    const user = await User.findOne({ clerkId }).populate({
+      path: "saved",
+      match: query,
+      options: {
+        sort: sortOptions,
+        skip: skipAmount,
+        limit: pageSize + 1,
+      },
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id clerkId name picture" },
+      ],
+    });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const savedQuestions = user.saved.slice(0, pageSize); // extracting the user's saved question
+
+    const isNext = user.saved.length > pageSize; // to find out if the total number of saved questions is greater than page size
+
+    return { questions: savedQuestions, isNext }; // return question that is saved
+  } catch (error) {
+    console.error("Error fetching saved questions:", error);
+    throw error;
   }
-};
+}
 
-export const createOnDemandAuthorization = async () => {
+export async function getUserInfo(params: GetUserByIdParams) {
   try {
-    const onDemandAuthorization = await dwollaClient.post(
-      "on-demand-authorizations"
-    );
-    const authLink = onDemandAuthorization.body._links;
-    return authLink;
-  } catch (err) {
-    console.error("Creating an On Demand Authorization Failed: ", err);
-  }
-};
+    await connectToDatabase();
 
-export const createDwollaCustomer = async (
-  newCustomer: NewDwollaCustomerParams
-) => {
-  try {
-    return await dwollaClient
-      .post("customers", newCustomer)
-      .then((res) => res.headers.get("location"));
-  } catch (err) {
-    console.error("Creating a Dwolla Customer Failed: ", err);
-  }
-};
+    const { userId } = params;
+    const user = await User.findOne({ clerkId: userId });
 
-export const createTransfer = async ({
-  sourceFundingSourceUrl,
-  destinationFundingSourceUrl,
-  amount,
-}: TransferParams) => {
-  try {
-    const requestBody = {
-      _links: {
-        source: {
-          href: sourceFundingSourceUrl,
-        },
-        destination: {
-          href: destinationFundingSourceUrl,
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    const totalQuestions = await Question.countDocuments({ author: user._id }); // get the total question where the author is the user themselves
+    const totalAnswers = await Answer.countDocuments({ author: user._id }); // get the total answer where the author is the user themselves
+
+    const [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user._id } }, // find the questions author that matches the user id
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" }, // get the number of upvotes for each question
         },
       },
-      amount: {
-        currency: "USD",
-        value: amount,
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" }, // sum all of the upvotes
+        },
       },
-    };
-    return await dwollaClient
-      .post("transfers", requestBody)
-      .then((res) => res.headers.get("location"));
-  } catch (err) {
-    console.error("Transfer fund failed: ", err);
-  }
-};
+    ]);
 
-export const addFundingSource = async ({
-  dwollaCustomerId,
-  processorToken,
-  bankName,
-}: AddFundingSourceParams) => {
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } }, // find the answers author that matches the user id
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" }, // get the number of upvotes for each answer
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" }, // sum all of the upvotes
+        },
+      },
+    ]);
+
+    const [questionViews] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    const criteria = [
+      { type: "QUESTION_COUNT" as BadgeCriteriaType, count: totalQuestions },
+      { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+
+    const badgeCounts = assignBadges({ criteria });
+
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+      badgeCounts,
+      reputation: user.reputation,
+    };
+  } catch (error) {
+    console.error("Error getting user info:", error);
+    throw error;
+  }
+}
+
+export async function getUserQuestions(params: GetUserStatsParams) {
   try {
-    // create dwolla auth link
-    const dwollaAuthLinks = await createOnDemandAuthorization();
+    await connectToDatabase();
 
-    // add funding source to the dwolla customer & get the funding source url
-    const fundingSourceOptions = {
-      customerId: dwollaCustomerId,
-      fundingSourceName: bankName,
-      plaidToken: processorToken,
-      _links: dwollaAuthLinks,
-    };
-    return await createFundingSource(fundingSourceOptions);
-  } catch (err) {
-    console.error("Transfer fund failed: ", err);
+    const { userId, page = 1, pageSize = 3 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    // count the total questions asked by the user
+    const totalQuestions = await Question.countDocuments({ author: userId });
+
+    // display all of the questions asked by the user
+    const userQuestions = await Question.find({ author: userId })
+      .sort({ views: -1, upvotes: -1 }) // sort the questions by highest views and upvotes
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate("tags", "_id name") // populate the tags with id and name
+      .populate("author", "_id clerkId name picture"); // populate the author with id,clerkId,name, and picture
+
+    const isNextQuestions = totalQuestions > skipAmount + userQuestions.length;
+
+    return { totalQuestions, questions: userQuestions, isNextQuestions };
+  } catch (error) {
+    console.error("Error fetching user questions:", error);
+    throw error;
   }
-};
+}
+
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    await connectToDatabase();
+
+    const { userId, page = 1, pageSize = 3 } = params;
+
+    const skipAmount = (page - 1) * pageSize;
+
+    // count the total answers asked by the user
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    // display all of the answers asked by the user
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({ upvotes: -1 }) // sort the answers by the highest upvotes
+      .skip(skipAmount)
+      .limit(pageSize)
+      .populate({
+        path: "question",
+        select: "_id title",
+      }) // populate the question with id and title
+      .populate("author", "_id clerkId name picture"); // populate the author with id,clerkId,name, and picture
+
+    const isNextAnswer = totalAnswers > skipAmount + userAnswers.length;
+
+    return { totalAnswers, answers: userAnswers, isNextAnswer };
+  } catch (error) {
+    console.error("Error fetching user answers:", error);
+    throw error;
+  }
+}
+
+// export async function getAllUsers(params:GetAllUsersParams){
+//   try {
+//     connectToDatabase();
+//   } catch (error) {
+//     console.log(error);
+//     throw error;
+//   }
+// }
+
+
 ```
 
 </details>
 
 <details>
-<summary><code>bank.actions.ts</code></summary>
+<summary><code>question.action.ts</code></summary>
 
-```typescript
+```question.action
 "use server";
 
+import Question from "@/database/question.model";
+import Tag from "@/database/tag.model";
+import { connectToDatabase } from "../mongoose";
 import {
-  ACHClass,
-  CountryCode,
-  TransferAuthorizationCreateRequest,
-  TransferCreateRequest,
-  TransferNetwork,
-  TransferType,
-} from "plaid";
+  CreateQuestionParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
+  GetQuestionByIdParams,
+  GetQuestionsParams,
+  QuestionVoteParams,
+  RecommendedParams,
+} from "./shared.types";
+import User from "@/database/user.model";
+import { revalidatePath } from "next/cache";
+import Answer from "@/database/answer.model";
+import Interaction from "@/database/interaction.model";
+import { FilterQuery } from "mongoose";
 
-import { plaidClient } from "../plaid.config";
-import { parseStringify } from "../utils";
-
-import { getTransactionsByBankId } from "./transaction.actions";
-import { getBanks, getBank } from "./user.actions";
-
-// Get multiple bank accounts
-export const getAccounts = async ({ userId }: getAccountsProps) => {
+export async function getQuestions(params: GetQuestionsParams) {
   try {
-    // get banks from db
-    const banks = await getBanks({ userId });
+    connectToDatabase();
 
-    const accounts = await Promise.all(
-      banks?.map(async (bank: Bank) => {
-        // get each account info from plaid
-        const accountsResponse = await plaidClient.accountsGet({
-          access_token: bank.accessToken,
-        });
-        const accountData = accountsResponse.data.accounts[0];
+    const { searchQuery, filter, page = 1, pageSize = 3 } = params; // searchQuesry is from (home)>page.tsx
 
-        // get institution info from plaid
-        const institution = await getInstitution({
-          institutionId: accountsResponse.data.item.institution_id!,
-        });
+    // calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize; // for example if we are at page 2, it will be 2-1 and then times 20 meaning that we want to skip the first twenty and only see the rest of it
 
-        const account = {
-          id: accountData.account_id,
-          availableBalance: accountData.balances.available!,
-          currentBalance: accountData.balances.current!,
-          institutionId: institution.institution_id,
-          name: accountData.name,
-          officialName: accountData.official_name,
-          mask: accountData.mask!,
-          type: accountData.type as string,
-          subtype: accountData.subtype! as string,
-          appwriteItemId: bank.$id,
-          sharableId: bank.sharableId,
-        };
+    const query: FilterQuery<typeof Question> = {}; // how to read: query of a type FilterQuery and we are filtering something that are a type of Question. {} means that our query at the start is just an empty object
 
-        return account;
-      })
-    );
-
-    const totalBanks = accounts.length;
-    const totalCurrentBalance = accounts.reduce((total, account) => {
-      return total + account.currentBalance;
-    }, 0);
-
-    return parseStringify({ data: accounts, totalBanks, totalCurrentBalance });
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
-  }
-};
-
-// Get one bank account
-export const getAccount = async ({ appwriteItemId }: getAccountProps) => {
-  try {
-    // get bank from db
-    const bank = await getBank({ documentId: appwriteItemId });
-
-    // get account info from plaid
-    const accountsResponse = await plaidClient.accountsGet({
-      access_token: bank.accessToken,
-    });
-    const accountData = accountsResponse.data.accounts[0];
-
-    // get transfer transactions from appwrite
-    const transferTransactionsData = await getTransactionsByBankId({
-      bankId: bank.$id,
-    });
-
-    const transferTransactions = transferTransactionsData.documents.map(
-      (transferData: Transaction) => ({
-        id: transferData.$id,
-        name: transferData.name!,
-        amount: transferData.amount!,
-        date: transferData.$createdAt,
-        paymentChannel: transferData.channel,
-        category: transferData.category,
-        type: transferData.senderBankId === bank.$id ? "debit" : "credit",
-      })
-    );
-
-    // get institution info from plaid
-    const institution = await getInstitution({
-      institutionId: accountsResponse.data.item.institution_id!,
-    });
-
-    const transactions = await getTransactions({
-      accessToken: bank?.accessToken,
-    });
-
-    const account = {
-      id: accountData.account_id,
-      availableBalance: accountData.balances.available!,
-      currentBalance: accountData.balances.current!,
-      institutionId: institution.institution_id,
-      name: accountData.name,
-      officialName: accountData.official_name,
-      mask: accountData.mask!,
-      type: accountData.type as string,
-      subtype: accountData.subtype! as string,
-      appwriteItemId: bank.$id,
-    };
-
-    // sort transactions by date such that the most recent transaction is first
-    const allTransactions = [...transactions, ...transferTransactions].sort(
-      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-    );
-
-    return parseStringify({
-      data: account,
-      transactions: allTransactions,
-    });
-  } catch (error) {
-    console.error("An error occurred while getting the account:", error);
-  }
-};
-
-// Get bank info
-export const getInstitution = async ({
-  institutionId,
-}: getInstitutionProps) => {
-  try {
-    const institutionResponse = await plaidClient.institutionsGetById({
-      institution_id: institutionId,
-      country_codes: ["US"] as CountryCode[],
-    });
-
-    const intitution = institutionResponse.data.institution;
-
-    return parseStringify(intitution);
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
-  }
-};
-
-// Get transactions
-export const getTransactions = async ({
-  accessToken,
-}: getTransactionsProps) => {
-  let hasMore = true;
-  let transactions: any = [];
-
-  try {
-    // Iterate through each page of new transaction updates for item
-    while (hasMore) {
-      const response = await plaidClient.transactionsSync({
-        access_token: accessToken,
-      });
-
-      const data = response.data;
-
-      transactions = response.data.added.map((transaction) => ({
-        id: transaction.transaction_id,
-        name: transaction.name,
-        paymentChannel: transaction.payment_channel,
-        type: transaction.payment_channel,
-        accountId: transaction.account_id,
-        amount: transaction.amount,
-        pending: transaction.pending,
-        category: transaction.category ? transaction.category[0] : "",
-        date: transaction.date,
-        image: transaction.logo_url,
-      }));
-
-      hasMore = data.has_more;
+    // if a search query is provided, filter questions by title or content
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        { content: { $regex: new RegExp(searchQuery, "i") } }, // if the content contains the keyword of the search we will also display it
+      ];
     }
 
-    return parseStringify(transactions);
-  } catch (error) {
-    console.error("An error occurred while getting the accounts:", error);
-  }
-};
+    let sortOptions = {};
 
-// Create Transfer
-export const createTransfer = async () => {
-  const transferAuthRequest: TransferAuthorizationCreateRequest = {
-    access_token: "access-sandbox-cddd20c1-5ba8-4193-89f9-3a0b91034c25",
-    account_id: "Zl8GWV1jqdTgjoKnxQn1HBxxVBanm5FxZpnQk",
-    funding_account_id: "442d857f-fe69-4de2-a550-0c19dc4af467",
-    type: "credit" as TransferType,
-    network: "ach" as TransferNetwork,
-    amount: "10.00",
-    ach_class: "ppd" as ACHClass,
-    user: {
-      legal_name: "Anne Charleston",
-    },
-  };
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 }; // sort by the latest questions asked
+        break;
+      case "frequent":
+        sortOptions = { views: -1 }; // sort by the highest question view since user frequently see that question
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 }; // sort by questions that has 0 answers
+        break;
+
+      default:
+        break;
+    }
+    const questions = await Question.find(query) // to find question
+      .populate({ path: "tags", model: Tag }) // if a specific question has tags attached to it,we want to populate all the values from the tags so that we can also display them at the question card.We do this because MongoDB does not show the name for the tag,it only show the reference.So to be able to get the name,we have to populate it
+      .populate({ path: "author", model: User })
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOptions); // to sort from newest question to oldest question (the newer question will be at the top)
+
+    // figuring out if the next page exist or not
+
+    const totalQuestions = await Question.countDocuments(query);
+
+    const isNext = totalQuestions > skipAmount + questions.length;
+    // skipAmount is the number of questions we already skipped / seen
+    // questions.length represents the number of questions of the current page we are at
+    // for example if we have 101 total questions and the skipped amount is currently 4 pages with the pageSize value of 5 and the current page that we are at contains 5 questions
+    // so the total would be 25, meaning that 101>25 therefore we will still have next pages
+    return { questions, isNext };
+  } catch (error) {
+    console.error("Error fetching questions:", error);
+    throw error;
+  }
+}
+
+// we are dealing with asynchronous code so that's why we will have the try and catch block to handle if the call succeed or not
+export async function createQuestion(params: CreateQuestionParams) {
   try {
-    const transferAuthResponse =
-      await plaidClient.transferAuthorizationCreate(transferAuthRequest);
-    const authorizationId = transferAuthResponse.data.authorization.id;
+    connectToDatabase();
 
-    const transferCreateRequest: TransferCreateRequest = {
-      access_token: "access-sandbox-cddd20c1-5ba8-4193-89f9-3a0b91034c25",
-      account_id: "Zl8GWV1jqdTgjoKnxQn1HBxxVBanm5FxZpnQk",
-      description: "payment",
-      authorization_id: authorizationId,
-    };
+    const { title, content, tags, author, path } = params;
+    // destructuring the params
+    // accepting parameters from the front end (everything we pass from our form).The path is going to be an URL to the page that we have to reload (the homepage) because we have to revalidate it so that next.js know something has change
 
-    const responseCreateResponse = await plaidClient.transferCreate(
-      transferCreateRequest
-    );
-
-    const transfer = responseCreateResponse.data.transfer;
-    return parseStringify(transfer);
-  } catch (error) {
-    console.error(
-      "An error occurred while creating transfer authorization:",
-      error
-    );
-  }
-};
-```
-
-</details>
-
-
-<details>
-<summary><code>BankTabItem.tsx</code></summary>
-
-```typescript
-"use client";
-
-import { useSearchParams, useRouter } from "next/navigation";
-
-import { cn, formUrlQuery } from "@/lib/utils";
-
-export const BankTabItem = ({ account, appwriteItemId }: BankTabItemProps) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const isActive = appwriteItemId === account?.appwriteItemId;
-
-  const handleBankChange = () => {
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "id",
-      value: account?.appwriteItemId,
+    // create the question
+    const question = await Question.create({
+      title,
+      content,
+      author,
     });
-    router.push(newUrl, { scroll: false });
-  };
 
-  return (
-    <div
-      onClick={handleBankChange}
-      className={cn(`banktab-item`, {
-        " border-blue-600": isActive,
-      })}
-    >
-      <p
-        className={cn(`text-16 line-clamp-1 flex-1 font-medium text-gray-500`, {
-          " text-blue-600": isActive,
-        })}
-      >
-        {account.name}
-      </p>
-    </div>
-  );
-};
-```
+    const tagDocuments = [];
 
-</details>
-
-<details>
-<summary><code>BankInfo.tsx</code></summary>
-
-```typescript
-"use client";
-
-import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
-
-import {
-  cn,
-  formUrlQuery,
-  formatAmount,
-  getAccountTypeColors,
-} from "@/lib/utils";
-
-const BankInfo = ({ account, appwriteItemId, type }: BankInfoProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-
-  const isActive = appwriteItemId === account?.appwriteItemId;
-
-  const handleBankChange = () => {
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "id",
-      value: account?.appwriteItemId,
-    });
-    router.push(newUrl, { scroll: false });
-  };
-
-  const colors = getAccountTypeColors(account?.type as AccountTypes);
-
-  return (
-    <div
-      onClick={handleBankChange}
-      className={cn(`bank-info ${colors.bg}`, {
-        "shadow-sm border-blue-700": type === "card" && isActive,
-        "rounded-xl": type === "card",
-        "hover:shadow-sm cursor-pointer": type === "card",
-      })}
-    >
-      <figure
-        className={`flex-center h-fit rounded-full bg-blue-100 ${colors.lightBg}`}
-      >
-        <Image
-          src="/icons/connect-bank.svg"
-          width={20}
-          height={20}
-          alt={account.subtype}
-          className="m-2 min-w-5"
-        />
-      </figure>
-      <div className="flex w-full flex-1 flex-col justify-center gap-1">
-        <div className="bank-info_content">
-          <h2
-            className={`text-16 line-clamp-1 flex-1 font-bold text-blue-900 ${colors.title}`}
-          >
-            {account.name}
-          </h2>
-          {type === "full" && (
-            <p
-              className={`text-12 rounded-full px-3 py-1 font-medium text-blue-700 ${colors.subText} ${colors.lightBg}`}
-            >
-              {account.subtype}
-            </p>
-          )}
-        </div>
-
-        <p className={`text-16 font-medium text-blue-700 ${colors.subText}`}>
-          {formatAmount(account.currentBalance)}
-        </p>
-      </div>
-    </div>
-  );
-};
-
-export default BankInfo;
-```
-
-</details>
-
-<details>
-<summary><code>Copy.tsx</code></summary>
-
-```typescript
-"use client";
-import { useState } from "react";
-
-import { Button } from "./ui/button";
-
-const Copy = ({ title }: { title: string }) => {
-  const [hasCopied, setHasCopied] = useState(false);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(title);
-    setHasCopied(true);
-
-    setTimeout(() => {
-      setHasCopied(false);
-    }, 2000);
-  };
-
-  return (
-    <Button
-      data-state="closed"
-      className="mt-3 flex max-w-[320px] gap-4"
-      variant="secondary"
-      onClick={copyToClipboard}
-    >
-      <p className="line-clamp-1 w-full max-w-full text-xs font-medium text-black-2">
-        {title}
-      </p>
-
-      {!hasCopied ? (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          className="mr-2 size-4"
-        >
-          <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
-          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
-        </svg>
-      ) : (
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          className="mr-2 size-4"
-        >
-          <polyline points="20 6 9 17 4 12"></polyline>
-        </svg>
-      )}
-    </Button>
-  );
-};
-
-export default Copy;
-```
-
-</details>
-
-<details>
-<summary><code>PaymentTransferForm.tsx</code></summary>
-
-```typescript
-"use client";
-
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import * as z from "zod";
-
-import { createTransfer } from "@/lib/actions/dwolla.actions";
-import { createTransaction } from "@/lib/actions/transaction.actions";
-import { getBank, getBankByAccountId } from "@/lib/actions/user.actions";
-import { decryptId } from "@/lib/utils";
-
-import { BankDropdown } from "./bank/BankDropdown";
-import { Button } from "./ui/button";
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-
-const formSchema = z.object({
-  email: z.string().email("Invalid email address"),
-  name: z.string().min(4, "Transfer note is too short"),
-  amount: z.string().min(4, "Amount is too short"),
-  senderBank: z.string().min(4, "Please select a valid bank account"),
-  sharableId: z.string().min(8, "Please select a valid sharable Id"),
-});
-
-const PaymentTransferForm = ({ accounts }: PaymentTransferFormProps) => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      name: "",
-      email: "",
-      amount: "",
-      senderBank: "",
-      sharableId: "",
-    },
-  });
-
-  const submit = async (data: z.infer<typeof formSchema>) => {
-    setIsLoading(true);
-
-    try {
-      const receiverAccountId = decryptId(data.sharableId);
-      const receiverBank = await getBankByAccountId({
-        accountId: receiverAccountId,
-      });
-      const senderBank = await getBank({ documentId: data.senderBank });
-
-      const transferParams = {
-        sourceFundingSourceUrl: senderBank.fundingSourceUrl,
-        destinationFundingSourceUrl: receiverBank.fundingSourceUrl,
-        amount: data.amount,
-      };
-      // create transfer
-      const transfer = await createTransfer(transferParams);
-
-      // create transfer transaction
-      if (transfer) {
-        const transaction = {
-          name: data.name,
-          amount: data.amount,
-          senderId: senderBank.userId.$id,
-          senderBankId: senderBank.$id,
-          receiverId: receiverBank.userId.$id,
-          receiverBankId: receiverBank.$id,
-          email: data.email,
-        };
-
-        const newTransaction = await createTransaction(transaction);
-
-        if (newTransaction) {
-          form.reset();
-          router.push("/");
+    // create the tags or get them if they already exist
+    // findOneAndUpdate is a special mongoose property that has 2 parameters.We can add additional parameters if we want but essentially it has to be at least 2
+    // it finds a document in the Tag collection that matches the specified conditions and updates it. If no document is found, it creates a new one
+    // basically if the question created has a tag which already exist in the array it will add the question id to the tag and if not,it will create a new tag
+    for (const tag of tags) {
+      // looping over the tags array
+      const existingTag = await Tag.findOneAndUpdate(
+        // allows us find something (findOne)
+        {
+          name: { $regex: new RegExp(`^${tag}$`, "i") }, // looks for a tag whose name matches the tag variable (case-insensitive)."regex" stands for regular expression and the "i" stands for case-insensitive
+        },
+        // allows us to do something on it (Update)
+        {
+          $setOnInsert: { name: tag }, // if a document is being inserted (i.e., no matching document is found), this operation sets the name field to the current "tag"
+          $push: { questions: question._id }, // regardless of whether a document is found or inserted, it pushes the ID of a question (question._id) into the question array field of the document
+        },
+        // additional parameter
+        {
+          upsert: true, // if no document is found, create a new one based on the query criteria and update operations
+          new: true, // return the modified document rather than the original one
         }
+      );
+
+      tagDocuments.push(existingTag._id); // after each operation, it pushes the _id of the tag (whether existing or newly created) into the tagDocuments array
+    }
+
+    await Question.findByIdAndUpdate(question._id, {
+      $push: { tags: { $each: tagDocuments } },
+      // after processing all tags, it updates the Question document with the ID question._id.
+      // it pushes each element of the tagDocuments array into the tags array of the Question document.
+      // the $each modifier is used to add multiple values to the array
+      // after processing all tags, it updates the Question document by pushing all collected tag IDs into its tags array.
+    });
+
+    // create an interaction record for the user's ask_question action (to track who is the author of the question)
+    await Interaction.create({
+      user: author,
+      action: "ask_question",
+      question: question._id,
+      tags: tagDocuments,
+    });
+
+    // increment author's reputation by +5 for creating a question
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 5 } }); // pass in the authpr and update their reputation by 5 points
+
+    revalidatePath(path); // to remove the need to reload the homepage everytime a new question is added
+  } catch (error) {
+    console.error("Error creating question:", error);
+    throw error;
+  }
+}
+
+export async function getQuestionById(params: GetQuestionByIdParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId } = params;
+
+    const question = await Question.findById(questionId)
+      .populate({
+        path: "tags",
+        model: Tag,
+        select: "_id name",
+      }) // selecting the id and the name
+      .populate({
+        path: "author",
+        model: User,
+        select: "id_ clerkId name picture",
+      }); // selecting only the id,clerkId,name,picture
+
+    return question;
+  } catch (error) {
+    console.error("Error fetching question by ID:", error);
+    throw error;
+  }
+}
+
+export async function upvoteQuestion(params: QuestionVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } }; // pull the specific userId  from the upvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to upvote again since we already upvoted
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId }, // pull the specific userId  from the downvotes
+        $addToSet: { upvotes: userId }, // push  the specific userId to the upvotes
+        // we undo the downvote and then we upvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } }; // if we have not already upvoted or downvoted we will add a new upvote of the userId to the set
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // increment author's reputation by +1 for upvoting a question and -1 for undoing the upvote
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -1 : +1 },
+    });
+
+    // increment author's reputation by +10 for receiving an upvote to the question they created or -10 for receiving a downvote for the question they created
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasupVoted ? -10 : +10 },
+    });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error upvoting question:", error);
+    throw error;
+  }
+}
+
+export async function downvoteQuestion(params: QuestionVoteParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, userId, hasupVoted, hasdownVoted, path } = params;
+
+    let updateQuery = {};
+
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } }; // pull the specific userId  from the downvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to downvote again since we already downvoted
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId }, // pull the specific userId  from the upvotes
+        $addToSet: { downvotes: userId }, // push  the specific userId to the downvotes
+        // we undo the upvote and then we downvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } }; // if we have not already upvoted or downvoted we will add a new downvote of the userId to the set
+    }
+
+    const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // increment author's reputation
+    // downvoting or undoing the downvote for other people's answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? +1 : -1 },
+    });
+
+    // receiving downvote from other users
+    await User.findByIdAndUpdate(question.author, {
+      $inc: { reputation: hasdownVoted ? +10 : -10 },
+    });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error downvoting question:", error);
+    throw error;
+  }
+}
+
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, path } = params;
+
+    await Question.deleteOne({ _id: questionId }); // delete the question
+    await Answer.deleteMany({ question: questionId }); // delete all answers associated with the question
+    await Interaction.deleteMany({ question: questionId }); // delete all interaction associated with the question
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    ); // remove the reference to this question from all of the tags
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    throw error;
+  }
+}
+
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    await connectToDatabase();
+
+    const { questionId, title, content, tags, path } = params;
+
+    const question = await Question.findById(questionId).populate("tags"); // find the question that has to be updated
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+
+    // update question fields
+    question.title = title; // update the title
+    question.content = content; // update the content
+
+    await question.save();
+
+    const newTags = tags.map((tag: string) => tag.toUpperCase());
+    const existingTags = question.tags.map((tag: any) =>
+      tag.name.toUpperCase()
+    );
+
+    const tagUpdates = {
+      tagsToAdd: [] as string[],
+      tagsToRemove: [] as string[],
+    };
+
+    for (const tag of newTags) {
+      if (!existingTags.includes(tag.toUpperCase())) {
+        tagUpdates.tagsToAdd.push(tag);
       }
-    } catch (error) {
-      console.error("Submitting create transfer request failed: ", error);
     }
 
-    setIsLoading(false);
-  };
+    for (const tag of question.tags) {
+      if (!newTags.includes(tag.name.toUpperCase())) {
+        tagUpdates.tagsToRemove.push(tag._id);
+      }
+    }
 
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(submit)} className="flex flex-col">
-        <FormField
-          control={form.control}
-          name="senderBank"
-          render={() => (
-            <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-6 pt-5">
-                <div className="payment-transfer_form-content">
-                  <FormLabel className="text-14 font-medium text-gray-700">
-                    Select Source Bank
-                  </FormLabel>
-                  <FormDescription className="text-12 font-normal text-gray-600">
-                    Select the bank account you want to transfer funds from
-                  </FormDescription>
-                </div>
-                <div className="flex w-full flex-col">
-                  <FormControl>
-                    <BankDropdown
-                      accounts={accounts}
-                      setValue={form.setValue}
-                      otherStyles="!w-full"
-                    />
-                  </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+    // add new tags and link them to the question
+    const newTagDocuments = [];
 
-        <FormField
-          control={form.control}
-          name="name"
-          render={({ field }) => (
-            <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-6 pt-5">
-                <div className="payment-transfer_form-content">
-                  <FormLabel className="text-14 font-medium text-gray-700">
-                    Transfer Note (Optional)
-                  </FormLabel>
-                  <FormDescription className="text-12 font-normal text-gray-600">
-                    Please provide any additional information or instructions
-                    related to the transfer
-                  </FormDescription>
-                </div>
-                <div className="flex w-full flex-col">
-                  <FormControl>
-                    <Textarea
-                      placeholder="Write a short note here"
-                      className="input-class"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+    for (const tag of tagUpdates.tagsToAdd) {
+      const newTag = await Tag.findOneAndUpdate(
+        { name: { $regex: new RegExp(`^${tag}$`, "i") } },
+        { $setOnInsert: { name: tag }, $push: { questions: question._id } },
+        { upsert: true, new: true }
+      );
 
-        <div className="payment-transfer_form-details">
-          <h2 className="text-18 font-semibold text-gray-900">
-            Bank account details
-          </h2>
-          <p className="text-16 font-normal text-gray-600">
-            Enter the bank account details of the recipient
-          </p>
-        </div>
+      newTagDocuments.push(newTag._id);
+    }
 
-        <FormField
-          control={form.control}
-          name="email"
-          render={({ field }) => (
-            <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item py-5">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
-                  Recipient&apos;s Email Address
-                </FormLabel>
-                <div className="flex w-full flex-col">
-                  <FormControl>
-                    <Input
-                      placeholder="ex: johndoe@gmail.com"
-                      className="input-class"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+    console.log({ tagUpdates });
 
-        <FormField
-          control={form.control}
-          name="sharableId"
-          render={({ field }) => (
-            <FormItem className="border-t border-gray-200">
-              <div className="payment-transfer_form-item pb-5 pt-6">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
-                  Receiver&apos;s Plaid Sharable Id
-                </FormLabel>
-                <div className="flex w-full flex-col">
-                  <FormControl>
-                    <Input
-                      placeholder="Enter the public account number"
-                      className="input-class"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+    // remove question reference for tagsToRemove from the tag
+    if (tagUpdates.tagsToRemove.length > 0) {
+      await Tag.updateMany(
+        { _id: { $in: tagUpdates.tagsToRemove } },
+        { $pull: { questions: question._id } }
+      );
+    }
 
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem className="border-y border-gray-200">
-              <div className="payment-transfer_form-item py-5">
-                <FormLabel className="text-14 w-full max-w-[280px] font-medium text-gray-700">
-                  Amount
-                </FormLabel>
-                <div className="flex w-full flex-col">
-                  <FormControl>
-                    <Input
-                      placeholder="ex: 5.00"
-                      className="input-class"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage className="text-12 text-red-500" />
-                </div>
-              </div>
-            </FormItem>
-          )}
-        />
+    if (tagUpdates.tagsToRemove.length > 0) {
+      await Question.findByIdAndUpdate(question._id, {
+        $pull: { tags: { $in: tagUpdates.tagsToRemove } },
+      });
+    }
 
-        <div className="payment-transfer_btn-box">
-          <Button type="submit" className="payment-transfer_btn">
-            {isLoading ? (
-              <>
-                <Loader2 size={20} className="animate-spin" /> &nbsp; Sending...
-              </>
-            ) : (
-              "Transfer Funds"
-            )}
-          </Button>
-        </div>
-      </form>
-    </Form>
-  );
-};
+    if (newTagDocuments.length > 0) {
+      await Question.findByIdAndUpdate(question._id, {
+        $push: { tags: { $each: newTagDocuments } },
+      });
+    }
 
-export default PaymentTransferForm;
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error editing question:", error);
+    throw error;
+  }
+}
+
+export async function getHotQuestions() {
+  // this function does not need a param since our question already has views and upvotes which we can make use of
+  try {
+    await connectToDatabase();
+
+    const hotQuestions = await Question.find({}) // once it connect to the database we will find question and sort it according to views and upvotes
+      .sort({ views: -1, upvotes: -1 }) // will sort in a descending order meaning that the hottest questions will be at the top
+      .limit(5); // will only show top 5 hot questions
+
+    return hotQuestions;
+  } catch (error) {
+    console.error("Error fetching hot questions:", error);
+    throw error;
+  }
+}
+
+export async function getRecommendedQuestions(params: RecommendedParams) {
+  try {
+    await connectToDatabase();
+
+    const { userId, page = 1, pageSize = 20, searchQuery } = params;
+
+    // find user
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("user not found");
+    }
+
+    const skipAmount = (page - 1) * pageSize;
+
+    // find the user's interactions to see what tags they have been following
+    const userInteractions = await Interaction.find({ user: user._id })
+      .populate("tags")
+      .exec();
+
+    // extract tags from user's interactions
+    const userTags = userInteractions.reduce((tags, interaction) => {
+      if (interaction.tags) {
+        tags = tags.concat(interaction.tags);
+      }
+      return tags;
+    }, []);
+
+    // get distinct tag IDs from user's interactions
+    const distinctUserTagIds = [
+      // @ts-ignore
+      ...new Set(userTags.map((tag: any) => tag._id)),
+    ];
+
+    const query: FilterQuery<typeof Question> = {
+      $and: [
+        { tags: { $in: distinctUserTagIds } }, // questions with user's tags
+        { author: { $ne: user._id } }, // exclude user's own questions so that user wont see their own questions at the recommendation
+      ],
+    };
+
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: searchQuery, $options: "i" } },
+        { content: { $regex: searchQuery, $options: "i" } },
+      ];
+    }
+
+    const totalQuestions = await Question.countDocuments(query);
+
+    const recommendedQuestions = await Question.find(query)
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .populate({
+        path: "author",
+        model: User,
+      })
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    const isNext = totalQuestions > skipAmount + recommendedQuestions.length;
+
+    return { questions: recommendedQuestions, isNext };
+  } catch (error) {
+    console.error("Error getting recommended questions:", error);
+    throw error;
+  }
+}
+
 ```
 
 </details>
 
 <details>
-<summary><code>Missing from the video (top right on the transaction list page) BankDropdown.tsx</code></summary>
+<summary><code>answer.action.ts</code></summary>
 
-```typescript
-"use client";
+```answer.action
+"use server";
 
-import Image from "next/image";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useState } from "react";
-
+import Question from "@/database/question.model";
+import { connectToDatabase } from "../mongoose";
 import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-} from "@/components/ui/select";
-import { formUrlQuery, formatAmount } from "@/lib/utils";
+  AnswerVoteParams,
+  CreateAnswerParams,
+  DeleteAnswerParams,
+  GetAnswersParams,
+} from "./shared.types";
+import Answer from "@/database/answer.model";
+import { revalidatePath } from "next/cache";
+import Interaction from "@/database/interaction.model";
+import User from "@/database/user.model";
 
-export const BankDropdown = ({
-  accounts = [],
-  setValue,
-  otherStyles,
-}: BankDropdownProps) => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const [selected, setSeclected] = useState(accounts[0]);
+export async function createAnswer(params: CreateAnswerParams) {
+  try {
+    connectToDatabase();
 
-  const handleBankChange = (id: string) => {
-    const account = accounts.find((account) => account.appwriteItemId === id)!;
+    const { content, author, question, path } = params;
 
-    setSeclected(account);
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "id",
-      value: id,
+    const newAnswer = await Answer.create({ content, author, question });
+
+    // add the answer to the question's answer array
+    // question is used as a reference to where to push the answer
+    const updatedQuestion = await Question.findByIdAndUpdate(
+      question,
+      {
+        $push: { answers: newAnswer._id },
+      },
+      { new: true }
+    );
+
+    // create an Interaction record for the user's answer action
+    await Interaction.create({
+      user: author,
+      action: "answer",
+      question,
+      answer: newAnswer._id,
+      tags: updatedQuestion.tags,
     });
-    router.push(newUrl, { scroll: false });
 
-    if (setValue) {
-      setValue("senderBank", id);
+    // increment author's reputation by +10 for creating an answer
+    await User.findByIdAndUpdate(author, { $inc: { reputation: 10 } });
+
+    revalidatePath(path); // to automatically show the answer without having to reload the page
+  } catch (error) {
+    console.error("Error creating answer:", error);
+    throw error;
+  }
+}
+
+export async function getAnswers(params: GetAnswersParams) {
+  try {
+    connectToDatabase();
+
+    const {
+      questionId,
+      sortBy = "highestUpvotes",
+      page = 1,
+      pageSize = 5,
+    } = params;
+
+    // calculate the number of posts to skip based on the page number and page size
+    const skipAmount = (page - 1) * pageSize;
+
+    let sortOptions = {};
+
+    switch (sortBy) {
+      case "highestUpvotes":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "lowestUpvotes":
+        sortOptions = { upvotes: 1 };
+        break;
+      case "recent":
+        sortOptions = { createdAt: -1 }; // sorted in alphabetical order
+        break;
+      case "old":
+        sortOptions = { createdAt: 1 };
+        break;
+      default:
+        break;
     }
-  };
 
-  return (
-    <Select
-      defaultValue={selected.id}
-      onValueChange={(value) => handleBankChange(value)}
-    >
-      <SelectTrigger
-        className={`flex w-full gap-3 md:w-[300px] ${otherStyles}`}
-      >
-        <Image
-          src="icons/credit-card.svg"
-          width={20}
-          height={20}
-          alt="account"
-        />
-        <p className="line-clamp-1 w-full text-left">{selected.name}</p>
-      </SelectTrigger>
-      <SelectContent
-        className={`w-full md:w-[300px] ${otherStyles}`}
-        align="end"
-      >
-        <SelectGroup>
-          <SelectLabel className="py-2 font-normal text-gray-500">
-            Select a bank to display
-          </SelectLabel>
-          {accounts.map((account: Account) => (
-            <SelectItem
-              key={account.id}
-              value={account.appwriteItemId}
-              className="cursor-pointer border-t"
-            >
-              <div className="flex flex-col ">
-                <p className="text-16 font-medium">{account.name}</p>
-                <p className="text-14 font-medium text-blue-600">
-                  {formatAmount(account.currentBalance)}
-                </p>
-              </div>
-            </SelectItem>
-          ))}
-        </SelectGroup>
-      </SelectContent>
-    </Select>
-  );
-};
-```
-  
-</details>
+    const answers = await Answer.find({ question: questionId })
+      .populate({
+        path: "author",
+        select: "_id clerkId name picture",
+      }) // populate the author with id,clerkId,name and picture
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
 
-<details>
-<summary><code>Pagination.tsx</code></summary>
+    const totalAnswer = await Answer.countDocuments({ question: questionId }); // counting the answers for that specific question
 
-```typescript
-"use client";
+    const isNextAnswer = totalAnswer > skipAmount + answers.length;
 
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+    return { answers, isNextAnswer };
+  } catch (error) {
+    console.error("Error fetching answers:", error);
+    throw error;
+  }
+}
 
-import { Button } from "@/components/ui/button";
-import { formUrlQuery } from "@/lib/utils";
+export async function upvoteAnswer(params: AnswerVoteParams) {
+  try {
+    await connectToDatabase();
 
-export const Pagination = ({ page, totalPages }: PaginationProps) => {
-  const router = useRouter();
-  const searchParams = useSearchParams()!;
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
 
-  const handleNavigation = (type: "prev" | "next") => {
-    const pageNumber = type === "prev" ? page - 1 : page + 1;
+    let updateQuery = {};
 
-    const newUrl = formUrlQuery({
-      params: searchParams.toString(),
-      key: "page",
-      value: pageNumber.toString(),
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: userId } }; // pull the specific userId  from the upvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to upvote again since we already upvoted
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: userId }, // pull the specific userId  from the downvotes
+        $addToSet: { upvotes: userId }, // add to set  the specific userId to the upvotes
+        // we undo the downvote and then we upvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: userId } }; // if we have not already upvoted or downvoted we will add a new upvote of the userId to the set
+    }
+
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // upvoting or undoing the upvote for other people's answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasupVoted ? -2 : +2 },
     });
 
-    router.push(newUrl, { scroll: false });
-  };
+    // receiving upvote from other users
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasupVoted ? -2 : +2 },
+    });
 
-  return (
-    <div className="flex justify-between gap-3">
-      <Button
-        size="lg"
-        variant="ghost"
-        className="p-0 hover:bg-transparent"
-        onClick={() => handleNavigation("prev")}
-        disabled={Number(page) <= 1}
-      >
-        <Image
-          src="/icons/arrow-left.svg"
-          alt="arrow"
-          width={20}
-          height={20}
-          className="mr-2"
-        />
-        Prev
-      </Button>
-      <p className="text-14 flex items-center px-2">
-        {page} / {totalPages}
-      </p>
-      <Button
-        size="lg"
-        variant="ghost"
-        className="p-0 hover:bg-transparent"
-        onClick={() => handleNavigation("next")}
-        disabled={Number(page) >= totalPages}
-      >
-        Next
-        <Image
-          src="/icons/arrow-left.svg"
-          alt="arrow"
-          width={20}
-          height={20}
-          className="ml-2 -scale-x-100"
-        />
-      </Button>
-    </div>
-  );
-};
-```
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error upvoting answer:", error);
+    throw error;
+  }
+}
 
-</details>
+export async function downvoteAnswer(params: AnswerVoteParams) {
+  try {
+    await connectToDatabase();
 
-<details>
-<summary><code>Category.tsx</code></summary>
+    const { answerId, userId, hasupVoted, hasdownVoted, path } = params;
 
-```typescript
-import Image from "next/image";
+    let updateQuery = {};
 
-import { topCategoryStyles } from "@/constants";
-import { cn } from "@/lib/utils";
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: userId } }; // pull the specific userId  from the downvotes . Pull means that we dont want to do the action or we want to undo it
+      // we dont want to downvote again since we already downvoted
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: userId }, // pull the specific userId  from the upvotes
+        $addToSet: { downvotes: userId }, // add to set the specific userId to the downvotes
+        // we undo the upvote and then we downvoted
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: userId } }; // if we have not already upvoted or downvoted we will add a new downvote of the userId to the set
+    }
 
-import { Progress } from "./ui/progress";
+    const answer = await Answer.findByIdAndUpdate(answerId, updateQuery, {
+      new: true,
+    }); // passed in the questionId and the updateQuery and create a new instance
 
-export const Category = ({ category }: CategoryProps) => {
-  const {
-    bg,
-    circleBg,
-    text: { main, count },
-    progress: { bg: progressBg, indicator },
-    icon,
-  } = topCategoryStyles[category.name as keyof typeof topCategoryStyles] ||
-  topCategoryStyles.default;
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
 
-  return (
-    <div className={cn("gap-[18px] flex p-4 rounded-xl", bg)}>
-      <figure className={cn("flex-center size-10 rounded-full", circleBg)}>
-        <Image src={icon} width={20} height={20} alt={category.name} />
-      </figure>
-      <div className="flex w-full flex-1 flex-col gap-2">
-        <div className="text-14 flex justify-between">
-          <h2 className={cn("font-medium", main)}>{category.name}</h2>
-          <h3 className={cn("font-normal", count)}>{category.count}</h3>
-        </div>
-        <Progress
-          value={(category.count / category.totalCount) * 100}
-          className={cn("h-2 w-full", progressBg)}
-          indicatorClassName={cn("h-2 w-full", indicator)}
-        />
-      </div>
-    </div>
-  );
-};
+    // increment author's reputation
+    // downvoting or undoing the downvote for other people's answer
+    await User.findByIdAndUpdate(userId, {
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
+    });
+
+    // receiving downvote from other users
+    await User.findByIdAndUpdate(answer.author, {
+      $inc: { reputation: hasdownVoted ? +2 : -2 },
+    });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error downvoting answer:", error);
+    throw error;
+  }
+}
+
+export async function deleteAnswer(params: DeleteAnswerParams) {
+  try {
+    await connectToDatabase();
+
+    const { answerId, path } = params;
+
+    // find the answer to be deleted
+    const answer = await Answer.findById(answerId);
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // delete the answer
+    await Answer.deleteOne({ _id: answerId });
+
+    // remove the answer reference from its question
+    await Question.updateMany(
+      { _id: answer.question },
+      { $pull: { answers: answerId } }
+    );
+
+    // delete interactions related to the answer
+    await Interaction.deleteMany({ answer: answerId });
+
+    revalidatePath(path);
+  } catch (error) {
+    console.error("Error deleting answer:", error);
+    throw error;
+  }
+}
+
 ```
 
 </details>
