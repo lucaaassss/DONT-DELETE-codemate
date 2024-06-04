@@ -30,13 +30,16 @@ Built with Next.js, Codemate is a web community forum specifically designed for 
 
 - Next.js
 - TypeScript
-- Appwrite
-- Plaid
-- Dwolla
+- Tailwind CSS
+- ShadCN
 - React Hook Form
 - Zod
-- TailwindCSS
-- Chart.js
+- Clerk
+- ChatGPT API
+- EmailJS
+- TinyMCE
+- MongoDB
+- Vercel
 - ShadCN
 
 ## <a name="features">🔋 Features</a>
