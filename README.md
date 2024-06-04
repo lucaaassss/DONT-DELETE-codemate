@@ -40,7 +40,6 @@ Built with Next.js, Codemate is a web community forum specifically designed for 
 - TinyMCE
 - MongoDB
 - Vercel
-- ShadCN
 
 ## <a name="features">🔋 Features</a>
 
