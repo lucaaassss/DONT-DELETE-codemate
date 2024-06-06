@@ -16,13 +16,15 @@ export const QuestionsSchema = z.object({
     .min(5, "Title must be at least 5 characters long")
     .max(150, "Title cannot exceed 150 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Title contains profanity word",
+      message:
+        "The title might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
   explanation: z
     .string()
     .min(20, "Explanation must be at least 20 characters long")
     .refine((value) => !containsProfanity(value), {
-      message: "Explanation contains profanity word",
+      message:
+        "The explanation might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
   tags: z
     .array(
@@ -31,7 +33,8 @@ export const QuestionsSchema = z.object({
         .min(1, "Tag must be at least 1 character long")
         .max(20, "Tag cannot exceed 20 characters")
         .refine((value) => !containsProfanity(value), {
-          message: "Tag contains profanity word",
+          message:
+            "The tag might contain inappropriate language. Please contact our support team if you think this is a mistake.",
         })
     )
     .min(1, "At least 1 tag is required"),
@@ -42,7 +45,8 @@ export const AnswerSchema = z.object({
     .string()
     .min(20, "Answer must be at least 20 characters long")
     .refine((value) => !containsProfanity(value), {
-      message: "Answer contains profanity word",
+      message:
+        "The answer might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
 });
 
@@ -52,14 +56,16 @@ export const ProfileSchema = z.object({
     .min(5, "Name must be at least 5 characters long")
     .max(30, "Name cannot exceed 30 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Name contains profanity word",
+      message:
+        "The name might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
   username: z
     .string()
     .min(5, "Username must be at least 5 characters long")
     .max(25, "Username cannot exceed 25 characters")
     .refine((value) => !containsProfanity(value), {
-      message: "Username contains profanity word",
+      message:
+        "The username might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
   bio: z
     .string()
@@ -68,13 +74,18 @@ export const ProfileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .refine((value) => !containsProfanity(value), {
-      message: "Bio contains profanity word",
+      message:
+        "The bio might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
   portfolioWebsite: z
     .string()
     .url("Invalid URL format")
     .optional()
-    .or(z.literal("")),
+    .or(z.literal(""))
+    .refine((value) => !containsProfanity(value), {
+      message:
+        "The URL might contain inappropriate language. Please contact our support team if you think this is a mistake.",
+    }),
   location: z
     .string()
     .min(2, "Location must be at least 2 characters long")
@@ -82,6 +93,7 @@ export const ProfileSchema = z.object({
     .optional()
     .or(z.literal(""))
     .refine((value) => !containsProfanity(value), {
-      message: "Location contains profanity word",
+      message:
+        "The location might contain inappropriate language. Please contact our support team if you think this is a mistake.",
     }),
 });
