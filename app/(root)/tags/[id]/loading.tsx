@@ -4,6 +4,7 @@ const Loading = () => {
   return (
     <section>
       <Skeleton className="h-12 w-52" />
+      <Skeleton className="mt-11 h-12 w-56" />
 
       <Skeleton className="mb-12 mt-11 h-14 w-full" />
 
