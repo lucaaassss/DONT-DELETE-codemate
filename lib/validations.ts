@@ -4,12 +4,15 @@ import * as z from "zod";
 const profanityList = Profanity;
 
 // function to check for profanity
+// split(/\b/) is used to split the input string into an array of words based on word boundaries. Then, it checks if any of the words in the input string are in the profanity list.
+// this modification ensures that only whole words are matched against the profanity list, preventing issues like the one you mentioned with "hello" containing "hell".
 const containsProfanity = (value: string | undefined): boolean => {
   if (!value) return false;
-  return profanityList.some((word) => value.toLowerCase().includes(word));
+  const words = value.toLowerCase().split(/\b/);
+  return profanityList.some((word) => words.includes(word));
 };
 
-// Apply the profanity filter to the schemas
+// apply the profanity filter to the schemas
 export const QuestionsSchema = z.object({
   title: z
     .string()
