@@ -40,6 +40,7 @@ Built with Next.js, Codemate is a web community forum specifically designed for 
 - TinyMCE
 - MongoDB
 - Vercel
+- Sentry
 
 ## <a name="features">🔋 Features</a>
 
@@ -120,7 +121,13 @@ NEXT_PUBLIC_EMAILJS_SERVICE_ID=
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=
 
+#SENTRY
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+
+
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+NODE_ENV=production
 
 ```
 
@@ -163,7 +170,14 @@ NEXT_PUBLIC_EMAILJS_SERVICE_ID=
 NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=
 NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=
 
+#SENTRY
+SENTRY_DSN=
+NEXT_PUBLIC_SENTRY_DSN=
+
+
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+NODE_ENV=production
+
 
 ```
 
