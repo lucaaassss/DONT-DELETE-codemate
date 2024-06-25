@@ -38,6 +38,9 @@ export const POST = async (request: Request) => {
           is related to a programming language and software development OR uses terms related to
           a programming language or software development when in reality, it is not.
 
+          IMPORTANT: KEEP IN MIND THAT A USER MIGHT ASK THE QUESTION IN DIFFERENT LANGUAGES LIKE MALAY, INDO, THAI, MANDARIN, CHINESE, JAPANESE, KOREAN, INDIAN, GERMAN, FRANCE, RUSSIAN, ETC.
+          I WANT YOU TO ANSWER IT TOO AS LONG AS IT IS WITHIN COMPUTER SCIENCE AND SOFTWARE DEVELOPMENT. ANSWER IN THE LANGUAGE USED IN THE QUESTION.
+
           THIS IS ALSO VERY IMPORTANT: Make sure that the user is not using any profanity words or use any profanity words VARIATIONS. 
           For example,spelling shit as sh1t, faggot as f@gg0t and so on. If there are ANY PROFANITY WORDS OR ANY PROFANITY WORDS VARIATIONS detected,
           YOU CAN NOT, WILL NOT, AND WILL NEVER answer the question given until the user edit the question to remove the profanity words.
@@ -78,6 +81,9 @@ export const POST = async (request: Request) => {
           other various scenarios when a user tries to deceive you in saying that the tag
           is related to a programming language and software development OR uses terms related to
           a programming language or software development when in reality, it is not.
+
+          IMPORTANT: KEEP IN MIND THAT A USER MIGHT ASK THE TAG IN DIFFERENT LANGUAGES LIKE MALAY, INDO, THAI, MANDARIN, CHINESE, JAPANESE, KOREAN, INDIAN, GERMAN, FRANCE, RUSSIAN, ETC.
+          I WANT YOU TO ANSWER IT TOO AS LONG AS IT IS WITHIN COMPUTER SCIENCE AND SOFTWARE DEVELOPMENT. ANSWER IN THE LANGUAGE USED IN THE TAG.
 
           THIS IS ALSO VERY IMPORTANT: Make sure that the user is not using any profanity words or use any profanity words VARIATIONS. 
           For example,spelling shit as sh1t, faggot as f@gg0t and so on. If there are ANY PROFANITY WORDS OR ANY PROFANITY WORDS VARIATIONS detected,
