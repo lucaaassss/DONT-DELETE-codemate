@@ -131,7 +131,7 @@ NODE_ENV=production
 
 ```
 
-Replace the placeholder values with your actual respective account credentials. You can obtain these credentials by signing up on the [Clerk](https://clerk.com/), [TinyMCE](https://www.tiny.cloud/) , [MongoDB](https://www.mongodb.com/), [OpenAI](https://platform.openai.com/playground), [EmailJS](https://www.emailjs.com/) , and [Sentry](https://sentry.io/welcome/?utm_source=google&utm_medium=cpc&utm_id=%7B20403208976%7D&utm_campaign=Google_Search_Brand_SentryKW_ROW_Alpha&utm_content=g&utm_term=sentry&gad_source=1&gclid=CjwKCAjwyJqzBhBaEiwAWDRJVILOnBSw_ArmnKuwI38GZj0MvCQMSO-gRCFMYwEF-UE2zXXU1PEyIBoC458QAvD_BwE)
+Replace the placeholder values with your actual respective account credentials. You can obtain these credentials by signing up on [Clerk](https://clerk.com/), [TinyMCE](https://www.tiny.cloud/) , [MongoDB](https://www.mongodb.com/), [OpenAI](https://platform.openai.com/playground), [EmailJS](https://www.emailjs.com/) , and [Sentry](https://sentry.io/welcome/?utm_source=google&utm_medium=cpc&utm_id=%7B20403208976%7D&utm_campaign=Google_Search_Brand_SentryKW_ROW_Alpha&utm_content=g&utm_term=sentry&gad_source=1&gclid=CjwKCAjwyJqzBhBaEiwAWDRJVILOnBSw_ArmnKuwI38GZj0MvCQMSO-gRCFMYwEF-UE2zXXU1PEyIBoC458QAvD_BwE)
 
 **Running the Project**
 
